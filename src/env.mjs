@@ -8,6 +8,9 @@ export const env = createEnv({
    */
   server: {
     DATABASE_URL: z.string().url(),
+    SECRET_KEY: z.string(),
+    SECRET_KEY_CLOUDINARY: z.string(),
+    API_KEY_CLOUDINARY: z.string(),
     NODE_ENV: z.enum(["development", "test", "production"]),
   },
 
@@ -17,7 +20,8 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
+    NEXT_PUBLIC_CLOUDINARY_API: z.string().min(1),
+    NEXT_PUBLIC_CLOUDINARY_API_KEY: z.string().min(1),
   },
 
   /**
@@ -27,6 +31,11 @@ export const env = createEnv({
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
+    SECRET_KEY: process.env.SECRET_KEY,
+    SECRET_KEY_CLOUDINARY: process.env.SECRET_KEY_CLOUDINARY,
+    API_KEY_CLOUDINARY: process.env.API_KEY_CLOUDINARY,
+    NEXT_PUBLIC_CLOUDINARY_API: process.env.NEXT_PUBLIC_CLOUDINARY_API,
+    NEXT_PUBLIC_CLOUDINARY_API_KEY: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

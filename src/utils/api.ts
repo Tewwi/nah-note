@@ -7,9 +7,9 @@
 import { httpBatchLink, loggerLink } from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
+import { getCookie } from "cookies-next";
 import superjson from "superjson";
 import { type AppRouter } from "~/server/api/root";
-
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return ""; // browser should use relative url
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // SSR should use vercel url
@@ -40,6 +40,12 @@ export const api = createTRPCNext<AppRouter>({
         }),
         httpBatchLink({
           url: `${getBaseUrl()}/api/trpc`,
+          headers: () => {
+            const token = getCookie("token");
+            return {
+              Authorization: `Bearer ${token}`,
+            };
+          },
         }),
       ],
     };

@@ -2,16 +2,42 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = env("DATABASE_URL")
+  provider     = "mongodb"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model User {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  email    String  @unique
+  userName String
+  password String
+  avatar   String? @default("https://res.cloudinary.com/dqlcjscsz/image/upload/v1690958315/blog/default-avatar_v6uu8y.jpg")
+  Page     Page[]
+}
+
+model Page {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  blocks          Block[]
+  title           String?  @default("Untitled")
+  author          User     @relation(fields: [authorId], references: [id])
+  authorId        String   @db.ObjectId
+  permissionId    String[] @db.ObjectId
+  parent          Page?    @relation("ParentChild", fields: [parentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  parentId        String?  @db.ObjectId
+  children        Page[]   @relation("ParentChild")
+  emoji           String   
+  backgroundCover String?
+}
+
+model Block {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  content String
+  type    String
+  page    Page   @relation(fields: [pageId], references: [id])
+  pageId  String @db.ObjectId
 }
