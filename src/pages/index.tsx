@@ -11,7 +11,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const token = getCookie("token", { req, res });
   if (token) {
     const ssg = generateSSGHelper(token?.toString());
-    await ssg.user.getUserDetail.prefetch();
+    await ssg.user.getCurrUserDetail.prefetch();
 
     return {
       props: {

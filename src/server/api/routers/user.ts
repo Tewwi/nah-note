@@ -1,16 +1,16 @@
+import type { User } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
+import bcrypt from "bcrypt";
+import i18n from "i18next";
 import { z } from "zod";
 import {
   createTRPCRouter,
   privateProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import bcrypt from "bcrypt";
-import { TRPCError } from "@trpc/server";
 import { handleTryCatchApiAction, signCloud } from "~/server/utils";
-import { createToken } from "~/utils/jwtHelper";
-import type { User } from "@prisma/client";
 import { defaultAvatar } from "~/utils/constant";
-import { textContent } from "~/TextContent/text";
+import { createToken } from "~/utils/jwtHelper";
 
 export const userRouter = createTRPCRouter({
   register: publicProcedure
@@ -33,8 +33,8 @@ export const userRouter = createTRPCRouter({
 
       if (userDetail) {
         throw new TRPCError({
-          message: textContent.registerEmailError,
-          code: "INTERNAL_SERVER_ERROR",
+          message: i18n.t("registerEmailError"),
+          code: "NOT_FOUND",
         });
       }
 
@@ -125,7 +125,7 @@ export const userRouter = createTRPCRouter({
       return signCloud(input.folderName);
     }),
 
-  getUserDetail: privateProcedure.query(({ ctx }) => {
+  getCurrUserDetail: privateProcedure.query(({ ctx }) => {
     if (ctx.currUser) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...userInfo } = ctx.currUser;

@@ -1,18 +1,18 @@
-import Head from "next/head";
-import React from "react";
 import { Box, Container, Typography } from "@mui/material";
-import InputField from "~/components/FormComponents/InputField";
-import { api } from "~/utils/api";
-import { textContent } from "~/TextContent/text";
-import { useForm } from "react-hook-form";
-import { regex } from "~/utils/constant";
-import Link from "next/link";
-import { blue } from "~/theme/colors";
-import type { IErrorCatch } from "~/interface/common";
-import { toast } from "react-hot-toast";
-import { useRouter } from "next/router";
-import LoadingButton from "~/components/Common/Button/LoadingButton";
 import { setCookie } from "cookies-next";
+import Head from "next/head";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
+import LoadingButton from "~/components/Common/Button/LoadingButton";
+import InputField from "~/components/FormComponents/InputField";
+import type { IErrorCatch } from "~/interface/common";
+import { blue } from "~/theme/colors";
+import { paletteLight } from "~/theme/palette";
+import { api } from "~/utils/api";
+import { regex } from "~/utils/constant";
 
 interface ILoginParams {
   email: string;
@@ -21,6 +21,7 @@ interface ILoginParams {
 
 const LoginPage = () => {
   const router = useRouter();
+  const { t } = useTranslation();
   const { control, handleSubmit } = useForm<ILoginParams>({
     defaultValues: {
       email: "",
@@ -43,7 +44,7 @@ const LoginPage = () => {
       return;
     }
 
-    toast.success(textContent.loginSuccess);
+    toast.success(t("loginSuccess"));
     void router.push("/");
   };
 
@@ -52,69 +53,85 @@ const LoginPage = () => {
       <Head>
         <title>Nah | Login</title>
       </Head>
-      <Container sx={{ display: "flex", minHeight: "100vh" }}>
-        <Box
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          backgroundColor: paletteLight.background.default,
+          color: paletteLight.common.black,
+        }}
+      >
+        <Container
           sx={{
-            margin: "auto",
-            gap: "8px",
-            width: "350px",
             display: "flex",
-            flexDirection: "column",
+            minHeight: "100vh",
           }}
         >
-          <Typography m="auto" variant="h2" mb={1}>
-            Login
-          </Typography>
-
-          <Box>
-            <Typography variant="body1">Email</Typography>
-            <InputField
-              control={control}
-              name="email"
-              rules={{
-                required: textContent.requiredError,
-                pattern: {
-                  value: regex.email,
-                  message: textContent.emailError,
-                },
-              }}
-            />
-          </Box>
-
-          <Box>
-            <Typography variant="body1">Password</Typography>
-            <InputField
-              control={control}
-              name="password"
-              type="password"
-              rules={{
-                required: textContent.requiredError,
-                min: 6,
-              }}
-            />
-          </Box>
-
-          <LoadingButton
-            variant="contained"
-            sx={{ fontSize: "1rem" }}
-            onClick={() => {
-              void handleSubmit(onSubmit)();
+          <Box
+            sx={{
+              margin: "auto",
+              gap: "8px",
+              width: "350px",
+              display: "flex",
+              flexDirection: "column",
             }}
-            title="Login"
-            loading={isLoading}
-          />
-          <Link
-            style={{
-              textDecoration: "underline",
-              color: blue[700],
-              alignSelf: "flex-end",
-            }}
-            href={"/auth/register"}
           >
-            {textContent.goRegisterPage}
-          </Link>
-        </Box>
-      </Container>
+            <Typography m="auto" variant="h2" mb={1}>
+              {t("login")}
+            </Typography>
+
+            <Box>
+              <Typography variant="body1">Email</Typography>
+              <InputField
+                control={control}
+                name="email"
+                rules={{
+                  required: t('requiredError'),
+                  pattern: {
+                    value: regex.email,
+                    message: t("emailError"),
+                  },
+                }}
+                inputProps={{ style: { color: paletteLight.common.black } }}
+              />
+            </Box>
+
+            <Box>
+              <Typography variant="body1">{t("password")}</Typography>
+              <InputField
+                control={control}
+                name="password"
+                type="password"
+                rules={{
+                  required: t('requiredError'),
+                  min: 6,
+                }}
+                inputProps={{ style: { color: paletteLight.common.black } }}
+              />
+            </Box>
+
+            <LoadingButton
+              variant="contained"
+              sx={{ fontSize: "1rem" }}
+              onClick={() => {
+                void handleSubmit(onSubmit)();
+              }}
+              title="Login"
+              loading={isLoading}
+            />
+            <Link
+              style={{
+                textDecoration: "underline",
+                color: blue[700],
+                alignSelf: "flex-end",
+              }}
+              href={"/auth/register"}
+            >
+              {t("goRegisterPage")}
+            </Link>
+          </Box>
+        </Container>
+      </div>
     </>
   );
 };

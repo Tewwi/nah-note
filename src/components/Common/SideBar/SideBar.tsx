@@ -8,15 +8,26 @@ import { api } from "~/utils/api";
 import BoxClickAble from "../BoxClickAble";
 import ImageLoading from "../Image/ImageLoading";
 import UserPageList from "./userPageList";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   openSideBar: boolean;
   handleClose: () => void;
 }
-
+ 
 const SideBar = (props: Props) => {
   const { openSideBar, handleClose } = props;
-  const { data: userInfo, isLoading } = api.user.getUserDetail.useQuery();
+  const router = useRouter();
+  const { t } = useTranslation();
+  const { data: userInfo, isLoading, isError, error } = api.user.getCurrUserDetail.useQuery();
+  
+  useEffect(() => {
+    if(isError && error.message === 'jwt malformed') {
+      void router.push('/auth/login')
+    }
+  }, [error, isError, router])
 
   return (
     <Drawer
@@ -76,7 +87,7 @@ const SideBar = (props: Props) => {
           }}
         >
           <SearchIcon fontSize="small" />
-          <Typography variant="body2">Search</Typography>
+          <Typography variant="body2">{t("search")}</Typography>
         </BoxClickAble>
         <Divider />
 
@@ -88,7 +99,7 @@ const SideBar = (props: Props) => {
           }}
         >
           <SettingsIcon fontSize="small" />
-          <Typography variant="body2">Setting</Typography>
+          <Typography variant="body2">{t("setting")}</Typography>
         </BoxClickAble>
         <Divider />
 
@@ -100,7 +111,7 @@ const SideBar = (props: Props) => {
           }}
         >
           <AddIcon fontSize="small" />
-          <Typography variant="body2">New Page</Typography>
+          <Typography variant="body2">{t("newPage")}</Typography>
         </BoxClickAble>
       </Stack>
       <Divider />

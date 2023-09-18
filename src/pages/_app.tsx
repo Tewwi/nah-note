@@ -4,6 +4,7 @@ import "~/styles/globals.css";
 import { ThemeConfig } from "~/theme/ThemeConfig";
 import Layout from "~/components/Common/Layout";
 import { Toaster } from "react-hot-toast";
+import '../i18/config';
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   

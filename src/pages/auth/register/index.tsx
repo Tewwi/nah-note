@@ -5,12 +5,13 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
-import { textContent } from "~/TextContent/text";
+import { useTranslation } from "react-i18next";
 import LoadingButton from "~/components/Common/Button/LoadingButton";
 import InputField from "~/components/FormComponents/InputField";
 import UploadAvatarButton from "~/components/RegisterPage/UploadAvatarButton";
 import type { IErrorCatch } from "~/interface/common";
 import { blue } from "~/theme/colors";
+import { paletteLight } from "~/theme/palette";
 import { api } from "~/utils/api";
 import { handleUploadFile } from "~/utils/cloudinaryHelper";
 import { regex } from "~/utils/constant";
@@ -25,6 +26,7 @@ interface IRegisterParams {
 
 const RegisterPage = () => {
   const router = useRouter();
+  const { t } = useTranslation();
   const {
     control,
     watch,
@@ -71,7 +73,7 @@ const RegisterPage = () => {
         userName: values.userName,
         avatar: url,
       });
-      toast.success(textContent.registerSuccess);
+      toast.success(t("registerSuccess"));
       void router.push({ pathname: "login" });
     } catch (e) {
       const error = e as IErrorCatch;
@@ -98,107 +100,120 @@ const RegisterPage = () => {
       <Head>
         <title>Nah | Register</title>
       </Head>
-      <Container sx={{ display: "flex", minHeight: "100vh" }}>
-        <Box
-          sx={{
-            margin: "auto",
-            gap: "8px",
-            width: "350px",
-            display: "flex",
-            flexDirection: "column",
-            m: "auto",
-          }}
-        >
-          <Typography m="auto" variant="h2" mb={1}>
-            Register
-          </Typography>
-
-          <Box>
-            <Typography variant="body1">Email</Typography>
-            <InputField
-              control={control}
-              name="email"
-              rules={{
-                required: textContent.requiredError,
-                pattern: {
-                  value: regex.email,
-                  message: textContent.emailError,
-                },
-              }}
-            />
-          </Box>
-
-          <Box>
-            <Typography variant="body1">User Name</Typography>
-            <InputField
-              control={control}
-              name="userName"
-              rules={{
-                required: textContent.requiredError,
-              }}
-            />
-          </Box>
-
-          <Box>
-            <Typography variant="body1">Password</Typography>
-            <InputField
-              control={control}
-              name="password"
-              type="password"
-              rules={{
-                required: textContent.requiredError,
-                min: { value: 6, message: textContent.passwordError },
-              }}
-            />
-          </Box>
-
-          <Box>
-            <Typography variant="body1">Confirm Password</Typography>
-            <InputField
-              control={control}
-              name="confirmPassword"
-              type="password"
-              rules={{
-                required: textContent.requiredError,
-                validate: (val) => {
-                  if (watch("password") !== val) {
-                    return textContent.confirmPasswordError;
-                  }
-                },
-              }}
-            />
-          </Box>
-
-          <UploadAvatarButton
-            fileUpload={fileUpload}
-            handleClearAvatar={() => {
-              setValue("avatar", undefined);
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          backgroundColor: paletteLight.background.default,
+          color: paletteLight.common.black,
+        }}
+      >
+        <Container sx={{ display: "flex", minHeight: "100vh" }}>
+          <Box
+            sx={{
+              margin: "auto",
+              gap: "8px",
+              width: "350px",
+              display: "flex",
+              flexDirection: "column",
+              m: "auto",
             }}
-            errorsMessage={errors.avatar?.message}
-            handleUploadAvatar={handleUploadAvatar}
-          />
-
-          <LoadingButton
-            variant="contained"
-            sx={{ fontSize: "1rem" }}
-            onClick={() => {
-              void handleSubmit(onSubmit)();
-            }}
-            title="Register"
-            loading={loading}
-          />
-          <Link
-            style={{
-              textDecoration: "underline",
-              color: blue[700],
-              alignSelf: "flex-end",
-            }}
-            href={"/auth/login"}
           >
-            {textContent.goLoginPage}
-          </Link>
-        </Box>
-      </Container>
+            <Typography m="auto" variant="h2" mb={1}>
+              {t("register")}
+            </Typography>
+
+            <Box>
+              <Typography variant="body1">Email</Typography>
+              <InputField
+                inputProps={{ style: { color: paletteLight.common.black } }}
+                control={control}
+                name="email"
+                rules={{
+                  required: t("requiredError"),
+                  pattern: {
+                    value: regex.email,
+                    message: t("emailError"),
+                  },
+                }}
+              />
+            </Box>
+
+            <Box>
+              <Typography variant="body1">{t("userName")}</Typography>
+              <InputField
+                inputProps={{ style: { color: paletteLight.common.black } }}
+                control={control}
+                name="userName"
+                rules={{
+                  required: t("requiredError"),
+                }}
+              />
+            </Box>
+
+            <Box>
+              <Typography variant="body1">{t("password")}</Typography>
+              <InputField
+                inputProps={{ style: { color: paletteLight.common.black } }}
+                control={control}
+                name="password"
+                type="password"
+                rules={{
+                  required: t("requiredError"),
+                  min: { value: 6, message: t("passwordError") },
+                }}
+              />
+            </Box>
+
+            <Box>
+              <Typography variant="body1">{t("confirmPass")}</Typography>
+              <InputField
+                inputProps={{ style: { color: paletteLight.common.black } }}
+                control={control}
+                name="confirmPassword"
+                type="password"
+                rules={{
+                  required: t("requiredError"),
+                  validate: (val) => {
+                    if (watch("password") !== val) {
+                      return t("confirmPasswordError");
+                    }
+                  },
+                }}
+              />
+            </Box>
+
+            <UploadAvatarButton
+              fileUpload={fileUpload}
+              handleClearAvatar={() => {
+                setValue("avatar", undefined);
+              }}
+              errorsMessage={errors.avatar?.message}
+              handleUploadAvatar={handleUploadAvatar}
+            />
+
+            <LoadingButton
+              variant="contained"
+              sx={{ fontSize: "1rem" }}
+              onClick={() => {
+                void handleSubmit(onSubmit)();
+              }}
+              title="Register"
+              loading={loading}
+            />
+            <Link
+              style={{
+                textDecoration: "underline",
+                color: blue[700],
+                alignSelf: "flex-end",
+              }}
+              href={"/auth/login"}
+            >
+              {t("goLoginPage")}
+            </Link>
+          </Box>
+        </Container>
+      </div>
     </>
   );
 };

@@ -3,22 +3,25 @@ import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import { itemPerPage } from "~/server/constant";
 
+const schemaPage = z.object({
+  title: z.string().nullable().optional(),
+  authorId: z.string(),
+  parentId: z.string().nullable().optional(),
+  emoji: z.string().nullable().optional(),
+  id: z.string().optional(),
+  backgroundCover: z.string().nullable().optional(),
+});
+
 export const pageRouter = createTRPCRouter({
   createNewPage: privateProcedure
-    .input(
-      z.object({
-        title: z.string(),
-        authorId: z.string(),
-        parent: z.string().nullable(),
-      })
-    )
+    .input(schemaPage)
     .mutation(async ({ ctx, input }) => {
       try {
         await ctx.prisma.page.create({
           data: {
             title: input.title,
             authorId: input.authorId,
-            parentId: input.parent,
+            parentId: input.parentId,
           },
         });
       } catch (error) {
@@ -86,6 +89,28 @@ export const pageRouter = createTRPCRouter({
             children: true,
             author: true,
             blocks: true,
+          },
+        });
+
+        return resp;
+      } catch (error) {
+        throw new TRPCError({
+          message: "Something went wrong",
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+    }),
+  updatePageById: privateProcedure
+    .input(schemaPage)
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...restData } = input;
+      try {
+        const resp = await ctx.prisma.page.update({
+          where: {
+            id: id,
+          },
+          data: {
+            ...restData,
           },
         });
 

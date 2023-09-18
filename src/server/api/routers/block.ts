@@ -2,15 +2,16 @@ import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import { handleTryCatchApiAction } from "~/server/utils";
 
+export const schemaBlock = z.object({
+  type: z.string(),
+  pageId: z.string(),
+  content: z.string(),
+  id: z.string().optional(),
+});
+
 export const blockRouter = createTRPCRouter({
   createNewBlock: privateProcedure
-    .input(
-      z.object({
-        type: z.string(),
-        pageId: z.string(),
-        content: z.string(),
-      })
-    )
+    .input(schemaBlock)
     .mutation(async ({ ctx, input }) => {
       await handleTryCatchApiAction(async () => {
         await ctx.prisma.block.create({
@@ -22,16 +23,9 @@ export const blockRouter = createTRPCRouter({
         });
       });
     }),
-    
+
   updateBlock: privateProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        type: z.string(),
-        pageId: z.string(),
-        content: z.string(),
-      })
-    )
+    .input(schemaBlock)
     .mutation(async ({ ctx, input }) => {
       const { id, ...rest } = input;
       await handleTryCatchApiAction(async () => {

@@ -30,7 +30,7 @@ model Page {
   parent          Page?    @relation("ParentChild", fields: [parentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   parentId        String?  @db.ObjectId
   children        Page[]   @relation("ParentChild")
-  emoji           String   
+  emoji           String?   
   backgroundCover String?
 }
 

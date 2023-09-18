@@ -1,4 +1,4 @@
-export const textContent = {
+export const en = {
   requiredError: "This field is required",
   passwordError: "Minimum six characters for password",
   emailError: "Correct email format required",
@@ -8,4 +8,15 @@ export const textContent = {
   registerSuccess: "Register success",
   loginSuccess: "Login success",
   registerEmailError: "This email already exist",
+  placeholderCoverImg: "Please enter your image link ...",
+  addCoverButton: "Add Cover",
+  editCoverButton: "Edit Cover",
+  login: "Login",
+  password: 'Password',
+  confirmPass: 'Confirm Password',
+  register: "Register",
+  userName: "User Name",
+  search: "Search", 
+  setting: "Setting",
+  newPage: "New Page",
 };

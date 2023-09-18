@@ -1,6 +1,6 @@
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import OutletRoundedIcon from "@mui/icons-material/OutletRounded";
-import { Popover, Stack } from "@mui/material";
+import { Popover, Stack, useTheme } from "@mui/material";
 import EmojiPicker, {
   EmojiStyle,
   Theme,
@@ -12,17 +12,24 @@ import type { Control, UseFormSetValue } from "react-hook-form";
 import type { IPageForm } from "~/interface/IPage";
 import BoxClickAble from "../Common/BoxClickAble";
 import InputTransparent from "../FormComponents/InputTransparent";
+import SelectCoverDialog from "../Dialog/SelectCoverDialog";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<IPageForm, any>;
   setValue: UseFormSetValue<IPageForm>;
-  emoji: string;
+  emoji: string | null | undefined;
   coverPic: string | null;
 }
 
 const PageHeader = (props: IProps) => {
-  const { control, setValue, emoji } = props;
+  const { control, setValue, emoji, coverPic } = props;
+  const theme = useTheme();
+  const { t } = useTranslation();
+  const [anchorElCoverImg, setAnchorElCoverImg] = useState<null | HTMLElement>(
+    null
+  );
   const [anchorElEmoji, setAnchorElEmoji] = useState<null | HTMLElement>(null);
 
   const handleChooseEmoji = (emoji: EmojiClickData) => {
@@ -34,13 +41,25 @@ const PageHeader = (props: IProps) => {
     setAnchorElEmoji(ref);
   };
 
+  const handleChooseCoverImg = (url: string) => {
+    setValue("backgroundCover", url);
+    setAnchorElCoverImg(null);
+  };
+
+  const handleOpenCoverImgPopper = (ref: HTMLElement) => {
+    setAnchorElCoverImg(ref);
+  };
+
   return (
-    <Stack direction="column">
-      {Boolean(emoji) && (
-        <div onClick={(e) => handleOpenEmojiPopper(e.currentTarget)}>
+    <Stack direction="column" mt="-42px">
+      {emoji ? (
+        <Stack
+          sx={{ width: "fit-content", cursor: "pointer" }}
+          onClick={(e) => handleOpenEmojiPopper(e.currentTarget)}
+        >
           <Emoji unified={emoji} emojiStyle={EmojiStyle.TWITTER} size={60} />
-        </div>
-      )}
+        </Stack>
+      ) : null}
 
       <Stack direction="row" sx={{ gap: "10px", position: "relative", mt: 1 }}>
         <BoxClickAble
@@ -56,20 +75,40 @@ const PageHeader = (props: IProps) => {
           anchorEl={anchorElEmoji}
           onClose={() => setAnchorElEmoji(null)}
           elevation={0}
-          PaperProps={{ sx: { boxShadow: "none" } }}
+          PaperProps={{ sx: { boxShadow: "none", border: "none" } }}
         >
           <EmojiPicker
             onEmojiClick={handleChooseEmoji}
             autoFocusSearch={false}
             emojiStyle={EmojiStyle.TWITTER}
             lazyLoadEmojis={true}
-            theme={Theme.AUTO}
+            theme={
+              theme.palette.mode.toString() === "light"
+                ? Theme.LIGHT
+                : Theme.DARK
+            }
           />
         </Popover>
 
-        <BoxClickAble sx={{ opacity: "0.7" }} startIcon={<InsertPhotoIcon />}>
-          Add cover
+        <BoxClickAble
+          onClick={(e) => handleOpenCoverImgPopper(e.currentTarget)}
+          sx={{ opacity: "0.7" }}
+          startIcon={<InsertPhotoIcon />}
+        >
+          {!coverPic ? t("addCoverButton") : t("editCoverButton")}
         </BoxClickAble>
+
+        <Popover
+          open={Boolean(anchorElCoverImg)}
+          anchorEl={anchorElCoverImg}
+          onClose={() => setAnchorElCoverImg(null)}
+          elevation={0}
+          PaperProps={{
+            sx: { boxShadow: "none", border: "none", minWidth: "500px" },
+          }}
+        >
+          <SelectCoverDialog handleChooseCoverImg={handleChooseCoverImg} />
+        </Popover>
       </Stack>
 
       <InputTransparent
