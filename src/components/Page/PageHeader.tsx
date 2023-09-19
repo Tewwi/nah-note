@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import OutletRoundedIcon from "@mui/icons-material/OutletRounded";
-import { Popover, Stack, useTheme } from "@mui/material";
+import { Popover, Skeleton, Stack, useTheme } from "@mui/material";
 import EmojiPicker, {
   EmojiStyle,
   Theme,
@@ -8,32 +9,40 @@ import EmojiPicker, {
   Emoji,
 } from "emoji-picker-react";
 import { useState } from "react";
-import type { Control, UseFormSetValue } from "react-hook-form";
+import type { Control } from "react-hook-form";
 import type { IPageForm } from "~/interface/IPage";
 import BoxClickAble from "../Common/BoxClickAble";
 import InputTransparent from "../FormComponents/InputTransparent";
 import SelectCoverDialog from "../Dialog/SelectCoverDialog";
 import { useTranslation } from "react-i18next";
+import { api } from "~/utils/api";
 
 interface IProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<IPageForm, any>;
-  setValue: UseFormSetValue<IPageForm>;
   emoji: string | null | undefined;
   coverPic: string | null;
+  handleChangeValue: (
+    name: keyof IPageForm,
+    value: string,
+    callback?: () => any
+  ) => void;
+  loading: boolean;
 }
 
 const PageHeader = (props: IProps) => {
-  const { control, setValue, emoji, coverPic } = props;
+  const { control, emoji, coverPic, handleChangeValue, loading } = props;
   const theme = useTheme();
   const { t } = useTranslation();
+  const { refetch } = api.page.getPageByCurrUser.useInfiniteQuery({ page: 1 });
   const [anchorElCoverImg, setAnchorElCoverImg] = useState<null | HTMLElement>(
     null
   );
   const [anchorElEmoji, setAnchorElEmoji] = useState<null | HTMLElement>(null);
 
-  const handleChooseEmoji = (emoji: EmojiClickData) => {
-    setValue("emoji", emoji.unified);
+  const handleChooseEmoji = (newEmoji: EmojiClickData) => {
+    handleChangeValue("emoji", newEmoji.unified, async () => {
+      await refetch();
+    });
     setAnchorElEmoji(null);
   };
 
@@ -42,7 +51,7 @@ const PageHeader = (props: IProps) => {
   };
 
   const handleChooseCoverImg = (url: string) => {
-    setValue("backgroundCover", url);
+    handleChangeValue("backgroundCover", url);
     setAnchorElCoverImg(null);
   };
 
@@ -50,14 +59,30 @@ const PageHeader = (props: IProps) => {
     setAnchorElCoverImg(ref);
   };
 
+  const handleUpdateTitle = (value: string) => {
+    handleChangeValue("title", value, async () => {
+      await refetch();
+    });
+  };
+
   return (
-    <Stack direction="column" mt="-42px">
+    <Stack direction="column" mt={emoji ? "-42px" : "0px"}>
       {emoji ? (
         <Stack
           sx={{ width: "fit-content", cursor: "pointer" }}
           onClick={(e) => handleOpenEmojiPopper(e.currentTarget)}
         >
-          <Emoji unified={emoji} emojiStyle={EmojiStyle.TWITTER} size={60} />
+          {!loading ? (
+            <Emoji unified={emoji} emojiStyle={EmojiStyle.TWITTER} size={60} />
+          ) : (
+            <Skeleton
+              sx={{
+                width: "60px",
+                height: "80px",
+              }}
+              animation="wave"
+            />
+          )}
         </Stack>
       ) : null}
 
@@ -78,10 +103,11 @@ const PageHeader = (props: IProps) => {
           PaperProps={{ sx: { boxShadow: "none", border: "none" } }}
         >
           <EmojiPicker
-            onEmojiClick={handleChooseEmoji}
+            onEmojiClick={(e) => {
+              void handleChooseEmoji(e);
+            }}
             autoFocusSearch={false}
             emojiStyle={EmojiStyle.TWITTER}
-            lazyLoadEmojis={true}
             theme={
               theme.palette.mode.toString() === "light"
                 ? Theme.LIGHT
@@ -118,6 +144,7 @@ const PageHeader = (props: IProps) => {
         inputProps={{
           style: { fontSize: "32px" },
         }}
+        onBlur={(e) => void handleUpdateTitle(e.target.value)}
       />
     </Stack>
   );

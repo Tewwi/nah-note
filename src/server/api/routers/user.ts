@@ -79,13 +79,13 @@ export const userRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const resp = (await ctx.prisma.user.findUnique({
         where: {
-          email: input.email,
+          email: input.email, 
         },
       })) as User;
 
       if (!resp) {
         throw new TRPCError({
-          message: "Not found email",
+          message: i18n.t("notFoundEmail"),
           code: "NOT_FOUND",
         });
       }
@@ -94,7 +94,7 @@ export const userRouter = createTRPCRouter({
 
       if (!checkPassword) {
         throw new TRPCError({
-          message: "Password not match",
+          message: i18n.t("confirmPasswordError"),
           code: "UNAUTHORIZED",
         });
       }
@@ -132,7 +132,7 @@ export const userRouter = createTRPCRouter({
       return userInfo;
     } else {
       throw new TRPCError({
-        message: "Something went wrong !",
+        message: i18n.t("somethingWrong"),
         code: "INTERNAL_SERVER_ERROR",
       });
     }

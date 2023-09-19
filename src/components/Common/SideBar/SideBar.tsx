@@ -4,13 +4,14 @@ import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import SearchIcon from "@mui/icons-material/Search";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { Divider, Drawer, IconButton, Stack, Typography } from "@mui/material";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { api } from "~/utils/api";
 import BoxClickAble from "../BoxClickAble";
 import ImageLoading from "../Image/ImageLoading";
 import UserPageList from "./userPageList";
-import { useEffect } from "react";
-import { useRouter } from "next/router";
-import { useTranslation } from "react-i18next";
+import useCrudPage from "~/hook/useCrudPage";
 
 interface Props {
   openSideBar: boolean;
@@ -22,7 +23,16 @@ const SideBar = (props: Props) => {
   const router = useRouter();
   const { t } = useTranslation();
   const { data: userInfo, isLoading, isError, error } = api.user.getCurrUserDetail.useQuery();
-  
+  const { handleCreateNewPage } = useCrudPage();
+
+  const handleNewPageBtn = async () => {
+    if(!userInfo) {
+      return;
+    }
+
+    await handleCreateNewPage({authorId: userInfo.id});
+  }
+
   useEffect(() => {
     if(isError && error.message === 'jwt malformed') {
       void router.push('/auth/login')
@@ -109,6 +119,7 @@ const SideBar = (props: Props) => {
             gap: "10px",
             alignItems: "center",
           }}
+          onClick={() => void handleNewPageBtn()}
         >
           <AddIcon fontSize="small" />
           <Typography variant="body2">{t("newPage")}</Typography>

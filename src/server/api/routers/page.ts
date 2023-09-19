@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import { itemPerPage } from "~/server/constant";
+import i18n from "i18next";
 
 const schemaPage = z.object({
   title: z.string().nullable().optional(),
@@ -17,16 +18,18 @@ export const pageRouter = createTRPCRouter({
     .input(schemaPage)
     .mutation(async ({ ctx, input }) => {
       try {
-        await ctx.prisma.page.create({
+        const resp = await ctx.prisma.page.create({
           data: {
             title: input.title,
             authorId: input.authorId,
             parentId: input.parentId,
           },
         });
+
+        return resp;
       } catch (error) {
         throw new TRPCError({
-          message: "Something went wrong",
+          message: i18n.t("somethingWrong"),
           code: "INTERNAL_SERVER_ERROR",
         });
       }
@@ -68,7 +71,7 @@ export const pageRouter = createTRPCRouter({
         };
       } catch (error) {
         throw new TRPCError({
-          message: "Something went wrong",
+          message: i18n.t("somethingWrong"),
           code: "INTERNAL_SERVER_ERROR",
         });
       }
@@ -95,7 +98,7 @@ export const pageRouter = createTRPCRouter({
         return resp;
       } catch (error) {
         throw new TRPCError({
-          message: "Something went wrong",
+          message: i18n.t("somethingWrong"),
           code: "INTERNAL_SERVER_ERROR",
         });
       }
@@ -117,7 +120,7 @@ export const pageRouter = createTRPCRouter({
         return resp;
       } catch (error) {
         throw new TRPCError({
-          message: "Something went wrong",
+          message: i18n.t("somethingWrong"),
           code: "INTERNAL_SERVER_ERROR",
         });
       }

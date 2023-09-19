@@ -19,4 +19,6 @@ export const en = {
   search: "Search", 
   setting: "Setting",
   newPage: "New Page",
+  notFoundEmail: "Not found email",
+  somethingWrong: "Something went wrong !",
 };

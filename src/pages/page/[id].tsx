@@ -1,4 +1,5 @@
-import { Box, Container } from "@mui/material";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Box, Container, Skeleton } from "@mui/material";
 import { getCookie } from "cookies-next";
 import type { GetServerSideProps } from "next";
 import Head from "next/head";
@@ -8,27 +9,16 @@ import { useFieldArray, useForm } from "react-hook-form";
 import ImageLoading from "~/components/Common/Image/ImageLoading";
 import PageHeader from "~/components/Page/PageHeader";
 import type { IPageForm } from "~/interface/IPage";
-import { generateSSGHelper } from "~/server/utils";
 import { api } from "~/utils/api";
 
 export const getServerSideProps: GetServerSideProps = async ({
   req,
   res,
-  query,
+  // eslint-disable-next-line @typescript-eslint/require-await
 }) => {
   const token = getCookie("token", { req, res });
-  const { id } = query;
   if (token) {
-    const ssg = generateSSGHelper(token?.toString());
-    if (id) {
-      await ssg.page.getPageById.prefetch({ id: id.toString() });
-    }
-
-    return {
-      props: {
-        trpcState: ssg.dehydrate(),
-      },
-    };
+    return { props: {} };
   }
 
   return {
@@ -42,13 +32,12 @@ export const getServerSideProps: GetServerSideProps = async ({
 const PageDetail = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { data, isLoading: getPageByIdLoading } = api.page.getPageById.useQuery(
-    {
-      id: id?.toString() || "",
-    }
-  );
   const { mutateAsync } = api.page.updatePageById.useMutation();
-  const { control, setValue, watch, handleSubmit } = useForm<IPageForm>({
+  const { data, isLoading, refetch } = api.page.getPageById.useQuery({
+    id: id?.toString() || "",
+  });
+  const { control, setValue, watch, handleSubmit, reset } = useForm<IPageForm>({
+    mode: "onBlur",
     defaultValues: { ...data },
   });
   const { fields } = useFieldArray({
@@ -56,24 +45,44 @@ const PageDetail = () => {
     name: "blocks",
   });
 
-  console.log(fields);
-
-  const emoji = watch("emoji");
-  const coverPic = watch("backgroundCover");
+  console.log("fields", fields);
+  const currData = watch();
 
   const onSubmit = useCallback(
-    async (data: IPageForm) => {
-      const resp = await mutateAsync({ ...data, authorId: data.author.id });
+    async (submitData: IPageForm) => {
+      console.log("submit", data);
+      if (!data) {
+        console.log("refetch data page", currData);
+        await refetch();
+      }
 
-      console.log("resp submit :", resp);
+      await mutateAsync({
+        ...submitData,
+        authorId: data?.author.id || currData.author.id,
+        id: id?.toString(),
+      });
     },
-    [mutateAsync]
+    [mutateAsync, id]
   );
 
+  const handleChangeValue = async (
+    name: keyof IPageForm,
+    value: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    callback?: () => any
+  ) => {
+    setValue(name, value);
+    await handleSubmit(onSubmit)();
+    if (callback) {
+      callback();
+    }
+  };
+
   useEffect(() => {
-    const subscription = watch(() => void handleSubmit(onSubmit)());
-    return () => subscription.unsubscribe();
-  }, [handleSubmit, onSubmit, watch]);
+    if (data) {
+      reset({ ...data });
+    }
+  }, [data, id, reset]);
 
   return (
     <>
@@ -83,25 +92,37 @@ const PageDetail = () => {
       <Box>
         {data?.backgroundCover ? (
           <ImageLoading
-            src={coverPic || data?.backgroundCover}
+            src={currData.backgroundCover || data?.backgroundCover}
             alt="avatar"
             width={0}
-            height={0}
+            height={180}
             sizes="100vw"
-            style={{ objectFit: "cover", height: "180px", width: "100%" }}
-            loadingCustom={getPageByIdLoading}
+            style={{ objectFit: "cover", width: "100%" }}
+            loadingCustom={!data.backgroundCover}
           />
         ) : (
-          <Box width="100%" height="120px"></Box>
+          <Box width="100%" height="180px">
+            {isLoading && (
+              <Skeleton
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                }}
+                animation="wave"
+              />
+            )}
+          </Box>
         )}
 
         <Container maxWidth="md">
           <Box>
             <PageHeader
               control={control}
-              setValue={setValue}
-              emoji={emoji}
-              coverPic={coverPic}
+              emoji={currData.emoji}
+              coverPic={currData.backgroundCover}
+              // eslint-disable-next-line @typescript-eslint/no-misused-promises
+              handleChangeValue={handleChangeValue}
+              loading={isLoading}
             />
           </Box>
         </Container>

@@ -7,17 +7,23 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import { Emoji, EmojiStyle } from "emoji-picker-react";
+import { useRouter } from "next/router";
 
 const UserPageList = () => {
   const { data } = api.page.getPageByCurrUser.useInfiniteQuery(
     { page: 1 },
     { getNextPageParam: (lastPage) => lastPage.nextCursor }
   );
+  const router = useRouter();
   const listPage = useMemo(() => data?.pages[0]?.resp, [data]);
   const [openList, setOpenList] = useState(false);
-
+    
   const handleTogglePages = () => {
     setOpenList(!openList);
+  };
+
+  const handleChangePage = (id: string) => {
+    void router.push(`/page/${id}`);
   };
 
   return (
@@ -40,6 +46,7 @@ const UserPageList = () => {
               key={item.id}
               fullWidth
               sx={{ p: 0.5, height: "unset" }}
+              onClick={() => handleChangePage(item.id)}
             >
               <Stack
                 direction="row"
