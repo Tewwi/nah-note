@@ -10,6 +10,8 @@
     "start": "next start"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.0.8",
+    "@dnd-kit/sortable": "^7.0.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.3",
@@ -17,6 +19,7 @@
     "@prisma/client": "^5.0.0",
     "@t3-oss/env-nextjs": "^0.3.1",
     "@tanstack/react-query": "^4.29.7",
+    "@tinymce/tinymce-react": "^4.3.0",
     "@trpc/client": "^10.26.0",
     "@trpc/next": "^10.26.0",
     "@trpc/react-query": "^10.26.0",

@@ -21,4 +21,12 @@ export const en = {
   newPage: "New Page",
   notFoundEmail: "Not found email",
   somethingWrong: "Something went wrong !",
+  deleteBlockSuccess: "Delete success",
+  deleteBlock: "Delete item",
+  submit: "Submit",
+  remove: "Remove",
+  maxFileSize: "The maximum size per file is 5MB",
+  uploadFile: 'Upload File',
+  link: 'Link',
+  upload: "Upload"
 };

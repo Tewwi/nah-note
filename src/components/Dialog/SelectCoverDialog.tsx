@@ -8,7 +8,7 @@ import LoadingButton from "../Common/Button/LoadingButton";
 import UploadAvatarButton from "../RegisterPage/UploadAvatarButton";
 
 interface IProps {
-  handleChooseCoverImg: (url: string) => void;
+  handleChooseCoverImg: (url: string | null) => void;
 }
 
 const folderName = "cover_image";
@@ -33,6 +33,11 @@ const SelectCoverDialog = (props: IProps) => {
 
   const handleChooseFileImg = (file: File) => {
     setImgFile(file);
+  };
+
+  const handleRemoveImg = () => {
+    setImgFile(null);
+    props.handleChooseCoverImg(null);
   };
 
   const handleUploadCoverFile = async () => {
@@ -69,12 +74,12 @@ const SelectCoverDialog = (props: IProps) => {
           value={tab}
           onChange={(e, value) => handleChangeTab(Number(value))}
         >
-          <Tab sx={{ p: 0 }} label="Upload" />
-          <Tab sx={{ p: 0 }} label="Link" />
+          <Tab sx={{ p: 0 }} label={t("upload")} />
+          <Tab sx={{ p: 0 }} label={t("link")} />
         </Tabs>
 
-        <BoxClickAble variant="text" sx={{ opacity: 0.5 }}>
-          Remove
+        <BoxClickAble variant="text" sx={{ opacity: 0.5 }} onClick={handleRemoveImg}>
+          {t("remove")}
         </BoxClickAble>
       </Stack>
 
@@ -88,7 +93,7 @@ const SelectCoverDialog = (props: IProps) => {
                 handleChooseFileImg(file[0]);
               }
             }}
-            label="Upload File"
+            label={t("uploadFile")}
           />
           <BoxClickAble
             variant="contained"
@@ -103,7 +108,7 @@ const SelectCoverDialog = (props: IProps) => {
               void handleUploadCoverFile();
             }}
           >
-            Submit
+            {t("submit")}
           </BoxClickAble>
           <Typography
             variant="body2"
@@ -113,7 +118,7 @@ const SelectCoverDialog = (props: IProps) => {
               textAlign: "center",
             }}
           >
-            The maximum size per file is 5MB
+            {t("maxFileSize")}
           </Typography>
         </Stack>
       )}
@@ -136,7 +141,7 @@ const SelectCoverDialog = (props: IProps) => {
               alignSelf: "center",
             }}
             onClick={handleSubmitUrl}
-            title="Submit"
+            title={t("submit")}
             loading={isLoading}
           />
         </Stack>

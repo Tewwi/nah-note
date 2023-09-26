@@ -22,6 +22,7 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_CLOUDINARY_API: z.string().min(1),
     NEXT_PUBLIC_CLOUDINARY_API_KEY: z.string().min(1),
+    NEXT_PUBLIC_TINY_API_KEY: z.string().min(1),
   },
 
   /**
@@ -36,6 +37,7 @@ export const env = createEnv({
     API_KEY_CLOUDINARY: process.env.API_KEY_CLOUDINARY,
     NEXT_PUBLIC_CLOUDINARY_API: process.env.NEXT_PUBLIC_CLOUDINARY_API,
     NEXT_PUBLIC_CLOUDINARY_API_KEY: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+    NEXT_PUBLIC_TINY_API_KEY: process.env.NEXT_PUBLIC_TINY_API_KEY,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

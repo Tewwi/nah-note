@@ -1,13 +1,15 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Box, Container, Skeleton } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import { getCookie } from "cookies-next";
 import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useCallback, useEffect } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import ImageLoading from "~/components/Common/Image/ImageLoading";
-import PageHeader from "~/components/Page/PageHeader";
+import { useForm } from "react-hook-form";
+import BlockList from "~/components/PageComponent/BlockList";
+import CoverImage from "~/components/PageComponent/CoverImage";
+import PageHeader from "~/components/PageComponent/PageHeader";
 import type { IPageForm } from "~/interface/IPage";
 import { api } from "~/utils/api";
 
@@ -40,25 +42,21 @@ const PageDetail = () => {
     mode: "onBlur",
     defaultValues: { ...data },
   });
-  const { fields } = useFieldArray({
-    control,
-    name: "blocks",
-  });
-
-  console.log("fields", fields);
   const currData = watch();
 
   const onSubmit = useCallback(
     async (submitData: IPageForm) => {
       console.log("submit", data);
+      let authorId: string = data?.author.id || "";
+
       if (!data) {
-        console.log("refetch data page", currData);
-        await refetch();
+        const respPageData = await refetch();
+        authorId = respPageData.data?.authorId || "";
       }
 
       await mutateAsync({
         ...submitData,
-        authorId: data?.author.id || currData.author.id,
+        authorId: authorId,
         id: id?.toString(),
       });
     },
@@ -67,7 +65,7 @@ const PageDetail = () => {
 
   const handleChangeValue = async (
     name: keyof IPageForm,
-    value: string,
+    value: string | null,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     callback?: () => any
   ) => {
@@ -89,30 +87,12 @@ const PageDetail = () => {
       <Head>
         <title>Nah | Page Detail</title>
       </Head>
-      <Box>
-        {data?.backgroundCover ? (
-          <ImageLoading
-            src={currData.backgroundCover || data?.backgroundCover}
-            alt="avatar"
-            width={0}
-            height={180}
-            sizes="100vw"
-            style={{ objectFit: "cover", width: "100%" }}
-            loadingCustom={!data.backgroundCover}
-          />
-        ) : (
-          <Box width="100%" height="180px">
-            {isLoading && (
-              <Skeleton
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                }}
-                animation="wave"
-              />
-            )}
-          </Box>
-        )}
+      <Box sx={{ paddingBottom: 6 }}>
+        <CoverImage
+          handleChangeValue={handleChangeValue}
+          url={currData.backgroundCover}
+          isLoading={isLoading}
+        />
 
         <Container maxWidth="md">
           <Box>
@@ -120,11 +100,11 @@ const PageDetail = () => {
               control={control}
               emoji={currData.emoji}
               coverPic={currData.backgroundCover}
-              // eslint-disable-next-line @typescript-eslint/no-misused-promises
               handleChangeValue={handleChangeValue}
               loading={isLoading}
             />
           </Box>
+          {id && <BlockList control={control} pageId={id.toString()} />}
         </Container>
       </Box>
     </>

@@ -23,7 +23,7 @@ interface IProps {
   coverPic: string | null;
   handleChangeValue: (
     name: keyof IPageForm,
-    value: string,
+    value: string | null,
     callback?: () => any
   ) => void;
   loading: boolean;
@@ -50,7 +50,7 @@ const PageHeader = (props: IProps) => {
     setAnchorElEmoji(ref);
   };
 
-  const handleChooseCoverImg = (url: string) => {
+  const handleChooseCoverImg = (url: string | null) => {
     handleChangeValue("backgroundCover", url);
     setAnchorElCoverImg(null);
   };
@@ -69,7 +69,7 @@ const PageHeader = (props: IProps) => {
     <Stack direction="column" mt={emoji ? "-42px" : "0px"}>
       {emoji ? (
         <Stack
-          sx={{ width: "fit-content", cursor: "pointer" }}
+          sx={{ width: "fit-content", cursor: "pointer", zIndex: 2 }}
           onClick={(e) => handleOpenEmojiPopper(e.currentTarget)}
         >
           {!loading ? (
@@ -100,7 +100,7 @@ const PageHeader = (props: IProps) => {
           anchorEl={anchorElEmoji}
           onClose={() => setAnchorElEmoji(null)}
           elevation={0}
-          PaperProps={{ sx: { boxShadow: "none", border: "none" } }}
+          PaperProps={{ sx: { boxShadow: "none", border: "none", minHeight: '450', minWidth: '350' } }}
         >
           <EmojiPicker
             onEmojiClick={(e) => {
@@ -115,13 +115,13 @@ const PageHeader = (props: IProps) => {
             }
           />
         </Popover>
-
+        
         <BoxClickAble
           onClick={(e) => handleOpenCoverImgPopper(e.currentTarget)}
-          sx={{ opacity: "0.7" }}
+          sx={{ opacity: "0.7", display: coverPic ? 'none': 'inline-flex' }}
           startIcon={<InsertPhotoIcon />}
         >
-          {!coverPic ? t("addCoverButton") : t("editCoverButton")}
+          {t("addCoverButton")}
         </BoxClickAble>
 
         <Popover

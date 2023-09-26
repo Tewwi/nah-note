@@ -30,14 +30,14 @@ model Page {
   parent          Page?    @relation("ParentChild", fields: [parentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   parentId        String?  @db.ObjectId
   children        Page[]   @relation("ParentChild")
-  emoji           String?   
+  emoji           String?
   backgroundCover String?
 }
 
 model Block {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  content String
-  type    String
-  page    Page   @relation(fields: [pageId], references: [id])
-  pageId  String @db.ObjectId
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  content  String
+  type     String
+  page     Page   @relation(fields: [pageId], references: [id])
+  pageId   String @db.ObjectId
 }
