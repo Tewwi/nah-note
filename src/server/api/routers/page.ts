@@ -26,6 +26,14 @@ export const pageRouter = createTRPCRouter({
           },
         });
 
+        await ctx.prisma.block.create({
+          data: {
+            content: "",
+            type: "text",
+            pageId: resp.id,
+          },
+        });
+
         return resp;
       } catch (error) {
         throw new TRPCError({

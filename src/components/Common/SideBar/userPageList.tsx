@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { api } from "~/utils/api";
 import BoxClickAble from "../BoxClickAble";
-import { Collapse, Stack, Typography } from "@mui/material";
+import { Collapse, Skeleton, Stack, Typography } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -10,14 +10,14 @@ import { Emoji, EmojiStyle } from "emoji-picker-react";
 import { useRouter } from "next/router";
 
 const UserPageList = () => {
-  const { data } = api.page.getPageByCurrUser.useInfiniteQuery(
+  const { data, isFetching } = api.page.getPageByCurrUser.useInfiniteQuery(
     { page: 1 },
     { getNextPageParam: (lastPage) => lastPage.nextCursor }
   );
   const router = useRouter();
   const listPage = useMemo(() => data?.pages[0]?.resp, [data]);
   const [openList, setOpenList] = useState(false);
-    
+
   const handleTogglePages = () => {
     setOpenList(!openList);
   };
@@ -59,14 +59,25 @@ const UserPageList = () => {
               >
                 <Stack>
                   {item.children.length ? <KeyboardArrowDownIcon /> : null}
+
                   {item.emoji ? (
-                    <Emoji
-                      unified={item.emoji}
-                      emojiStyle={EmojiStyle.TWITTER}
-                      size={14}
-                    />
+                    isFetching ? (
+                      <Skeleton
+                        sx={{
+                          width: "14px",
+                          height: "20px",
+                        }}
+                        animation="wave"
+                      />
+                    ) : (
+                      <Emoji
+                        unified={item.emoji}
+                        emojiStyle={EmojiStyle.TWITTER}
+                        size={14}
+                      />
+                    )
                   ) : (
-                    <FeedOutlinedIcon fontSize="small" />
+                    <FeedOutlinedIcon sx={{ width: "14px" }} fontSize="small" />
                   )}
                 </Stack>
                 <Typography fontSize="13px">{item.title}</Typography>

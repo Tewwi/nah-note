@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import ImageLoading from "../Common/Image/ImageLoading";
-import { Box, Button, Popover, Skeleton, Typography } from "@mui/material";
+import { Box, Button, Popover, Typography } from "@mui/material";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import SelectCoverDialog from "../Dialog/SelectCoverDialog";
 import type { IPageForm } from "~/interface/IPage";
+import ImageLoading from "../Common/Image/ImageLoading";
+import SelectCoverDialog from "../Dialog/SelectCoverDialog";
 
 interface Props {
   url: string | null | undefined;
@@ -13,11 +13,10 @@ interface Props {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     callback?: () => any
   ) => void;
-  isLoading: boolean;
 }
 
 const CoverImage = (props: Props) => {
-  const { url, handleChangeValue, isLoading } = props;
+  const { url, handleChangeValue } = props;
   const { t } = useTranslation();
   const [isHover, setIsHover] = useState(false);
   const [anchorElCoverImg, setAnchorElCoverImg] = useState<null | HTMLElement>(
@@ -30,26 +29,17 @@ const CoverImage = (props: Props) => {
   };
 
   if (!url) {
-    return (
-      <Box width="100%" height="180px">
-        {isLoading && (
-          <Skeleton
-            sx={{
-              width: "100%",
-              height: "100%",
-            }}
-            animation="wave"
-          />
-        )}
-      </Box>
-    );
+    return <Box width="100%" height="180px"></Box>;
   }
 
   return (
     <Box
       sx={{ position: "relative" }}
       onMouseOver={() => setIsHover(true)}
-      onMouseLeave={() => setIsHover(false)}
+      onMouseLeave={() => {
+        setIsHover(false);
+        setAnchorElCoverImg(null);
+      }}
     >
       <ImageLoading
         src={url}

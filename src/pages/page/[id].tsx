@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import BlockList from "~/components/PageComponent/BlockList";
 import CoverImage from "~/components/PageComponent/CoverImage";
 import PageHeader from "~/components/PageComponent/PageHeader";
+import PageLoading from "~/components/PageComponent/PageLoading";
 import type { IPageForm } from "~/interface/IPage";
 import { api } from "~/utils/api";
 
@@ -46,19 +47,14 @@ const PageDetail = () => {
 
   const onSubmit = useCallback(
     async (submitData: IPageForm) => {
-      console.log("submit", data);
-      let authorId: string = data?.author.id || "";
-
-      if (!data) {
-        const respPageData = await refetch();
-        authorId = respPageData.data?.authorId || "";
-      }
+      console.log("submit", submitData);
 
       await mutateAsync({
         ...submitData,
-        authorId: authorId,
         id: id?.toString(),
       });
+
+      await refetch();
     },
     [mutateAsync, id]
   );
@@ -76,11 +72,27 @@ const PageDetail = () => {
     }
   };
 
+  const handleReloadData = useCallback(async () => {
+    await refetch();
+  }, [refetch]);
+
   useEffect(() => {
+    if (id === "undefined") {
+      void router.replace("/404");
+    }
+
+    if(!data) {
+      void handleReloadData();
+    }
+
     if (data) {
       reset({ ...data });
     }
   }, [data, id, reset]);
+
+  if(isLoading) {
+    return <PageLoading />
+  }
 
   return (
     <>
@@ -91,7 +103,6 @@ const PageDetail = () => {
         <CoverImage
           handleChangeValue={handleChangeValue}
           url={currData.backgroundCover}
-          isLoading={isLoading}
         />
 
         <Container maxWidth="md">
@@ -101,7 +112,6 @@ const PageDetail = () => {
               emoji={currData.emoji}
               coverPic={currData.backgroundCover}
               handleChangeValue={handleChangeValue}
-              loading={isLoading}
             />
           </Box>
           {id && <BlockList control={control} pageId={id.toString()} />}

@@ -1,6 +1,5 @@
 import { type AppType } from "next/app";
 import { api } from "~/utils/api";
-import "~/styles/globals.css";
 import { ThemeConfig } from "~/theme/ThemeConfig";
 import Layout from "~/components/Common/Layout";
 import { Toaster } from "react-hot-toast";

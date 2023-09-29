@@ -8,7 +8,6 @@ import type { IPageForm } from "~/interface/IPage";
 import { api } from "~/utils/api";
 import Block from "../Block/Block";
 import DnDContext from "../DragnDrop/DnDContext";
-// import { arrayMove } from "@dnd-kit/sortable";
 
 interface Props {
   control: Control<IPageForm>;
@@ -18,7 +17,7 @@ interface Props {
 const BlockList = (props: Props) => {
   const { control, pageId } = props;
 
-  const { mutateAsync: createNewBlock } =
+  const { mutateAsync: createNewBlock, isLoading } =
     api.block.createNewBlock.useMutation();
   const { mutateAsync: deleteBlock } = api.block.deleteBlock.useMutation();
   const { mutate: updatePosition } =
@@ -78,6 +77,7 @@ const BlockList = (props: Props) => {
             key={item.id}
             pageId={pageId}
             handleDeleteBlock={handleDeleteBlock}
+            isLoading={isLoading}
           />
         );
       })}

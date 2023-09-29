@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import OutletRoundedIcon from "@mui/icons-material/OutletRounded";
-import { Popover, Skeleton, Stack, useTheme } from "@mui/material";
+import { Popover, Stack, useTheme } from "@mui/material";
 import EmojiPicker, {
+  Emoji,
   EmojiStyle,
   Theme,
   type EmojiClickData,
-  Emoji,
 } from "emoji-picker-react";
 import { useState } from "react";
 import type { Control } from "react-hook-form";
-import type { IPageForm } from "~/interface/IPage";
-import BoxClickAble from "../Common/BoxClickAble";
-import InputTransparent from "../FormComponents/InputTransparent";
-import SelectCoverDialog from "../Dialog/SelectCoverDialog";
 import { useTranslation } from "react-i18next";
+import type { IPageForm } from "~/interface/IPage";
 import { api } from "~/utils/api";
+import BoxClickAble from "../Common/BoxClickAble";
+import SelectCoverDialog from "../Dialog/SelectCoverDialog";
+import InputTransparent from "../FormComponents/InputTransparent";
 
 interface IProps {
   control: Control<IPageForm, any>;
@@ -26,11 +26,10 @@ interface IProps {
     value: string | null,
     callback?: () => any
   ) => void;
-  loading: boolean;
 }
 
 const PageHeader = (props: IProps) => {
-  const { control, emoji, coverPic, handleChangeValue, loading } = props;
+  const { control, emoji, coverPic, handleChangeValue } = props;
   const theme = useTheme();
   const { t } = useTranslation();
   const { refetch } = api.page.getPageByCurrUser.useInfiniteQuery({ page: 1 });
@@ -72,17 +71,7 @@ const PageHeader = (props: IProps) => {
           sx={{ width: "fit-content", cursor: "pointer", zIndex: 2 }}
           onClick={(e) => handleOpenEmojiPopper(e.currentTarget)}
         >
-          {!loading ? (
-            <Emoji unified={emoji} emojiStyle={EmojiStyle.TWITTER} size={60} />
-          ) : (
-            <Skeleton
-              sx={{
-                width: "60px",
-                height: "80px",
-              }}
-              animation="wave"
-            />
-          )}
+          <Emoji unified={emoji} emojiStyle={EmojiStyle.TWITTER} size={60} />
         </Stack>
       ) : null}
 
@@ -100,7 +89,14 @@ const PageHeader = (props: IProps) => {
           anchorEl={anchorElEmoji}
           onClose={() => setAnchorElEmoji(null)}
           elevation={0}
-          PaperProps={{ sx: { boxShadow: "none", border: "none", minHeight: '450', minWidth: '350' } }}
+          PaperProps={{
+            sx: {
+              boxShadow: "none",
+              border: "none",
+              minHeight: "450",
+              minWidth: "350",
+            },
+          }}
         >
           <EmojiPicker
             onEmojiClick={(e) => {
@@ -115,10 +111,10 @@ const PageHeader = (props: IProps) => {
             }
           />
         </Popover>
-        
+
         <BoxClickAble
           onClick={(e) => handleOpenCoverImgPopper(e.currentTarget)}
-          sx={{ opacity: "0.7", display: coverPic ? 'none': 'inline-flex' }}
+          sx={{ opacity: "0.7", display: coverPic ? "none" : "inline-flex" }}
           startIcon={<InsertPhotoIcon />}
         >
           {t("addCoverButton")}

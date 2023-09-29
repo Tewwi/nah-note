@@ -4,6 +4,7 @@ export interface IPageForm {
   id: string;
   title: string | null;
   author: User;
+  authorId: string;
   permissionId: string[];
   parentId: string | null;
   emoji: string | null | undefined;

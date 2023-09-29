@@ -1,5 +1,5 @@
 import AddIcon from "@mui/icons-material/Add";
-import { IconButton, Stack } from "@mui/material";
+import { CircularProgress, IconButton, Stack } from "@mui/material";
 import { Block } from "@prisma/client";
 import { api } from "~/utils/api";
 import TinyEditor from "../Editor/TinyEditor";
@@ -11,10 +11,11 @@ interface Props {
   blockData: Block;
   handleAddBlock: () => Promise<void>;
   handleDeleteBlock: (id: string) => Promise<void>;
+  isLoading: boolean;
 }
 
 const Block = (props: Props) => {
-  const { handleAddBlock, blockData, handleDeleteBlock } = props;
+  const { handleAddBlock, blockData, handleDeleteBlock, isLoading } = props;
   const { mutateAsync: updateBlock } = api.block.updateBlock.useMutation();
 
   const handleChangeValue = async (value: string) => {
@@ -30,8 +31,16 @@ const Block = (props: Props) => {
         <IconButton
           sx={{ color: (theme) => theme.palette.text.primary }}
           onClick={() => void handleAddBlock()}
+          disabled={isLoading}
         >
-          <AddIcon fontSize="small" />
+          {isLoading ? (
+            <CircularProgress
+              size="16px"
+              sx={{ color: (theme) => theme.palette.text.primary }}
+            />
+          ) : (
+            <AddIcon fontSize="small" />
+          )}
         </IconButton>
 
         <Draghandler

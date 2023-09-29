@@ -24,6 +24,7 @@ const TinyEditor = (props: Props) => {
             paddingInline: "8px",
             color: `${grey[900]} !important`,
           },
+          cursor: "text",
         },
         "& .mce-edit-focus": {
           outline: "none",
@@ -68,7 +69,7 @@ const TinyEditor = (props: Props) => {
             "alignright alignjustify | bullist numlist outdent indent | " +
             "removeformat",
           content_style:
-            "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+            "body { font-family:SVN-Sofia Pro Medium; font-size:14px }",
           inline: true,
           placeholder: "This is place ho ho ho",
         }}
