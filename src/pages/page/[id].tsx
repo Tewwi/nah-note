@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Box, Container } from "@mui/material";
-import { getCookie } from "cookies-next";
-import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useCallback, useEffect } from "react";
@@ -13,24 +11,6 @@ import PageHeader from "~/components/PageComponent/PageHeader";
 import PageLoading from "~/components/PageComponent/PageLoading";
 import type { IPageForm } from "~/interface/IPage";
 import { api } from "~/utils/api";
-
-export const getServerSideProps: GetServerSideProps = async ({
-  req,
-  res,
-  // eslint-disable-next-line @typescript-eslint/require-await
-}) => {
-  const token = getCookie("token", { req, res });
-  if (token) {
-    return { props: {} };
-  }
-
-  return {
-    redirect: {
-      destination: "/auth/login",
-      permanent: true,
-    },
-  };
-};
 
 const PageDetail = () => {
   const router = useRouter();
@@ -78,10 +58,10 @@ const PageDetail = () => {
 
   useEffect(() => {
     if (id === "undefined") {
-      void router.replace("/404");
+      void router.replace("/");
     }
 
-    if(!data) {
+    if (!data) {
       void handleReloadData();
     }
 
@@ -90,8 +70,8 @@ const PageDetail = () => {
     }
   }, [data, id, reset]);
 
-  if(isLoading) {
-    return <PageLoading />
+  if (isLoading || !id) {
+    return <PageLoading />;
   }
 
   return (
@@ -112,6 +92,7 @@ const PageDetail = () => {
               emoji={currData.emoji}
               coverPic={currData.backgroundCover}
               handleChangeValue={handleChangeValue}
+              id={id.toString()}
             />
           </Box>
           {id && <BlockList control={control} pageId={id.toString()} />}

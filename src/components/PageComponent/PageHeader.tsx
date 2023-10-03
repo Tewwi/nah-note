@@ -21,27 +21,45 @@ interface IProps {
   control: Control<IPageForm, any>;
   emoji: string | null | undefined;
   coverPic: string | null;
-  handleChangeValue: (
-    name: keyof IPageForm,
-    value: string | null,
-    callback?: () => any
-  ) => void;
+  id: string;
+  handleChangeValue: (name: keyof IPageForm, value: string | null) => void;
 }
 
 const PageHeader = (props: IProps) => {
-  const { control, emoji, coverPic, handleChangeValue } = props;
+  const { control, emoji, coverPic, handleChangeValue, id } = props;
   const theme = useTheme();
   const { t } = useTranslation();
-  const { refetch } = api.page.getPageByCurrUser.useInfiniteQuery({ page: 1 });
   const [anchorElCoverImg, setAnchorElCoverImg] = useState<null | HTMLElement>(
     null
   );
   const [anchorElEmoji, setAnchorElEmoji] = useState<null | HTMLElement>(null);
+  const utils = api.useContext();
+
+  const handleChangeItemSideBar = (value: string, key: keyof IPageForm) => {
+    const itemData = utils.page.getPageByCurrUser.getData({ page: 1 });
+    if (itemData) {
+      utils.page.getPageByCurrUser.setData({ page: 1 }, (old) => {
+        if (old) {
+          return {
+            ...old,
+            resp: old.resp.map((item) => {
+              if (item.id === id) {
+                return { ...item, [key]: value };
+              }
+
+              return item;
+            }),
+          };
+        }
+
+        return { ...itemData };
+      });
+    }
+  };
 
   const handleChooseEmoji = (newEmoji: EmojiClickData) => {
-    handleChangeValue("emoji", newEmoji.unified, async () => {
-      await refetch();
-    });
+    handleChangeItemSideBar(newEmoji.unified, "emoji");
+    handleChangeValue("emoji", newEmoji.unified);
     setAnchorElEmoji(null);
   };
 
@@ -59,9 +77,8 @@ const PageHeader = (props: IProps) => {
   };
 
   const handleUpdateTitle = (value: string) => {
-    handleChangeValue("title", value, async () => {
-      await refetch();
-    });
+    handleChangeItemSideBar(value, "title");
+    handleChangeValue("title", value);
   };
 
   return (
@@ -93,8 +110,8 @@ const PageHeader = (props: IProps) => {
             sx: {
               boxShadow: "none",
               border: "none",
-              minHeight: "450",
-              minWidth: "350",
+              minHeight: "450px",
+              minWidth: "350px",
             },
           }}
         >
@@ -109,6 +126,7 @@ const PageHeader = (props: IProps) => {
                 ? Theme.LIGHT
                 : Theme.DARK
             }
+            lazyLoadEmojis
           />
         </Popover>
 

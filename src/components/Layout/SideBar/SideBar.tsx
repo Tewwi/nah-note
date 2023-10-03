@@ -3,13 +3,20 @@ import MenuIcon from "@mui/icons-material/Menu";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import SearchIcon from "@mui/icons-material/Search";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { Divider, Drawer, IconButton, Stack, Typography } from "@mui/material";
+import {
+  CircularProgress,
+  Divider,
+  Drawer,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "~/utils/api";
-import BoxClickAble from "../BoxClickAble";
-import ImageLoading from "../Image/ImageLoading";
+import BoxClickAble from "../../Common/BoxClickAble";
+import ImageLoading from "../../Common/Image/ImageLoading";
 import UserPageList from "./userPageList";
 import useCrudPage from "~/hook/useCrudPage";
 
@@ -17,27 +24,32 @@ interface Props {
   openSideBar: boolean;
   handleClose: () => void;
 }
- 
+
 const SideBar = (props: Props) => {
   const { openSideBar, handleClose } = props;
   const router = useRouter();
   const { t } = useTranslation();
-  const { data: userInfo, isLoading, isError, error } = api.user.getCurrUserDetail.useQuery();
-  const { handleCreateNewPage } = useCrudPage();
+  const {
+    data: userInfo,
+    isLoading,
+    isError,
+    error,
+  } = api.user.getCurrUserDetail.useQuery();
+  const { handleCreateNewPage, createPageLoading } = useCrudPage();
 
   const handleNewPageBtn = async () => {
-    if(!userInfo) {
+    if (!userInfo) {
       return;
     }
 
-    await handleCreateNewPage({authorId: userInfo.id});
-  }
+    await handleCreateNewPage({ authorId: userInfo.id });
+  };
 
   useEffect(() => {
-    if(isError && error.message === 'jwt malformed') {
-      void router.push('/auth/login')
+    if (isError && error.message === "jwt malformed") {
+      void router.push("/auth/login");
     }
-  }, [error, isError, router])
+  }, [error, isError, router]);
 
   return (
     <Drawer
@@ -120,8 +132,16 @@ const SideBar = (props: Props) => {
             alignItems: "center",
           }}
           onClick={() => void handleNewPageBtn()}
+          disabled={createPageLoading}
         >
-          <AddIcon fontSize="small" />
+          {createPageLoading ? (
+            <CircularProgress
+              size="16px"
+              sx={{ color: (theme) => theme.palette.text.primary }}
+            />
+          ) : (
+            <AddIcon fontSize="small" />
+          )}
           <Typography variant="body2">{t("newPage")}</Typography>
         </BoxClickAble>
       </Stack>

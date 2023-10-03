@@ -1,7 +1,7 @@
 import { type AppType } from "next/app";
 import { api } from "~/utils/api";
 import { ThemeConfig } from "~/theme/ThemeConfig";
-import Layout from "~/components/Common/Layout";
+import Layout from "~/components/Layout/Layout";
 import { Toaster } from "react-hot-toast";
 import '../i18/config';
 

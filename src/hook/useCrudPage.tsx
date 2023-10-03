@@ -10,8 +10,11 @@ interface ICreateNewPage {
 
 const useCrudPage = () => {
   const router = useRouter();
-  const { mutateAsync: createNewPageApi, error } =
-    api.page.createNewPage.useMutation();
+  const {
+    mutateAsync: createNewPageApi,
+    error,
+    isLoading: createPageLoading,
+  } = api.page.createNewPage.useMutation();
 
   const handleCreateNewPage = async (params: ICreateNewPage) => {
     try {
@@ -25,6 +28,7 @@ const useCrudPage = () => {
 
   return {
     handleCreateNewPage: handleCreateNewPage,
+    createPageLoading: createPageLoading,
   };
 };
 
