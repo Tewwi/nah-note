@@ -53,11 +53,6 @@ export const SortableItem = ({ children, id }: PropsWithChildren<Props>) => {
   return (
     <SortableItemContext.Provider value={context}>
       <Stack
-        direction="row"
-        minHeight="35px"
-        alignItems="center"
-        width="100%"
-        gap="5px"
         ref={setNodeRef}
         style={style}
       >

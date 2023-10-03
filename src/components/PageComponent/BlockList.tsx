@@ -8,6 +8,9 @@ import type { IPageForm } from "~/interface/IPage";
 import { api } from "~/utils/api";
 import Block from "../Block/Block";
 import DnDContext from "../DragnDrop/DnDContext";
+import { debounce } from "lodash";
+import { useCallback } from "react";
+import type { Block as IBlock } from "@prisma/client";
 
 interface Props {
   control: Control<IPageForm>;
@@ -42,16 +45,24 @@ const BlockList = (props: Props) => {
     });
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debounceMove = useCallback(
+    debounce((blocks: IBlock[]) => {
+      updatePosition({
+        pageId: pageId,
+        blocks: blocks,
+      });
+    }, 2000),
+    [pageId]
+  );
+
   const handleDragEnd = (e: DragEndEvent) => {
     const activeIndex = fields.findIndex((value) => value.id === e.active.id);
     const overIndex = fields.findIndex((value) => value.id === e.over?.id);
 
     if (activeIndex !== -1 && overIndex !== -1) {
       move(activeIndex, overIndex);
-      updatePosition({
-        pageId: pageId,
-        blocks: arrayMove(fields, activeIndex, overIndex),
-      });
+      debounceMove(arrayMove(fields, activeIndex, overIndex));
     }
   };
 
@@ -69,7 +80,7 @@ const BlockList = (props: Props) => {
 
   return (
     <DnDContext handleDragEnd={handleDragEnd} listItems={fields}>
-      {fields.map((item) => {
+      {fields.map((item, index) => {
         return (
           <Block
             handleAddBlock={handleAddNewBlock}
@@ -78,6 +89,7 @@ const BlockList = (props: Props) => {
             pageId={pageId}
             handleDeleteBlock={handleDeleteBlock}
             isLoading={isLoading}
+            isLast={index === fields.length - 1}
           />
         );
       })}

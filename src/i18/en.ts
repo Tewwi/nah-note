@@ -28,5 +28,6 @@ export const en = {
   maxFileSize: "The maximum size per file is 5MB",
   uploadFile: 'Upload File',
   link: 'Link',
-  upload: "Upload"
+  upload: "Upload",
+  imgLinkInvalid: 'Url not valid',
 };

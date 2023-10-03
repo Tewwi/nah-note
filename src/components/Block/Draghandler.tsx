@@ -37,6 +37,7 @@ const Draghandler = (props: Props) => {
           {...attributes}
           {...listeners}
           ref={ref}
+          size='small'
         >
           <DragIndicatorIcon fontSize="small" />
         </IconButton>

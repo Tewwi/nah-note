@@ -91,6 +91,10 @@ export const pageRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
+      if (input.id.length < 1) {
+        return;
+      }
+      
       try {
         const resp = await ctx.prisma.page.findUnique({
           where: {

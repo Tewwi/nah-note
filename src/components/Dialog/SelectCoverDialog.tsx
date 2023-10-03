@@ -1,8 +1,10 @@
 import { Paper, Stack, Tab, Tabs, TextField, Typography } from "@mui/material";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { api } from "~/utils/api";
 import { handleUploadFile } from "~/utils/cloudinaryHelper";
+import { regex } from "~/utils/constant";
 import BoxClickAble from "../Common/BoxClickAble";
 import LoadingButton from "../Common/Button/LoadingButton";
 import UploadAvatarButton from "../RegisterPage/UploadAvatarButton";
@@ -27,6 +29,11 @@ const SelectCoverDialog = (props: IProps) => {
 
   const handleSubmitUrl = () => {
     if (urlImg) {
+      if (!urlImg.match(regex.imgLinkVerify)) {
+        toast.error(t("imgLinkInvalid"));
+        return;
+      }
+      
       props.handleChooseCoverImg(urlImg);
     }
   };
@@ -78,7 +85,11 @@ const SelectCoverDialog = (props: IProps) => {
           <Tab sx={{ p: 0 }} label={t("link")} />
         </Tabs>
 
-        <BoxClickAble variant="text" sx={{ opacity: 0.5 }} onClick={handleRemoveImg}>
+        <BoxClickAble
+          variant="text"
+          sx={{ opacity: 0.5 }}
+          onClick={handleRemoveImg}
+        >
           {t("remove")}
         </BoxClickAble>
       </Stack>

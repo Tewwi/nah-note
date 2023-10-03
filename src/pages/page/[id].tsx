@@ -16,9 +16,12 @@ const PageDetail = () => {
   const router = useRouter();
   const { id } = router.query;
   const { mutateAsync } = api.page.updatePageById.useMutation();
-  const { data, isLoading, refetch } = api.page.getPageById.useQuery({
-    id: id?.toString() || "",
-  });
+  const { data, isLoading, refetch } = api.page.getPageById.useQuery(
+    {
+      id: id?.toString() || "",
+    }
+    // { refetchOnWindowFocus: false }
+  );
   const { control, setValue, watch, handleSubmit, reset } = useForm<IPageForm>({
     mode: "onBlur",
     defaultValues: { ...data },
@@ -28,7 +31,6 @@ const PageDetail = () => {
   const onSubmit = useCallback(
     async (submitData: IPageForm) => {
       console.log("submit", submitData);
-
       await mutateAsync({
         ...submitData,
         id: id?.toString(),
@@ -41,15 +43,10 @@ const PageDetail = () => {
 
   const handleChangeValue = async (
     name: keyof IPageForm,
-    value: string | null,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    callback?: () => any
+    value: string | null
   ) => {
     setValue(name, value);
     await handleSubmit(onSubmit)();
-    if (callback) {
-      callback();
-    }
   };
 
   const handleReloadData = useCallback(async () => {
@@ -85,7 +82,7 @@ const PageDetail = () => {
           url={currData.backgroundCover}
         />
 
-        <Container maxWidth="md">
+        <Container maxWidth="md" sx={{ pl: "60px" }}>
           <Box>
             <PageHeader
               control={control}

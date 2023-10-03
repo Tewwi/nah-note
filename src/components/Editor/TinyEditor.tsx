@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { env } from "~/env.mjs";
 import { Box, useTheme } from "@mui/material";
@@ -82,4 +82,4 @@ const TinyEditor = (props: Props) => {
   );
 };
 
-export default TinyEditor;
+export default memo(TinyEditor);
