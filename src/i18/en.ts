@@ -30,4 +30,6 @@ export const en = {
   link: 'Link',
   upload: "Upload",
   imgLinkInvalid: 'Url not valid',
+  deletePage: "Delete page",
+  changeType: "Change item type",
 };

@@ -10,7 +10,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { componentsOverride } from "./componentsOverride";
 import { paletteLight, paletteDark } from "./palette";
 import { typography } from "./typography";
-import { shadows } from "./shadow";
+import { shadowsDarkMode, shadowsLightMode } from "./shadow";
 import { breakpoints } from "./breakpoints";
 
 interface Props {
@@ -25,7 +25,7 @@ export const ThemeConfig = (props: Props) => {
     () => ({
       palette: themeMode === "dark" ? paletteDark : paletteLight,
       typography,
-      shadows,
+      shadows: themeMode === "dark" ? shadowsDarkMode : shadowsLightMode,
       breakpoints,
     }),
     [themeMode]

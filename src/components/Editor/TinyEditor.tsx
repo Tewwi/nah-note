@@ -7,10 +7,11 @@ import { grey } from "~/theme/colors";
 interface Props {
   value: string;
   handleChangeValue: (value: string) => Promise<void>;
+  blockPluginRoot?: string;
 }
 
 const TinyEditor = (props: Props) => {
-  const { value, handleChangeValue } = props;
+  const { value, handleChangeValue, blockPluginRoot = "p" } = props;
   const theme = useTheme();
 
   return (
@@ -71,6 +72,7 @@ const TinyEditor = (props: Props) => {
           content_style:
             "body { font-family:SVN-Sofia Pro Medium; font-size:14px }",
           inline: true,
+          forced_root_block: blockPluginRoot,
           placeholder: "This is place ho ho ho",
         }}
         onBlur={(e, editor) => {

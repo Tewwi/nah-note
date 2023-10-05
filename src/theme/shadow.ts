@@ -3,18 +3,19 @@ import { type Shadows } from "@mui/material/styles/shadows";
 import { paletteLight } from "./palette";
 
 const LIGHT_MODE = paletteLight.grey[500];
+const DARK_MODE = paletteLight.grey[1100];
 
-const createShadow = (color: string): Shadows => {
+const createShadow = (color: string, subColor: string): Shadows => {
   const transparent1 = alpha(color, 0.2);
   const transparent2 = alpha(color, 0.14);
   const transparent3 = alpha(color, 0.12);
 
   return [
     "none",
-    `0px 3px 15px ${paletteLight.grey[300]}`,
-    `0px 5px 15px ${paletteLight.grey[300]}`,
-    `0px 5px 20px ${paletteLight.grey[200]}`,
-    `0px 10px 5px ${alpha(paletteLight.grey[300], 0.5)}`,
+    `0px 3px 15px ${subColor}`,
+    `0px 5px 15px ${subColor}`,
+    `0px 5px 20px ${subColor}`,
+    `0px 10px 5px ${alpha(subColor, 0.5)}`,
     `0px 7px 4px rgba(0, 0, 0, 0.01), 0px 3px 3px rgba(0, 0, 0, 0.02), 0px 1px 2px rgba(0, 0, 0, 0.02), 0px 0px 0px rgba(0, 0, 0, 0.02)`,
     `0px 3px 5px -1px ${transparent1},0px 6px 10px 0px ${transparent2},0px 1px 18px 0px ${transparent3}`,
     `0px 4px 5px -2px ${transparent1},0px 7px 10px 1px ${transparent2},0px 2px 16px 1px ${transparent3}`,
@@ -38,4 +39,5 @@ const createShadow = (color: string): Shadows => {
   ];
 };
 
-export const shadows = createShadow(LIGHT_MODE);
+export const shadowsLightMode = createShadow(LIGHT_MODE, paletteLight.grey[300]);
+export const shadowsDarkMode = createShadow(DARK_MODE, paletteLight.grey[1100]);

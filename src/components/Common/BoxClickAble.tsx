@@ -1,4 +1,4 @@
-import { Button, type SxProps, type ButtonProps } from "@mui/material";
+import { Button, type ButtonProps, type SxProps } from "@mui/material";
 import React from "react";
 
 interface Props extends ButtonProps {

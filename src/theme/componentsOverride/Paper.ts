@@ -8,7 +8,7 @@ export const Paper = (theme: Theme): Components<Omit<Theme, "components">> => {
           marginTop: "6px",
           border: "1px solid",
           borderRadius: "8px",
-          borderColor: theme.palette.grey[500],
+          borderColor: theme.palette.secondary.contrastText,
           boxShadow: theme.shadows[2],
         },
       },

@@ -39,6 +39,6 @@ model Block {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
   content String
   type    String
-  page    Page   @relation(fields: [pageId], references: [id])
+  page    Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
   pageId  String @db.ObjectId
 }

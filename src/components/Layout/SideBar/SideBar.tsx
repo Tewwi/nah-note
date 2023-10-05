@@ -61,12 +61,12 @@ const SideBar = (props: Props) => {
           borderRadius: "unset",
           bgcolor: (theme) => theme.palette.background.paper,
           maxWidth: "300px",
-          width: "200px",
+          width: "230px",
           boxSizing: "border-box",
         },
       }}
       sx={{
-        width: "200px",
+        width: "230px",
         flexShrink: 0,
         height: "100%",
       }}

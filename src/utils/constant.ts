@@ -1,4 +1,4 @@
-import type { ILayoutGridBreakpoints } from "~/interface/common";
+import type { IBlockType, ILayoutGridBreakpoints } from "~/interface/common";
 
 export const defaultAvatar =
   "https://res.cloudinary.com/dqlcjscsz/image/upload/v1690958315/blog/default-avatar_v6uu8y.jpg";
@@ -14,3 +14,5 @@ export const regex = {
   password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*d){8,}$/,
   imgLinkVerify: /\.(jpeg|jpg|gif|png)$/,
 };
+
+export const blockTypes: IBlockType[] = [{ type: "text", label: "Text" }];

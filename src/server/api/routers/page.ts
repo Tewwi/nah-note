@@ -94,7 +94,7 @@ export const pageRouter = createTRPCRouter({
       if (input.id.length < 1) {
         return;
       }
-      
+
       try {
         const resp = await ctx.prisma.page.findUnique({
           where: {
@@ -131,6 +131,26 @@ export const pageRouter = createTRPCRouter({
 
         return resp;
       } catch (error) {
+        throw new TRPCError({
+          message: i18n.t("somethingWrong"),
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+    }),
+  deletePageById: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const resp = await ctx.prisma.page.delete({
+          where: {
+            id: input.id,
+          },
+        });
+
+        return resp;
+      } catch (error) {
+        console.log(error);
+        
         throw new TRPCError({
           message: i18n.t("somethingWrong"),
           code: "INTERNAL_SERVER_ERROR",

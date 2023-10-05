@@ -3,7 +3,7 @@ import { CircularProgress, IconButton, Stack } from "@mui/material";
 import { Block } from "@prisma/client";
 import { api } from "~/utils/api";
 import TinyEditor from "../Editor/TinyEditor";
-import { SortableItem } from "./BlockDnDProcider";
+import { SortableItem } from "./BlockDnDProvider";
 import Draghandler from "./Draghandler";
 import { useCallback, useState } from "react";
 

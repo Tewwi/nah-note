@@ -30,13 +30,22 @@ const PRIMARY = {
   contrastText: "#FBFDFF",
 };
 
-const SECONDARY = {
+const SECONDARY_LIGHT = {
   lighter: "#FFF1E7",
   light: "#FFB381",
   main: "#F76808",
   dark: "#ED5F00",
   darker: "#BD4B00",
-  contrastText: "#FFF1E7",
+  contrastText: "rgba(0, 0, 0, 0.2)",
+};
+
+const SECONDARY_DARK = {
+  lighter: "#FFF1E7",
+  light: "#FFB381",
+  main: "#F76808",
+  dark: "#ED5F00",
+  darker: "#BD4B00",
+  contrastText: "rgba(103, 92, 92, 0.6)",
 };
 
 const INFO = {
@@ -118,7 +127,7 @@ export const paletteLight: IPalette = {
   mode: "light",
   common: { black: "#000", white: "#fff" },
   primary: { ...PRIMARY },
-  secondary: { ...SECONDARY },
+  secondary: { ...SECONDARY_LIGHT },
   info: { ...INFO },
   success: { ...SUCCESS },
   warning: { ...WARNING },
@@ -152,7 +161,7 @@ export const paletteDark: IPalette = {
   mode: "dark",
   common: { black: "#000", white: "#fff" },
   primary: { ...PRIMARY },
-  secondary: { ...SECONDARY },
+  secondary: { ...SECONDARY_DARK },
   info: { ...INFO },
   success: { ...SUCCESS },
   warning: { ...WARNING },

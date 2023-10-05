@@ -15,10 +15,15 @@ const useCrudPage = () => {
     error,
     isLoading: createPageLoading,
   } = api.page.createNewPage.useMutation();
+  const { refetch: reloadPagesData } = api.page.getPageByCurrUser.useQuery(
+    { page: 1 },
+    { getNextPageParam: (lastPage) => lastPage.nextCursor }
+  );
 
   const handleCreateNewPage = async (params: ICreateNewPage) => {
     try {
       const resp = await createNewPageApi(params);
+      await reloadPagesData()
       void router.push(`/page/${resp.id}`);
     } catch (e) {
       console.log(e);
