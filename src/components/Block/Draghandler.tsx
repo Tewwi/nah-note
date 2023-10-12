@@ -1,29 +1,52 @@
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { IconButton, Popover, Stack, Tooltip, Typography } from "@mui/material";
+import {
+  CircularProgress,
+  IconButton,
+  Popover,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import BoxClickAble from "../Common/BoxClickAble";
 import { SortableItemContext } from "./BlockDnDProvider";
 import MenuChangeType from "./MenuChangeType";
+import type { blockTypeList } from "~/interface/IBlock";
+import type { Block as IBlock } from "@prisma/client";
 
 interface Props {
-  handleDeleteBlock: () => void;
+  handleDeleteBlock: (id: string) => Promise<void>;
+  handleChangeType: (type: blockTypeList) => Promise<void>;
+  blockData: IBlock;
+  isHiddenDeleteBtn: boolean;
 }
 
 const Draghandler = (props: Props) => {
-  const { handleDeleteBlock } = props;
+  const { handleDeleteBlock, handleChangeType, blockData, isHiddenDeleteBtn } =
+    props;
+  const { t } = useTranslation();
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { attributes, listeners, ref } = useContext(SortableItemContext);
-  const { t } = useTranslation();
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleOpenPopper = (ref: HTMLElement) => {
     setAnchorEl(ref);
   };
 
-  const handleDelete = () => {
-    handleDeleteBlock();
+  const onDelete = async () => {
+    setIsLoading(true);
+    await handleDeleteBlock(blockData.id);
+
+    setIsLoading(false);
+    setAnchorEl(null);
+  };
+
+  const onChangeType = (type: blockTypeList) => {
+    void handleChangeType(type);
     setAnchorEl(null);
   };
 
@@ -58,7 +81,21 @@ const Draghandler = (props: Props) => {
         }}
       >
         <Stack direction="column">
-          <BoxClickAble onClick={handleDelete}>
+          <BoxClickAble
+            onClick={() => {
+              void onDelete();
+            }}
+            disabled={isLoading}
+            sx={{
+              display: isHiddenDeleteBtn ? "none" : "inline-flex",
+            }}
+          >
+            {isLoading && (
+              <CircularProgress
+                size="16px"
+                sx={{ color: (theme) => theme.palette.text.primary, mr: 1 }}
+              />
+            )}
             <Typography variant="caption">{t("deleteBlock")}</Typography>
           </BoxClickAble>
           <Tooltip
@@ -70,11 +107,15 @@ const Draghandler = (props: Props) => {
                   p: 0,
                   bgcolor: "inherit",
                 },
-                borderRadius: "3px",
                 bgcolor: "transparent",
               },
             }}
-            title={<MenuChangeType />}
+            title={
+              <MenuChangeType
+                currType={blockData.type as blockTypeList}
+                handleChangeType={onChangeType}
+              />
+            }
           >
             <div>
               <BoxClickAble

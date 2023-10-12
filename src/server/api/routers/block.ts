@@ -9,6 +9,9 @@ export const schemaBlock = z.object({
   pageId: z.string(),
   content: z.string(),
   id: z.string().optional(),
+  todo_checked: z.boolean().optional(),
+  height: z.string().nullable().optional(),
+  width: z.string().nullable().optional(),
 });
 
 export const blockRouter = createTRPCRouter({
@@ -37,12 +40,13 @@ export const blockRouter = createTRPCRouter({
       const { id, ...rest } = input;
 
       try {
-        await ctx.prisma.block.update({
+        const resp = await ctx.prisma.block.update({
           where: { id: id },
           data: {
             ...rest,
           },
         });
+        console.log(resp);
       } catch (error) {
         throw new TRPCError({
           message: i18n.t("somethingWrong"),

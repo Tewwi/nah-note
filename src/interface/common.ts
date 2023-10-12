@@ -22,8 +22,3 @@ export interface IErrorCatch {
   message: string;
   code: string | number;
 }
-
-export interface IBlockType {
-  type: string;
-  label: string;
-}

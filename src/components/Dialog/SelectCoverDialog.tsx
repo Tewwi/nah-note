@@ -4,20 +4,23 @@ import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { api } from "~/utils/api";
 import { handleUploadFile } from "~/utils/cloudinaryHelper";
-import { regex } from "~/utils/constant";
+import { isImgUrl } from "~/utils/utilsImage";
 import BoxClickAble from "../Common/BoxClickAble";
 import LoadingButton from "../Common/Button/LoadingButton";
 import UploadAvatarButton from "../RegisterPage/UploadAvatarButton";
 
 interface IProps {
   handleChooseCoverImg: (url: string | null) => void;
+  isHideRemoveBtn?: boolean;
 }
 
 const folderName = "cover_image";
 
 const SelectCoverDialog = (props: IProps) => {
-  const { mutateAsync: signCloud } = api.user.signCloud.useMutation();
   const { t } = useTranslation();
+  const { isHideRemoveBtn, handleChooseCoverImg } = props;
+  const { mutateAsync: signCloud } = api.user.signCloud.useMutation();
+
   const [tab, setTab] = useState(0);
   const [urlImg, setUrlImg] = useState("");
   const [imgFile, setImgFile] = useState<File | null>(null);
@@ -27,14 +30,17 @@ const SelectCoverDialog = (props: IProps) => {
     setTab(tabIndex);
   };
 
-  const handleSubmitUrl = () => {
+  const handleSubmitUrl = async () => {
     if (urlImg) {
-      if (!urlImg.match(regex.imgLinkVerify)) {
+      setIsLoading(true);
+      const isUrlValid = await isImgUrl(urlImg);
+      if (!isUrlValid) {
         toast.error(t("imgLinkInvalid"));
         return;
       }
-      
-      props.handleChooseCoverImg(urlImg);
+
+      setIsLoading(false);
+      handleChooseCoverImg(urlImg);
     }
   };
 
@@ -44,13 +50,14 @@ const SelectCoverDialog = (props: IProps) => {
 
   const handleRemoveImg = () => {
     setImgFile(null);
-    props.handleChooseCoverImg(null);
+    handleChooseCoverImg(null);
   };
 
   const handleUploadCoverFile = async () => {
     if (!imgFile) {
       return;
     }
+
     setIsLoading(true);
     const { timestamp, signature } = await signCloud({
       folderName: folderName,
@@ -62,7 +69,7 @@ const SelectCoverDialog = (props: IProps) => {
       folderName
     );
 
-    props.handleChooseCoverImg(resp.url);
+    handleChooseCoverImg(resp.url);
   };
 
   return (
@@ -85,13 +92,15 @@ const SelectCoverDialog = (props: IProps) => {
           <Tab sx={{ p: 0 }} label={t("link")} />
         </Tabs>
 
-        <BoxClickAble
-          variant="text"
-          sx={{ opacity: 0.5 }}
-          onClick={handleRemoveImg}
-        >
-          {t("remove")}
-        </BoxClickAble>
+        {!isHideRemoveBtn && (
+          <BoxClickAble
+            variant="text"
+            sx={{ opacity: 0.5 }}
+            onClick={handleRemoveImg}
+          >
+            {t("remove")}
+          </BoxClickAble>
+        )}
       </Stack>
 
       {tab === 0 && (
@@ -106,7 +115,7 @@ const SelectCoverDialog = (props: IProps) => {
             }}
             label={t("uploadFile")}
           />
-          <BoxClickAble
+          <LoadingButton
             variant="contained"
             color="primary"
             sx={{
@@ -118,9 +127,9 @@ const SelectCoverDialog = (props: IProps) => {
             onClick={() => {
               void handleUploadCoverFile();
             }}
-          >
-            {t("submit")}
-          </BoxClickAble>
+            title={t("submit")}
+            loading={isLoading}
+          />
           <Typography
             variant="body2"
             sx={{
@@ -151,7 +160,7 @@ const SelectCoverDialog = (props: IProps) => {
               maxHeight: "30px",
               alignSelf: "center",
             }}
-            onClick={handleSubmitUrl}
+            onClick={() => void handleSubmitUrl()}
             title={t("submit")}
             loading={isLoading}
           />

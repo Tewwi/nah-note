@@ -1,6 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import type { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
-import type { TRPCErrorResponse } from "@trpc/server/rpc";
 import { useFieldArray, type Control } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -27,13 +27,13 @@ const BlockList = (props: Props) => {
     api.block.updateBlocksByPageId.useMutation();
 
   const { t } = useTranslation();
-  const { fields, append, move, remove } = useFieldArray({
+  const { fields, append, move, remove, update } = useFieldArray({
     control,
     name: "blocks",
     keyName: "field_id",
   });
 
-  const handleAddNewBlock = async () => {
+  const handleAddNewBlock = useCallback(async () => {
     const resp = await createNewBlock({
       pageId: pageId,
       type: "text",
@@ -43,7 +43,7 @@ const BlockList = (props: Props) => {
     append({
       ...resp,
     });
-  };
+  }, [pageId]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debounceMove = useCallback(
@@ -56,6 +56,10 @@ const BlockList = (props: Props) => {
     [pageId]
   );
 
+  const handleChangeValue = useCallback((index: number, value: IBlock) => {
+    update(index, value);
+  }, []);
+
   const handleDragEnd = (e: DragEndEvent) => {
     const activeIndex = fields.findIndex((value) => value.id === e.active.id);
     const overIndex = fields.findIndex((value) => value.id === e.over?.id);
@@ -66,30 +70,39 @@ const BlockList = (props: Props) => {
     }
   };
 
-  const handleDeleteBlock = async (id: string) => {
-    try {
-      await deleteBlock({ id: id });
-      const deleteBlockIndex = fields.findIndex((block) => block.id === id);
-      remove(deleteBlockIndex);
-      toast.success(t("deleteBlockSuccess"));
-    } catch (error) {
-      const err = error as TRPCErrorResponse;
-      toast.error(err.error.message);
-    }
-  };
+  const handleDeleteBlock = useCallback(
+    async (id: string) => {
+      if (fields.length === 1) {
+        toast.error(t("cantDelete"));
+      }
+
+      try {
+        await deleteBlock({ id: id });
+        const deleteBlockIndex = fields.findIndex((block) => block.id === id);
+        remove(deleteBlockIndex);
+        toast.success(t("deleteBlockSuccess"));
+      } catch (error) {
+        console.log(error);
+        toast.error(error as string);
+      }
+    },
+    [deleteBlock, fields]
+  );
 
   return (
     <DnDContext handleDragEnd={handleDragEnd} listItems={fields}>
       {fields.map((item, index) => {
         return (
           <Block
-            handleAddBlock={handleAddNewBlock}
-            blockData={item}
             key={item.id}
-            pageId={pageId}
-            handleDeleteBlock={handleDeleteBlock}
-            isLoading={isLoading}
+            blockData={item}
             isLast={index === fields.length - 1}
+            index={index}
+            pageId={pageId}
+            isLoading={isLoading}
+            handleChangeValueFieldArr={handleChangeValue}
+            handleAddBlock={handleAddNewBlock}
+            handleDeleteBlock={handleDeleteBlock}
           />
         );
       })}

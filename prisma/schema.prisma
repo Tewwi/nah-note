@@ -36,9 +36,12 @@ model Page {
 }
 
 model Block {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  content String
-  type    String
-  page    Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  pageId  String @db.ObjectId
+  id           String  @id @default(auto()) @map("_id") @db.ObjectId
+  content      String
+  type         String
+  page         Page    @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  pageId       String  @db.ObjectId
+  todo_checked Boolean @default(false)
+  height       String? @default("200")
+  width        String? @default("300")
 }

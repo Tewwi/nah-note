@@ -18,6 +18,7 @@ const UploadButton = (props: Props) => {
     size,
     onSelectUploadDocument,
     accept,
+    ...rest
   } = props;
 
   return (
@@ -39,6 +40,7 @@ const UploadButton = (props: Props) => {
           }}
         />
       }
+      {...rest}
     >
       {label}
       <input

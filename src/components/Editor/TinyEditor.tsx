@@ -1,17 +1,17 @@
 import React, { memo } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { env } from "~/env.mjs";
-import { Box, useTheme } from "@mui/material";
+import { Box, useTheme, type SxProps } from "@mui/material";
 import { grey } from "~/theme/colors";
 
 interface Props {
   value: string;
   handleChangeValue: (value: string) => Promise<void>;
-  blockPluginRoot?: string;
+  styleCustom?: SxProps;
 }
 
 const TinyEditor = (props: Props) => {
-  const { value, handleChangeValue, blockPluginRoot = "p" } = props;
+  const { value, handleChangeValue, styleCustom } = props;
   const theme = useTheme();
 
   return (
@@ -39,6 +39,7 @@ const TinyEditor = (props: Props) => {
         },
         flex: 1,
         height: "100%",
+        ...styleCustom,
       }}
     >
       <Editor
@@ -50,8 +51,8 @@ const TinyEditor = (props: Props) => {
           plugins: [
             "advlist",
             "autolink",
-            "lists",
             "link",
+            "lists",
             "image",
             "charmap",
             "preview",
@@ -65,17 +66,19 @@ const TinyEditor = (props: Props) => {
             "code",
           ],
           toolbar:
-            "undo redo | blocks | " +
+            "undo redo | " +
             "bold italic forecolor | alignleft aligncenter " +
-            "alignright alignjustify | bullist numlist outdent indent | " +
+            "alignright alignjustify | outdent indent | " +
             "removeformat",
           content_style:
             "body { font-family:SVN-Sofia Pro Medium; font-size:14px }",
           inline: true,
-          forced_root_block: blockPluginRoot,
           placeholder: "This is place ho ho ho",
+          fix_list_elements: true,
+          force_br_newlines: true,
+          force_p_newlines: false,
         }}
-        onBlur={(e, editor) => {
+        onBlur={(_e, editor) => {
           const text = editor.getContent();
           void handleChangeValue(text);
         }}

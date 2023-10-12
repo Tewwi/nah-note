@@ -12,20 +12,24 @@ interface Props {
     value: string | null,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     callback?: () => any
-  ) => void;
+  ) => Promise<void>;
 }
 
 const CoverImage = (props: Props) => {
   const { url, handleChangeValue } = props;
   const { t } = useTranslation();
   const [isHover, setIsHover] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [anchorElCoverImg, setAnchorElCoverImg] = useState<null | HTMLElement>(
     null
   );
 
-  const handleChooseCoverImg = (url: string | null) => {
-    handleChangeValue("backgroundCover", url);
+  const handleChooseCoverImg = async (url: string | null) => {
+    setIsLoading(true);
+    await handleChangeValue("backgroundCover", url);
+
     setAnchorElCoverImg(null);
+    setIsLoading(false);
   };
 
   if (!url) {
@@ -48,7 +52,7 @@ const CoverImage = (props: Props) => {
         height={180}
         sizes="100vw"
         style={{ objectFit: "cover", width: "100%" }}
-        loadingCustom={!url}
+        loadingCustom={isLoading}
       />
 
       <Button
@@ -79,7 +83,11 @@ const CoverImage = (props: Props) => {
           sx: { boxShadow: "none", border: "none", minWidth: "500px" },
         }}
       >
-        <SelectCoverDialog handleChooseCoverImg={handleChooseCoverImg} />
+        <SelectCoverDialog
+          handleChooseCoverImg={(url: string | null) => {
+            void handleChooseCoverImg(url);
+          }}
+        />
       </Popover>
     </Box>
   );

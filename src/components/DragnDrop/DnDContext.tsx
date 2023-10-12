@@ -20,7 +20,7 @@ const DnDContext = (props: React.PropsWithChildren<Props>) => {
   const { listItems, children, handleDragEnd } = props;
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: { delay: 100, tolerance: { x: 0, y: 0 } },
+      activationConstraint: { delay: 200, tolerance: { x: 0, y: 0 } },
     })
   );
 

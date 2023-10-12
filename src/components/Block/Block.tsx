@@ -1,11 +1,17 @@
 import AddIcon from "@mui/icons-material/Add";
 import { CircularProgress, IconButton, Stack } from "@mui/material";
+import type { Block as IBlock } from "@prisma/client";
 import { Block } from "@prisma/client";
+import { memo, useCallback, useMemo, useState } from "react";
+import type { blockTypeList } from "~/interface/IBlock";
 import { api } from "~/utils/api";
-import TinyEditor from "../Editor/TinyEditor";
+import {
+  createBlockItemByType,
+  handleChangeContentByType,
+} from "~/utils/utilsBlock";
 import { SortableItem } from "./BlockDnDProvider";
+import BlockItemByType from "./BlockItemByType";
 import Draghandler from "./Draghandler";
-import { useCallback, useState } from "react";
 
 interface Props {
   pageId: string;
@@ -14,20 +20,66 @@ interface Props {
   handleDeleteBlock: (id: string) => Promise<void>;
   isLoading: boolean;
   isLast: boolean;
+  handleChangeValueFieldArr: (index: number, value: IBlock) => void;
+  index: number;
 }
 
 const Block = (props: Props) => {
-  const { handleAddBlock, blockData, handleDeleteBlock, isLoading, isLast } =
-    props;
+  const {
+    handleAddBlock,
+    blockData,
+    handleDeleteBlock,
+    isLoading,
+    isLast,
+    index,
+    handleChangeValueFieldArr,
+  } = props;
   const { mutateAsync: updateBlock } = api.block.updateBlock.useMutation();
   const [isHover, setIsHover] = useState(false);
+  const isHiddenDeleteBtn = useMemo(
+    () => isLast && index === 0,
+    [index, isLast]
+  );
 
   const handleChangeValue = useCallback(
-    async (value: string) => {
-      await updateBlock({ ...blockData, content: value });
+    async (value: string, checkBoxValue?: boolean) => {
+      const newValue = {
+        ...blockData,
+        content: value,
+        todo_checked: checkBoxValue ? checkBoxValue : blockData.todo_checked,
+      };
+
+      handleChangeValueFieldArr(index, newValue);
+      await updateBlock(newValue);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [blockData]
+  );
+
+  const handleChangeType = useCallback(
+    async (type: blockTypeList) => {
+      const newContent = createBlockItemByType(
+        type,
+        handleChangeContentByType(blockData)
+      ).trim();
+
+      //reset value when change type
+      handleChangeValueFieldArr(index, {
+        ...blockData,
+        type: type,
+        content: newContent,
+        todo_checked: false,
+      });
+      await updateBlock({
+        ...blockData,
+        type: type,
+        content: newContent,
+        height: "200",
+        width: "300",
+      });
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [blockData, index]
   );
 
   return (
@@ -74,14 +126,17 @@ const Block = (props: Props) => {
               </IconButton>
 
               <Draghandler
-                handleDeleteBlock={() => void handleDeleteBlock(blockData.id)}
+                handleDeleteBlock={handleDeleteBlock}
+                handleChangeType={handleChangeType}
+                blockData={blockData}
+                isHiddenDeleteBtn={isHiddenDeleteBtn}
               />
             </>
           ) : null}
         </Stack>
 
-        <TinyEditor
-          value={blockData.content}
+        <BlockItemByType
+          blockData={blockData}
           handleChangeValue={handleChangeValue}
         />
       </Stack>
@@ -89,4 +144,4 @@ const Block = (props: Props) => {
   );
 };
 
-export default Block;
+export default memo(Block);
