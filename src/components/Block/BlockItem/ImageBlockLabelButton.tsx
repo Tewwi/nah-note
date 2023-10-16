@@ -35,7 +35,7 @@ const ImageBlockLabelButton = (props: IProps) => {
           cursor: "pointer",
           opacity: 0.7,
           justifyContent: "flex-start",
-          color: (theme) => theme.palette.text.disabled,
+          color: (theme) => theme.palette.text.secondary,
         }}
         startIcon={<PhotoSizeSelectActualOutlinedIcon fontSize="medium" />}
         onClick={(e) => setAnchorElImg(e.currentTarget)}

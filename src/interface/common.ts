@@ -22,3 +22,8 @@ export interface IErrorCatch {
   message: string;
   code: string | number;
 }
+
+export interface ISettingSelectItem {
+  label: string;
+  value: string;
+}

@@ -63,6 +63,15 @@ const FormControlInput = ({
           margin="none"
           regex={regex}
           {...rest}
+          sx={{
+            "& .MuiInputBase-root": {
+              backgroundColor: (theme) => theme.palette.action.focus,
+              ":hover": {
+                backgroundColor: (theme) => theme.palette.action.focus,
+              },
+            },
+            ...rest.sx,
+          }}
         />
       </Grid>
     </Grid>

@@ -128,6 +128,7 @@ const PageHeader = (props: IProps) => {
                 : Theme.DARK
             }
             lazyLoadEmojis
+            i18nIsDynamicList
           />
         </Popover>
 

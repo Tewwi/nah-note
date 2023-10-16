@@ -50,11 +50,11 @@ export const userRouter = createTRPCRouter({
 
         await ctx.prisma.page.create({
           data: {
-            title: 'Untitled',
+            title: "Untitled",
             authorId: userCreateResp.id,
           },
         });
-        
+
         return userCreateResp;
       });
     }),
@@ -79,7 +79,7 @@ export const userRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const resp = (await ctx.prisma.user.findUnique({
         where: {
-          email: input.email, 
+          email: input.email,
         },
       })) as User;
 
@@ -137,4 +137,32 @@ export const userRouter = createTRPCRouter({
       });
     }
   }),
+
+  updateUser: privateProcedure
+    .input(
+      z.object({
+        userName: z.string(),
+        email: z.string(),
+        id: z.string(),
+        avatar: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...info } = input;
+      try {
+        await ctx.prisma.user.update({
+          where: {
+            id: id,
+          },
+          data: {
+            ...info,
+          },
+        });
+      } catch (error) {
+        throw new TRPCError({
+          message: i18n.t("somethingWrong"),
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+    }),
 });

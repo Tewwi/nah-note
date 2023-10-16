@@ -151,7 +151,7 @@ export const paletteLight: IPalette = {
     selected: GREY[500_16],
     disabled: GREY[500_80],
     disabledBackground: GREY[500_24],
-    focus: GREY[500_24],
+    focus: GREY[200],
     hoverOpacity: 0.08,
     disabledOpacity: 0.48,
   } as any,

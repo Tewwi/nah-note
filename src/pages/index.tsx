@@ -29,15 +29,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 
 export default function Home() {
   const { data: userPages } = api.page.getPageByCurrUser.useQuery({ page: 1 });
-  const router = useRouter(); 
+  const router = useRouter();
 
   useEffect(() => {
     if (userPages?.resp) {
-      void router.replace(`page/${userPages?.resp[0]?.id}`)
+      void router.replace(`page/${userPages?.resp[0]?.id}`);
     }
   }, [router, userPages?.resp]);
 
-  return (
-    <PageLoading />
-  );
+  return <PageLoading />;
 }

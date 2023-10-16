@@ -12,13 +12,14 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "~/utils/api";
 import BoxClickAble from "../../Common/BoxClickAble";
 import ImageLoading from "../../Common/Image/ImageLoading";
 import UserPageList from "./userPageList";
 import useCrudPage from "~/hook/useCrudPage";
+import SettingDialog from "~/components/Dialog/SettingDialog/SettingDialog";
 
 interface Props {
   openSideBar: boolean;
@@ -28,6 +29,7 @@ interface Props {
 const SideBar = (props: Props) => {
   const { openSideBar, handleClose } = props;
   const router = useRouter();
+  const { handleCreateNewPage, createPageLoading } = useCrudPage();
   const { t } = useTranslation();
   const {
     data: userInfo,
@@ -35,7 +37,8 @@ const SideBar = (props: Props) => {
     isError,
     error,
   } = api.user.getCurrUserDetail.useQuery();
-  const { handleCreateNewPage, createPageLoading } = useCrudPage();
+
+  const [openSettingDialog, setOpenSettingDialog] = useState(false);
 
   const handleNewPageBtn = async () => {
     if (!userInfo) {
@@ -119,6 +122,7 @@ const SideBar = (props: Props) => {
             gap: "10px",
             alignItems: "center",
           }}
+          onClick={() => setOpenSettingDialog(true)}
         >
           <SettingsIcon fontSize="small" />
           <Typography variant="body2">{t("setting")}</Typography>
@@ -148,6 +152,10 @@ const SideBar = (props: Props) => {
       <Divider />
 
       <UserPageList />
+      <SettingDialog
+        open={openSettingDialog}
+        onClose={() => setOpenSettingDialog(false)}
+      />
     </Drawer>
   );
 };

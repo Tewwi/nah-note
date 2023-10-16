@@ -21,7 +21,7 @@ interface IRegisterParams {
   userName: string;
   password: string;
   confirmPassword: string;
-  avatar?: File;
+  avatar?: File | null;
 }
 
 const RegisterPage = () => {

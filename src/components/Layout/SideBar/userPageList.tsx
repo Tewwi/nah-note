@@ -9,12 +9,14 @@ import { useMemo, useState } from "react";
 import { api } from "~/utils/api";
 import BoxClickAble from "../../Common/BoxClickAble";
 import SidebarListAction from "./SidebarListAction";
+import { useTranslation } from "react-i18next";
 
 const UserPageList = () => {
   const { data, refetch } = api.page.getPageByCurrUser.useQuery(
     { page: 1 },
     { getNextPageParam: (lastPage) => lastPage.nextCursor }
   );
+  const { t } = useTranslation();
   const router = useRouter();
   const listPage = useMemo(() => data?.resp, [data]);
   const [openList, setOpenList] = useState(false);
@@ -42,7 +44,7 @@ const UserPageList = () => {
         ) : (
           <ExpandMoreIcon fontSize="small" />
         )}
-        Pages
+        {t("pages")}
       </BoxClickAble>
       <Collapse orientation="vertical" in={openList}>
         {listPage?.map((item) => {
