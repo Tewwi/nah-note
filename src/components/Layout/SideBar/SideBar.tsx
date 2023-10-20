@@ -1,8 +1,6 @@
 import AddIcon from "@mui/icons-material/Add";
 import MenuIcon from "@mui/icons-material/Menu";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
-import SearchIcon from "@mui/icons-material/Search";
-import SettingsIcon from "@mui/icons-material/Settings";
 import {
   CircularProgress,
   Divider,
@@ -12,14 +10,17 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import useCrudPage from "~/hook/useCrudPage";
 import { api } from "~/utils/api";
 import BoxClickAble from "../../Common/BoxClickAble";
 import ImageLoading from "../../Common/Image/ImageLoading";
+import SearchButton from "./SearchButton";
+import SettingButton from "./SettingButton";
 import UserPageList from "./userPageList";
-import useCrudPage from "~/hook/useCrudPage";
-import SettingDialog from "~/components/Dialog/SettingDialog/SettingDialog";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { deleteCookie } from "cookies-next";
 
 interface Props {
   openSideBar: boolean;
@@ -38,14 +39,17 @@ const SideBar = (props: Props) => {
     error,
   } = api.user.getCurrUserDetail.useQuery();
 
-  const [openSettingDialog, setOpenSettingDialog] = useState(false);
-
   const handleNewPageBtn = async () => {
     if (!userInfo) {
       return;
     }
 
     await handleCreateNewPage({ authorId: userInfo.id });
+  };
+
+  const handleLogout = () => {
+    deleteCookie("token");
+    void router.push("/auth/login");
   };
 
   useEffect(() => {
@@ -104,29 +108,10 @@ const SideBar = (props: Props) => {
       </BoxClickAble>
 
       <Stack direction="column">
-        <BoxClickAble
-          sx={{
-            justifyContent: "flex-start",
-            gap: "10px",
-            alignItems: "center",
-          }}
-        >
-          <SearchIcon fontSize="small" />
-          <Typography variant="body2">{t("search")}</Typography>
-        </BoxClickAble>
+        <SearchButton />
         <Divider />
 
-        <BoxClickAble
-          sx={{
-            justifyContent: "flex-start",
-            gap: "10px",
-            alignItems: "center",
-          }}
-          onClick={() => setOpenSettingDialog(true)}
-        >
-          <SettingsIcon fontSize="small" />
-          <Typography variant="body2">{t("setting")}</Typography>
-        </BoxClickAble>
+        <SettingButton />
         <Divider />
 
         <BoxClickAble
@@ -152,10 +137,24 @@ const SideBar = (props: Props) => {
       <Divider />
 
       <UserPageList />
-      <SettingDialog
-        open={openSettingDialog}
-        onClose={() => setOpenSettingDialog(false)}
-      />
+      <Divider />
+
+      <BoxClickAble
+        sx={{
+          justifyContent: "flex-start",
+          gap: "10px",
+          alignItems: "center",
+        }}
+        onClick={handleLogout}
+      >
+        <LogoutIcon color="error" />
+        <Typography
+          sx={{ color: (theme) => theme.palette.error.main }}
+          variant="body2"
+        >
+          {t("logout")}
+        </Typography>
+      </BoxClickAble>
     </Drawer>
   );
 };

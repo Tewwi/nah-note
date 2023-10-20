@@ -11,7 +11,7 @@ import {
 import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import BoxClickAble from "../Common/BoxClickAble";
-import { SortableItemContext } from "./BlockDnDProvider";
+import { SortableItemContext } from "../../context/BlockDnDProvider";
 import MenuChangeType from "./MenuChangeType";
 import type { blockTypeList } from "~/interface/IBlock";
 import type { Block as IBlock } from "@prisma/client";

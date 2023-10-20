@@ -1,8 +1,10 @@
-import { TRPCError } from "@trpc/server";
+import { TRPCError, getTRPCErrorFromUnknown } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import { itemPerPage } from "~/server/constant";
 import i18n from "i18next";
+import { handleCheckPermission } from "~/server/utils";
+import type { Page } from "@prisma/client";
 
 const schemaPage = z.object({
   title: z.string().nullable().optional(),
@@ -68,6 +70,12 @@ export const pageRouter = createTRPCRouter({
           },
         });
 
+        const total = await prisma.page.count({
+          where: {
+            authorId: currUser?.id,
+          },
+        });
+
         if (resp.length > limit) {
           const nextItem = resp.pop();
           nextCursor = nextItem!.id;
@@ -76,6 +84,7 @@ export const pageRouter = createTRPCRouter({
         return {
           resp,
           nextCursor,
+          total: Math.ceil(total / itemPerPage),
         };
       } catch (error) {
         throw new TRPCError({
@@ -106,12 +115,14 @@ export const pageRouter = createTRPCRouter({
             blocks: true,
           },
         });
+        handleCheckPermission(ctx.currUser.id, resp as Page);
 
         return resp;
       } catch (error) {
+        const err = getTRPCErrorFromUnknown(error);
         throw new TRPCError({
-          message: i18n.t("somethingWrong"),
-          code: "INTERNAL_SERVER_ERROR",
+          message: err.message,
+          code: err.code,
         });
       }
     }),
@@ -119,6 +130,8 @@ export const pageRouter = createTRPCRouter({
     .input(schemaPage)
     .mutation(async ({ ctx, input }) => {
       const { id, ...restData } = input;
+      handleCheckPermission(ctx.currUser.id, input as Page);
+
       try {
         const resp = await ctx.prisma.page.update({
           where: {
@@ -141,6 +154,13 @@ export const pageRouter = createTRPCRouter({
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       try {
+        const pageInfo = await ctx.prisma.page.findUnique({
+          where: {
+            id: input.id,
+          },
+        });
+        handleCheckPermission(ctx.currUser.id, pageInfo as Page);
+
         const resp = await ctx.prisma.page.delete({
           where: {
             id: input.id,
@@ -150,7 +170,34 @@ export const pageRouter = createTRPCRouter({
         return resp;
       } catch (error) {
         console.log(error);
-        
+
+        throw new TRPCError({
+          message: i18n.t("somethingWrong"),
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+    }),
+
+  searchPageByQuery: privateProcedure
+    .input(z.object({ query: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.currUser) {
+        return;
+      }
+
+      try {
+        const resp = await ctx.prisma.page.findMany({
+          where: {
+            authorId: ctx.currUser.id,
+            title: {
+              contains: input.query,
+              mode: "insensitive",
+            },
+          },
+        });
+
+        return resp;
+      } catch (error) {
         throw new TRPCError({
           message: i18n.t("somethingWrong"),
           code: "INTERNAL_SERVER_ERROR",

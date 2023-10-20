@@ -46,12 +46,13 @@ import { verifyUser } from "~/utils/jwtHelper";
  * @see https://trpc.io/docs/context
  */
 export const createTRPCContext = (opts: CreateNextContextOptions) => {
-  const { req } = opts;
+  const { req, res } = opts;
   const token = req.headers.authorization?.split(" ")[1];
-  
+
   return {
     prisma,
     token,
+    res,
   };
 };
 
@@ -102,7 +103,7 @@ export const publicProcedure = t.procedure;
 
 const enforceUserIsAuth = t.middleware(async ({ ctx, next }) => {
   const { token } = ctx;
-  
+
   const { id } = <{ id: string }>verifyUser(token || "");
   if (!token) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "UNAUTHORIZED" });
@@ -115,6 +116,10 @@ const enforceUserIsAuth = t.middleware(async ({ ctx, next }) => {
     .catch(() => {
       throw new TRPCError({ code: "UNAUTHORIZED", message: "UNAUTHORIZED" });
     });
+
+  if (!currUser) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "UNAUTHORIZED" });
+  }
 
   return next({
     ctx: {

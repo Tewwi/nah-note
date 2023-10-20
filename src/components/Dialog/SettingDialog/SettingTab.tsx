@@ -1,13 +1,13 @@
 import { Box, Divider, Stack, Typography, useMediaQuery } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import SettingSelect from "~/components/FormComponents/SettingSelect";
-import { useThemeContext } from "~/theme/ThemeConfig";
+import { useGlobalContext } from "~/context/GlobalContext";
 import { languageOptions, themeOptions } from "~/utils/constant";
 
 const SettingTab = () => {
   const isMobile = useMediaQuery("(max-width:600px)");
   const { t, i18n } = useTranslation();
-  const { theme, setTheme, language } = useThemeContext();
+  const { theme, setTheme, language } = useGlobalContext();
 
   const handleChangeTheme = (theme: string) => {
     setTheme(theme);

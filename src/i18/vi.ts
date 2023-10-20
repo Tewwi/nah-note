@@ -45,4 +45,5 @@ export const vi = {
   en: "En",
   vi: "Vi",
   pages: "Trang nhớ",
+  logout: "Đăng xuất",
 };

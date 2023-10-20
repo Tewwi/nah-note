@@ -45,4 +45,6 @@ export const en = {
   en: "En",
   vi: "Vi",
   pages: "Pages",
+  logout: "Logout",
+  unauthorized: "Unauthorized",
 };

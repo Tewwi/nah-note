@@ -9,7 +9,7 @@ import {
   createBlockItemByType,
   handleChangeContentByType,
 } from "~/utils/utilsBlock";
-import { SortableItem } from "./BlockDnDProvider";
+import { SortableItem } from "../../context/BlockDnDProvider";
 import BlockItemByType from "./BlockItemByType";
 import Draghandler from "./Draghandler";
 

@@ -2,24 +2,34 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { Collapse, Stack, Typography } from "@mui/material";
+import {
+  CircularProgress,
+  Collapse,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { Emoji, EmojiStyle } from "emoji-picker-react";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import Pagination from "~/components/Common/Pagination/Pagination";
+import { useGlobalContext } from "~/context/GlobalContext";
 import { api } from "~/utils/api";
 import BoxClickAble from "../../Common/BoxClickAble";
 import SidebarListAction from "./SidebarListAction";
-import { useTranslation } from "react-i18next";
 
 const UserPageList = () => {
-  const { data, refetch } = api.page.getPageByCurrUser.useQuery(
-    { page: 1 },
-    { getNextPageParam: (lastPage) => lastPage.nextCursor }
-  );
   const { t } = useTranslation();
   const router = useRouter();
-  const listPage = useMemo(() => data?.resp, [data]);
+  const theme = useTheme();
+  const { pagination, setPagination } = useGlobalContext();
+  const { data, refetch, isLoading } = api.page.getPageByCurrUser.useQuery({
+    ...pagination,
+  });
+
   const [openList, setOpenList] = useState(false);
+  const listPage = useMemo(() => data?.resp, [data]);
 
   const handleTogglePages = () => {
     setOpenList(!openList);
@@ -30,13 +40,18 @@ const UserPageList = () => {
   };
 
   const handleReloadData = async () => {
-    await refetch();
+    await refetch({});
   };
 
   return (
-    <>
+    <div style={{ width: "100%", flex: 1 }}>
       <BoxClickAble
-        sx={{ justifyContent: "flex-start", gap: "10px", alignItems: "center" }}
+        sx={{
+          justifyContent: "flex-start",
+          gap: "10px",
+          alignItems: "center",
+          width: "100%",
+        }}
         onClick={handleTogglePages}
       >
         {openList ? (
@@ -47,48 +62,75 @@ const UserPageList = () => {
         {t("pages")}
       </BoxClickAble>
       <Collapse orientation="vertical" in={openList}>
-        {listPage?.map((item) => {
-          return (
-            <BoxClickAble
-              key={item.id}
-              fullWidth
-              sx={{ p: 0.5, height: "unset", maxHeight: "30px" }}
-            >
-              <Stack
-                direction="row"
-                justifyContent="flex-start"
-                alignItems="center"
-                width="100%"
-                gap="10px"
-                pl={2}
-                onClick={() => handleChangePage(item.id)}
-              >
-                <Stack>
-                  {item.children.length ? <KeyboardArrowDownIcon /> : null}
+        <Stack direction="column">
+          {isLoading && (
+            <Stack minHeight="60px">
+              <CircularProgress size={18} sx={{ m: "auto" }} />
+            </Stack>
+          )}
 
-                  {item.emoji ? (
-                    <Emoji
-                      unified={item.emoji}
-                      emojiStyle={EmojiStyle.TWITTER}
-                      size={14}
-                    />
-                  ) : (
-                    <FeedOutlinedIcon sx={{ width: "14px" }} fontSize="small" />
-                  )}
+          {listPage?.map((item) => {
+            return (
+              <BoxClickAble
+                key={item.id}
+                fullWidth
+                sx={{
+                  p: 0.5,
+                  height: "unset",
+                  maxHeight: "30px",
+                  bgcolor:
+                    router.query.id === item.id
+                      ? theme.palette.action.hover
+                      : "transparent",
+                }}
+              >
+                <Stack
+                  direction="row"
+                  justifyContent="flex-start"
+                  alignItems="center"
+                  width="100%"
+                  gap="10px"
+                  pl={2}
+                  onClick={() => handleChangePage(item.id)}
+                >
+                  <Stack>
+                    {item.children.length ? <KeyboardArrowDownIcon /> : null}
+
+                    {item.emoji ? (
+                      <Emoji
+                        unified={item.emoji}
+                        emojiStyle={EmojiStyle.TWITTER}
+                        size={14}
+                      />
+                    ) : (
+                      <FeedOutlinedIcon
+                        sx={{ width: "14px" }}
+                        fontSize="small"
+                      />
+                    )}
+                  </Stack>
+                  <Typography textAlign="start" noWrap fontSize="13px">
+                    {item.title}
+                  </Typography>
                 </Stack>
-                <Typography textAlign="start" noWrap fontSize="13px">
-                  {item.title}
-                </Typography>
-              </Stack>
-              <SidebarListAction
-                handleReloadData={handleReloadData}
-                id={item.id}
-              />
-            </BoxClickAble>
-          );
-        })}
+                <SidebarListAction
+                  handleReloadData={handleReloadData}
+                  id={item.id}
+                />
+              </BoxClickAble>
+            );
+          })}
+        </Stack>
+
+        <Pagination
+          page={pagination.page}
+          handleChangePage={(page) => {
+            setPagination(page, data?.nextCursor);
+          }}
+          totalPage={data?.total || 1}
+        />
       </Collapse>
-    </>
+    </div>
   );
 };
 

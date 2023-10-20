@@ -5,6 +5,7 @@ import BoxClickAble from "~/components/Common/BoxClickAble";
 import { api } from "~/utils/api";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useRouter } from "next/router";
+import { handleUnauthorize } from "~/utils/constant";
 
 interface IProps {
   id: string;
@@ -16,7 +17,14 @@ const SidebarListAction = (props: IProps) => {
   const { t } = useTranslation();
   const router = useRouter();
   const { mutateAsync: deletePage, isLoading: deleteLoading } =
-    api.page.deletePageById.useMutation();
+    api.page.deletePageById.useMutation({
+      onError: (err) => {
+        if (err.data) {
+          handleUnauthorize(err.data.code, router);
+        }
+      },
+    });
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleDelete = async () => {
@@ -46,7 +54,9 @@ const SidebarListAction = (props: IProps) => {
         anchorEl={anchorEl}
         onClose={() => setAnchorEl(null)}
         elevation={5}
-        PaperProps={{ sx: { borderColor: (theme) => theme.palette.background.paper } }}
+        PaperProps={{
+          sx: { borderColor: (theme) => theme.palette.background.paper },
+        }}
       >
         <Stack direction="row">
           <BoxClickAble

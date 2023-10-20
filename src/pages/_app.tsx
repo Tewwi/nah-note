@@ -3,17 +3,19 @@ import { api } from "~/utils/api";
 import { ThemeConfig } from "~/theme/ThemeConfig";
 import Layout from "~/components/Layout/Layout";
 import { Toaster } from "react-hot-toast";
-import '../i18/config';
+import "../i18/config";
+import { AppProvider } from "~/context/GlobalContext";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
-  
   return (
-    <ThemeConfig>
-      <Layout {...pageProps}>
-        <Toaster position="top-center" />
-        <Component {...pageProps} />
-      </Layout>
-    </ThemeConfig>
+    <AppProvider>
+      <ThemeConfig>
+        <Layout {...pageProps}>
+          <Toaster position="top-center" />
+          <Component {...pageProps} />
+        </Layout>
+      </ThemeConfig>
+    </AppProvider>
   );
 };
 

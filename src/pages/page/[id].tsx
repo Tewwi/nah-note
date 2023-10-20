@@ -11,17 +11,32 @@ import PageHeader from "~/components/PageComponent/PageHeader";
 import PageLoading from "~/components/PageComponent/PageLoading";
 import type { IPageForm } from "~/interface/IPage";
 import { api } from "~/utils/api";
+import { handleUnauthorize } from "~/utils/constant";
 
 const PageDetail = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { mutateAsync } = api.page.updatePageById.useMutation();
+  const { mutateAsync } = api.page.updatePageById.useMutation({
+    onError: (err) => {
+      if (err.data) {
+        handleUnauthorize(err.data.code, router);
+      }
+    },
+  });
+
   const { data, isLoading, refetch } = api.page.getPageById.useQuery(
     {
       id: id?.toString() || "",
+    },
+    {
+      onError: (err) => {
+        if (err.data) {
+          handleUnauthorize(err.data.code, router);
+        }
+      },
     }
-    // { refetchOnWindowFocus: false }
   );
+
   const { control, setValue, watch, handleSubmit, reset } = useForm<IPageForm>({
     mode: "onBlur",
     defaultValues: { ...data },
