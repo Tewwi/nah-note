@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useCrudPage from "~/hook/useCrudPage";
 import { api } from "~/utils/api";
@@ -21,6 +21,8 @@ import SettingButton from "./SettingButton";
 import UserPageList from "./userPageList";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { deleteCookie } from "cookies-next";
+import { useGlobalContext } from "~/context/GlobalContext";
+import Pagination from "~/components/Common/Pagination/Pagination";
 
 interface Props {
   openSideBar: boolean;
@@ -31,6 +33,10 @@ const SideBar = (props: Props) => {
   const { openSideBar, handleClose } = props;
   const router = useRouter();
   const { handleCreateNewPage, createPageLoading } = useCrudPage();
+  const { pagination, setPagination } = useGlobalContext();
+  const { data } = api.page.getPageByCurrUser.useQuery({
+    ...pagination,
+  });
   const { t } = useTranslation();
   const {
     data: userInfo,
@@ -38,6 +44,8 @@ const SideBar = (props: Props) => {
     isError,
     error,
   } = api.user.getCurrUserDetail.useQuery();
+
+  const [openList, setOpenList] = useState(false);
 
   const handleNewPageBtn = async () => {
     if (!userInfo) {
@@ -136,8 +144,18 @@ const SideBar = (props: Props) => {
       </Stack>
       <Divider />
 
-      <UserPageList />
+      <UserPageList openList={openList} setOpenList={setOpenList} />
       <Divider />
+
+      {openList && (
+        <Pagination
+          page={pagination.page}
+          handleChangePage={(page) => {
+            setPagination(page, data?.nextCursor);
+          }}
+          totalPage={data?.total || 1}
+        />
+      )}
 
       <BoxClickAble
         sx={{
