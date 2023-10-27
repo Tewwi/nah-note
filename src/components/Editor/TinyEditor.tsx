@@ -38,6 +38,9 @@ const TinyEditor = (props: Props) => {
           padding: "10px",
           borderRadius: "5px",
         },
+        "& .tox-notifications-container": {
+          display: "none !important",
+        },
         "& p": {
           margin: "unset",
           display: "flex",
