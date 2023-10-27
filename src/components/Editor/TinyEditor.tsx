@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { env } from "~/env.mjs";
 import { Box, useTheme, type SxProps } from "@mui/material";
@@ -18,6 +18,13 @@ interface Props {
 const TinyEditor = (props: Props) => {
   const { value, handleChangeValue, styleCustom } = props;
   const theme = useTheme();
+
+  useEffect(() => {
+    const element = document.querySelector(".tox-tinymce-aux");
+    if (element) {
+      element.remove();
+    }
+  }, []);
 
   return (
     <Box
@@ -86,7 +93,9 @@ const TinyEditor = (props: Props) => {
           force_br_newlines: true,
           force_p_newlines: false,
           init_instance_callback: function () {
-            const freeTiny = document.querySelector(".tox") as any;
+            const freeTiny = document.querySelector(".tox-tinymce-aux") as any;
+            console.log("freeTiny", freeTiny);
+
             if (freeTiny) {
               freeTiny.style.display = "none";
             }
