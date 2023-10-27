@@ -84,7 +84,7 @@ const TinyEditor = (props: Props) => {
           force_p_newlines: false,
           init_instance_callback: function () {
             const freeTiny = document.querySelector(
-              ".tox .tox-notification--in"
+              ".tox-notifications-container"
             ) as any;
             if (freeTiny) {
               freeTiny.style.display = "none";

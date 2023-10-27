@@ -29,7 +29,11 @@ const LoginPage = () => {
     },
   });
 
-  const { mutateAsync: login, isLoading } = api.user.login.useMutation();
+  const {
+    mutateAsync: login,
+    isLoading,
+    isSuccess,
+  } = api.user.login.useMutation();
 
   const onSubmit = async (values: ILoginParams) => {
     try {
@@ -86,7 +90,7 @@ const LoginPage = () => {
                 control={control}
                 name="email"
                 rules={{
-                  required: t('requiredError'),
+                  required: t("requiredError"),
                   pattern: {
                     value: regex.email,
                     message: t("emailError"),
@@ -103,7 +107,7 @@ const LoginPage = () => {
                 name="password"
                 type="password"
                 rules={{
-                  required: t('requiredError'),
+                  required: t("requiredError"),
                   min: 6,
                 }}
                 inputProps={{ style: { color: paletteLight.common.black } }}
@@ -117,7 +121,7 @@ const LoginPage = () => {
                 void handleSubmit(onSubmit)();
               }}
               title="Login"
-              loading={isLoading}
+              loading={isLoading || isSuccess}
             />
             <Link
               style={{
