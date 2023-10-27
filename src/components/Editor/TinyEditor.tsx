@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
 import React, { memo } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { env } from "~/env.mjs";
@@ -77,6 +82,14 @@ const TinyEditor = (props: Props) => {
           fix_list_elements: true,
           force_br_newlines: true,
           force_p_newlines: false,
+          init_instance_callback: function () {
+            const freeTiny = document.querySelector(
+              ".tox .tox-notification--in"
+            ) as any;
+            if (freeTiny) {
+              freeTiny.style.display = "none";
+            }
+          },
         }}
         onBlur={(_e, editor) => {
           const text = editor.getContent();
