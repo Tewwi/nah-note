@@ -19,15 +19,6 @@ const TinyEditor = (props: Props) => {
   const { value, handleChangeValue, styleCustom } = props;
   const theme = useTheme();
 
-  const tesing = () => {
-    const element = document.querySelector(".tox-tinymce-aux");
-    if (element) {
-      element.remove();
-    }
-  };
-
-  tesing();
-
   return (
     <Box
       sx={{

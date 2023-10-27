@@ -57,7 +57,7 @@ const SideBar = (props: Props) => {
 
   const handleLogout = () => {
     deleteCookie("token");
-    void router.push("/auth/login");
+    router.reload();
   };
 
   useEffect(() => {
