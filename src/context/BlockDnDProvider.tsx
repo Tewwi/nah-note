@@ -10,6 +10,7 @@ import { createContext, useMemo } from "react";
 
 interface Props {
   id: UniqueIdentifier;
+  disable: boolean;
 }
 
 interface Context {
@@ -25,7 +26,11 @@ export const SortableItemContext = createContext<Context>({
   ref: () => {},
 });
 
-export const SortableItem = ({ children, id }: PropsWithChildren<Props>) => {
+export const SortableItem = ({
+  children,
+  id,
+  disable,
+}: PropsWithChildren<Props>) => {
   const {
     attributes,
     isDragging,
@@ -34,7 +39,7 @@ export const SortableItem = ({ children, id }: PropsWithChildren<Props>) => {
     setActivatorNodeRef,
     transform,
     transition,
-  } = useSortable({ id });
+  } = useSortable({ id, disabled: disable });
   const context = useMemo(
     () => ({
       attributes,
@@ -52,10 +57,7 @@ export const SortableItem = ({ children, id }: PropsWithChildren<Props>) => {
 
   return (
     <SortableItemContext.Provider value={context}>
-      <Stack
-        ref={setNodeRef}
-        style={style}
-      >
+      <Stack ref={setNodeRef} style={style}>
         {children}
       </Stack>
     </SortableItemContext.Provider>

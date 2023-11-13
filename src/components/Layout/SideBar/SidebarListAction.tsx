@@ -1,10 +1,12 @@
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { CircularProgress, IconButton, Popover, Stack } from "@mui/material";
-import React, { useState } from "react";
+import { getTRPCErrorFromUnknown } from "@trpc/server";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import BoxClickAble from "~/components/Common/BoxClickAble";
+import SettingPermissionDialog from "~/components/Dialog/SettingPermissionDialog/SettingPermissionDialog";
 import { api } from "~/utils/api";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { useRouter } from "next/router";
 import { handleUnauthorize } from "~/utils/constant";
 
 interface IProps {
@@ -18,19 +20,22 @@ const SidebarListAction = (props: IProps) => {
   const router = useRouter();
   const { mutateAsync: deletePage, isLoading: deleteLoading } =
     api.page.deletePageById.useMutation({
-      onError: (err) => {
-        if (err.data) {
-          handleUnauthorize(err.data.code, router);
-        }
-      },
+      onError: (err) =>
+        handleUnauthorize(getTRPCErrorFromUnknown(err).code, router),
     });
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [permissionDialog, setPermissionDialog] = useState(false);
 
   const handleDelete = async () => {
     await deletePage({ id: id });
-    void handleReloadData();
+    await handleReloadData();
     void router.replace("/");
+    setAnchorEl(null);
+  };
+
+  const handleOpenPermission = () => {
+    setPermissionDialog(true);
     setAnchorEl(null);
   };
 
@@ -58,7 +63,7 @@ const SidebarListAction = (props: IProps) => {
           sx: { borderColor: (theme) => theme.palette.background.paper },
         }}
       >
-        <Stack direction="row">
+        <Stack direction="column">
           <BoxClickAble
             disabled={deleteLoading}
             onClick={() => void handleDelete()}
@@ -72,8 +77,18 @@ const SidebarListAction = (props: IProps) => {
 
             {t("deletePage")}
           </BoxClickAble>
+
+          <BoxClickAble disabled={deleteLoading} onClick={handleOpenPermission}>
+            {t("settingPermission")}
+          </BoxClickAble>
         </Stack>
       </Popover>
+
+      <SettingPermissionDialog
+        open={permissionDialog}
+        onClose={() => setPermissionDialog(false)}
+        id={id}
+      />
     </>
   );
 };

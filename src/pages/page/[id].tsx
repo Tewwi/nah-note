@@ -1,9 +1,10 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Box, Container } from "@mui/material";
+import { getTRPCErrorFromUnknown } from "@trpc/server";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import BlockList from "~/components/PageComponent/BlockList";
 import CoverImage from "~/components/PageComponent/CoverImage";
@@ -17,23 +18,18 @@ const PageDetail = () => {
   const router = useRouter();
   const { id } = router.query;
   const { mutateAsync } = api.page.updatePageById.useMutation({
-    onError: (err) => {
-      if (err.data) {
-        handleUnauthorize(err.data.code, router);
-      }
-    },
+    onError: (err) =>
+      handleUnauthorize(getTRPCErrorFromUnknown(err).code, router),
   });
+  const { data: currUserInfo } = api.user.getCurrUserDetail.useQuery();
 
   const { data, isLoading, refetch } = api.page.getPageById.useQuery(
     {
       id: id?.toString() || "",
     },
     {
-      onError: (err) => {
-        if (err.data) {
-          handleUnauthorize(err.data.code, router);
-        }
-      },
+      onError: (err) =>
+        handleUnauthorize(getTRPCErrorFromUnknown(err).code, router),
     }
   );
 
@@ -42,6 +38,10 @@ const PageDetail = () => {
     defaultValues: { ...data },
   });
   const currData = watch();
+
+  const isAuthor = useMemo(() => {
+    return currUserInfo?.id === data?.authorId;
+  }, [currUserInfo?.id, data?.authorId]);
 
   const onSubmit = useCallback(
     async (submitData: IPageForm) => {
@@ -105,9 +105,16 @@ const PageDetail = () => {
               coverPic={currData.backgroundCover}
               handleChangeValue={handleChangeValue}
               id={id.toString()}
+              disabled={!isAuthor}
             />
           </Box>
-          {id && <BlockList control={control} pageId={id.toString()} />}
+          {id && (
+            <BlockList
+              control={control}
+              disable={!isAuthor}
+              pageId={id.toString()}
+            />
+          )}
         </Container>
       </Box>
     </>

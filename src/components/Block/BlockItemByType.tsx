@@ -7,10 +7,11 @@ import ImageBlockItem from "./BlockItem/ImageBlockItem";
 interface IProps {
   handleChangeValue: (value: string, checkBoxValue?: boolean) => Promise<void>;
   blockData: Block;
+  disable: boolean;
 }
 
 const BlockItemByType = (props: IProps) => {
-  const { blockData, handleChangeValue } = props;
+  const { blockData, handleChangeValue, disable } = props;
 
   switch (blockData.type as blockTypeList) {
     case "todo_list":
@@ -18,6 +19,7 @@ const BlockItemByType = (props: IProps) => {
         <TodoBlockItem
           blockData={blockData}
           handleChangeValue={handleChangeValue}
+          disable={disable}
         />
       );
 
@@ -26,6 +28,7 @@ const BlockItemByType = (props: IProps) => {
         <ImageBlockItem
           blockData={blockData}
           handleChangeValue={handleChangeValue}
+          disable={disable}
         />
       );
 
@@ -34,6 +37,7 @@ const BlockItemByType = (props: IProps) => {
         <TinyEditor
           value={blockData.content}
           handleChangeValue={handleChangeValue}
+          disable={disable}
         />
       );
   }

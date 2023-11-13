@@ -15,10 +15,11 @@ import type { Block as IBlock } from "@prisma/client";
 interface Props {
   control: Control<IPageForm>;
   pageId: string;
+  disable: boolean;
 }
 
 const BlockList = (props: Props) => {
-  const { control, pageId } = props;
+  const { control, pageId, disable } = props;
 
   const { mutateAsync: createNewBlock, isLoading } =
     api.block.createNewBlock.useMutation();
@@ -103,6 +104,7 @@ const BlockList = (props: Props) => {
             handleChangeValueFieldArr={handleChangeValue}
             handleAddBlock={handleAddNewBlock}
             handleDeleteBlock={handleDeleteBlock}
+            disable={disable}
           />
         );
       })}

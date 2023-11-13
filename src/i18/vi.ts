@@ -46,4 +46,7 @@ export const vi = {
   vi: "Vi",
   pages: "Trang nhớ",
   logout: "Đăng xuất",
+  settingPermission: "Quản lý chia sẻ",
+  searchPlaceholder: "Nhập tiêu đề trang nhớ",
+  permissionPlaceholder: "Nhập tên người dùng",
 };

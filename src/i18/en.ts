@@ -47,4 +47,8 @@ export const en = {
   pages: "Pages",
   logout: "Logout",
   unauthorized: "Unauthorized",
+  settingPermission: "Setting Permission",
+  searchPlaceholder: "Type title of page to search",
+  addSuccess: "Add Success",
+  permissionPlaceholder: "Type username",
 };

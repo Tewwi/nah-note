@@ -13,6 +13,7 @@ const schemaPage = z.object({
   emoji: z.string().nullable().optional(),
   id: z.string().optional(),
   backgroundCover: z.string().nullable().optional(),
+  permissionId: z.array(z.string()).optional(),
 });
 
 export const pageRouter = createTRPCRouter({
@@ -197,6 +198,66 @@ export const pageRouter = createTRPCRouter({
         });
 
         return resp;
+      } catch (error) {
+        throw new TRPCError({
+          message: i18n.t("somethingWrong"),
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+    }),
+  setPermissionPage: privateProcedure
+    .input(z.object({ userIds: z.string(), pageId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { pageId, userIds } = input;
+
+      try {
+        const page = await ctx.prisma.page.findUnique({
+          where: {
+            id: pageId,
+          },
+        });
+
+        handleCheckPermission(ctx.currUser.id, page as Page);
+        const permissionArray = page?.permissionId
+          ? [...page.permissionId, userIds]
+          : [userIds];
+
+        return await ctx.prisma.page.update({
+          where: {
+            id: page?.id,
+          },
+          data: {
+            permissionId: permissionArray,
+          },
+        });
+      } catch (error) {
+        throw new TRPCError({
+          message: i18n.t("somethingWrong"),
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+    }),
+  getListPermissionUserById: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      try {
+        const res = await ctx.prisma.page.findUnique({
+          where: {
+            id: input.id,
+          },
+        });
+
+        handleCheckPermission(ctx.currUser.id, res as Page);
+        return await ctx.prisma.user.findMany({
+          where: {
+            id: { in: res?.permissionId },
+          },
+          select: {
+            userName: true,
+            id: true,
+            avatar: true,
+          },
+        });
       } catch (error) {
         throw new TRPCError({
           message: i18n.t("somethingWrong"),

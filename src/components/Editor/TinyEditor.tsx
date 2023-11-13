@@ -13,10 +13,11 @@ interface Props {
   value: string;
   handleChangeValue: (value: string) => Promise<void>;
   styleCustom?: SxProps;
+  disable: boolean;
 }
 
 const TinyEditor = (props: Props) => {
-  const { value, handleChangeValue, styleCustom } = props;
+  const { value, handleChangeValue, styleCustom, disable } = props;
   const theme = useTheme();
 
   return (
@@ -95,6 +96,7 @@ const TinyEditor = (props: Props) => {
           const text = editor.getContent();
           void handleChangeValue(text);
         }}
+        disabled={disable}
       />
     </Box>
   );

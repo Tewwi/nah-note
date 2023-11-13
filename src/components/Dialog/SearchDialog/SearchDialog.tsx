@@ -16,6 +16,7 @@ import { api } from "~/utils/api";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import BoxClickAble from "~/components/Common/BoxClickAble";
 import { useRouter } from "next/router";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   open: boolean;
@@ -25,6 +26,7 @@ interface IProps {
 const SearchDialog = (props: IProps) => {
   const { open, onClose } = props;
   const router = useRouter();
+  const { t } = useTranslation();
   const isMobile = useMediaQuery("(max-width:600px)");
   const { mutateAsync, data, reset } = api.page.searchPageByQuery.useMutation();
 
@@ -61,7 +63,7 @@ const SearchDialog = (props: IProps) => {
         </IconButton>
         <InputBase
           sx={{ ml: 1, flex: 1 }}
-          placeholder="Search Google Maps"
+          placeholder={t("searchPlaceholder")}
           onChange={(e) => {
             void handleSearchPages(e.target.value);
           }}

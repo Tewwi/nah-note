@@ -7,10 +7,11 @@ import TinyEditor from "~/components/Editor/TinyEditor";
 interface IProps {
   handleChangeValue: (value: string, checkBoxValue?: boolean) => Promise<void>;
   blockData: Block;
+  disable: boolean;
 }
 
 const TodoBlockItem = (props: IProps) => {
-  const { blockData, handleChangeValue } = props;
+  const { blockData, handleChangeValue, disable } = props;
   const [checkboxValue, setCheckboxValue] = useState(
     Boolean(blockData.todo_checked)
   );
@@ -49,6 +50,7 @@ const TodoBlockItem = (props: IProps) => {
           textDecoration: checkboxValue ? "line-through" : "unset",
           opacity: checkboxValue ? 0.7 : 1,
         }}
+        disable={disable}
       />
     </Stack>
   );

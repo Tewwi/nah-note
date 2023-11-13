@@ -6,11 +6,12 @@ import SelectCoverDialog from "~/components/Dialog/SelectCoverDialog";
 
 interface IProps {
   handleChangeValue: (value: string, checkBoxValue?: boolean) => Promise<void>;
+  disable: boolean;
 }
 
 const ImageBlockLabelButton = (props: IProps) => {
+  const { handleChangeValue, disable } = props;
   const { t } = useTranslation();
-  const { handleChangeValue } = props;
   const [anchorElImg, setAnchorElImg] = useState<null | HTMLElement>(null);
 
   const handleChooseCoverImg = (url: string | null) => {
@@ -39,6 +40,7 @@ const ImageBlockLabelButton = (props: IProps) => {
         }}
         startIcon={<PhotoSizeSelectActualOutlinedIcon fontSize="medium" />}
         onClick={(e) => setAnchorElImg(e.currentTarget)}
+        disabled={disable}
       >
         {t("addImg")}
       </Button>

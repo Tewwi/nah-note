@@ -21,11 +21,17 @@ interface Props {
   handleChangeType: (type: blockTypeList) => Promise<void>;
   blockData: IBlock;
   isHiddenDeleteBtn: boolean;
+  disable: boolean;
 }
 
 const Draghandler = (props: Props) => {
-  const { handleDeleteBlock, handleChangeType, blockData, isHiddenDeleteBtn } =
-    props;
+  const {
+    handleDeleteBlock,
+    handleChangeType,
+    blockData,
+    isHiddenDeleteBtn,
+    disable,
+  } = props;
   const { t } = useTranslation();
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { attributes, listeners, ref } = useContext(SortableItemContext);
@@ -34,7 +40,9 @@ const Draghandler = (props: Props) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleOpenPopper = (ref: HTMLElement) => {
-    setAnchorEl(ref);
+    if (!disable) {
+      setAnchorEl(ref);
+    }
   };
 
   const onDelete = async () => {

@@ -6,13 +6,19 @@ import ImageResizeAble from "~/components/Common/Image/ImageResizeAble";
 interface IProps {
   handleChangeValue: (value: string, checkBoxValue?: boolean) => Promise<void>;
   blockData: Block;
+  disable: boolean;
 }
 
 const ImageBlockItem = (props: IProps) => {
-  const { blockData, handleChangeValue } = props;
+  const { blockData, handleChangeValue, disable } = props;
 
   if (!blockData.content) {
-    return <ImageBlockLabelButton handleChangeValue={handleChangeValue} />;
+    return (
+      <ImageBlockLabelButton
+        disable={disable}
+        handleChangeValue={handleChangeValue}
+      />
+    );
   }
 
   return <ImageResizeAble blockData={blockData} />;

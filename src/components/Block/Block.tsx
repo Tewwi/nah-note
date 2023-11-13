@@ -22,6 +22,7 @@ interface Props {
   isLast: boolean;
   handleChangeValueFieldArr: (index: number, value: IBlock) => void;
   index: number;
+  disable: boolean;
 }
 
 const Block = (props: Props) => {
@@ -33,6 +34,7 @@ const Block = (props: Props) => {
     isLast,
     index,
     handleChangeValueFieldArr,
+    disable,
   } = props;
   const { mutateAsync: updateBlock } = api.block.updateBlock.useMutation();
   const [isHover, setIsHover] = useState(false);
@@ -83,7 +85,7 @@ const Block = (props: Props) => {
   );
 
   return (
-    <SortableItem id={blockData.id}>
+    <SortableItem id={blockData.id} disable={disable}>
       <Stack
         direction="row"
         minHeight="35px"
@@ -112,7 +114,7 @@ const Block = (props: Props) => {
                   display: isLast ? "inline-flex" : "none",
                 }}
                 onClick={() => void handleAddBlock()}
-                disabled={isLoading}
+                disabled={isLoading || disable}
                 size="small"
               >
                 {isLoading ? (
@@ -130,6 +132,7 @@ const Block = (props: Props) => {
                 handleChangeType={handleChangeType}
                 blockData={blockData}
                 isHiddenDeleteBtn={isHiddenDeleteBtn}
+                disable={disable}
               />
             </>
           ) : null}
@@ -138,6 +141,7 @@ const Block = (props: Props) => {
         <BlockItemByType
           blockData={blockData}
           handleChangeValue={handleChangeValue}
+          disable={disable}
         />
       </Stack>
     </SortableItem>

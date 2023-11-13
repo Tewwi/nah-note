@@ -23,10 +23,11 @@ interface IProps {
   coverPic: string | null;
   id: string;
   handleChangeValue: (name: keyof IPageForm, value: string | null) => void;
+  disabled: boolean;
 }
 
 const PageHeader = (props: IProps) => {
-  const { control, emoji, coverPic, handleChangeValue, id } = props;
+  const { control, emoji, coverPic, handleChangeValue, id, disabled } = props;
   const theme = useTheme();
   const { t } = useTranslation();
   const [anchorElCoverImg, setAnchorElCoverImg] = useState<null | HTMLElement>(
@@ -98,6 +99,7 @@ const PageHeader = (props: IProps) => {
           sx={{ opacity: "0.7", display: emoji ? "none" : "flex" }}
           startIcon={<OutletRoundedIcon />}
           onClick={(e) => handleOpenEmojiPopper(e.currentTarget)}
+          disabled={disabled}
         >
           Add icon
         </BoxClickAble>
@@ -136,6 +138,7 @@ const PageHeader = (props: IProps) => {
           onClick={(e) => handleOpenCoverImgPopper(e.currentTarget)}
           sx={{ opacity: "0.7", display: coverPic ? "none" : "inline-flex" }}
           startIcon={<InsertPhotoIcon />}
+          disabled={disabled}
         >
           {t("addCoverButton")}
         </BoxClickAble>
@@ -161,6 +164,8 @@ const PageHeader = (props: IProps) => {
           style: { fontSize: "32px" },
         }}
         onBlur={(e) => void handleUpdateTitle(e.target.value)}
+        disabled={disabled}
+        sx={{ mb: 1 }}
       />
     </Stack>
   );

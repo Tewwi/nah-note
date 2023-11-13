@@ -165,4 +165,33 @@ export const userRouter = createTRPCRouter({
         });
       }
     }),
+
+  searchUserByName: privateProcedure
+    .input(
+      z.object({
+        query: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        return ctx.prisma.user.findMany({
+          where: {
+            userName: {
+              contains: input.query,
+              mode: "insensitive",
+            },
+          },
+          select: {
+            userName: true,
+            id: true,
+            avatar: true,
+          },
+        });
+      } catch (error) {
+        throw new TRPCError({
+          message: i18n.t("somethingWrong"),
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+    }),
 });
