@@ -3,10 +3,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
-import React, { memo } from "react";
-import { Editor } from "@tinymce/tinymce-react";
-import { env } from "~/env.mjs";
 import { Box, useTheme, type SxProps } from "@mui/material";
+import { Editor } from "@tinymce/tinymce-react";
+import { memo } from "react";
+import { env } from "~/env.mjs";
 import { grey } from "~/theme/colors";
 
 interface Props {
@@ -38,6 +38,9 @@ const TinyEditor = (props: Props) => {
           background: theme.palette.background.paper,
           padding: "10px",
           borderRadius: "5px",
+        },
+        "& .tox-notifications-container": {
+          display: "none !important",
         },
         "& p": {
           margin: "unset",
@@ -84,9 +87,7 @@ const TinyEditor = (props: Props) => {
           force_br_newlines: true,
           force_p_newlines: false,
           init_instance_callback: function () {
-            const freeTiny = document.querySelector(
-              ".tox-notifications-container"
-            ) as any;
+            const freeTiny = document.querySelector(".tox-tinymce-aux") as any;
             if (freeTiny) {
               freeTiny.style.display = "none";
             }

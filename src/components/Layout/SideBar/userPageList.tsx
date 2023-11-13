@@ -11,24 +11,28 @@ import {
 } from "@mui/material";
 import { Emoji, EmojiStyle } from "emoji-picker-react";
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import Pagination from "~/components/Common/Pagination/Pagination";
 import { useGlobalContext } from "~/context/GlobalContext";
 import { api } from "~/utils/api";
 import BoxClickAble from "../../Common/BoxClickAble";
 import SidebarListAction from "./SidebarListAction";
 
-const UserPageList = () => {
+interface IProps {
+  openList: boolean;
+  setOpenList: (value: boolean) => void;
+}
+
+const UserPageList = (props: IProps) => {
   const { t } = useTranslation();
+  const { openList, setOpenList } = props;
   const router = useRouter();
   const theme = useTheme();
-  const { pagination, setPagination } = useGlobalContext();
+  const { pagination } = useGlobalContext();
   const { data, refetch, isLoading } = api.page.getPageByCurrUser.useQuery({
     ...pagination,
   });
 
-  const [openList, setOpenList] = useState(false);
   const listPage = useMemo(() => data?.resp, [data]);
 
   const handleTogglePages = () => {
@@ -121,14 +125,6 @@ const UserPageList = () => {
             );
           })}
         </Stack>
-
-        <Pagination
-          page={pagination.page}
-          handleChangePage={(page) => {
-            setPagination(page, data?.nextCursor);
-          }}
-          totalPage={data?.total || 1}
-        />
       </Collapse>
     </div>
   );
