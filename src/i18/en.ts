@@ -52,4 +52,5 @@ export const en = {
   addSuccess: "Add Success",
   permissionPlaceholder: "Type username",
   pagesShare: "Share with me",
+  editorHolder: "Type some note",
 };

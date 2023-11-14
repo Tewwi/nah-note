@@ -6,6 +6,7 @@
 import { Box, useTheme, type SxProps } from "@mui/material";
 import { Editor } from "@tinymce/tinymce-react";
 import { memo } from "react";
+import { useTranslation } from "react-i18next";
 import { env } from "~/env.mjs";
 import { grey } from "~/theme/colors";
 
@@ -19,6 +20,7 @@ interface Props {
 const TinyEditor = (props: Props) => {
   const { value, handleChangeValue, styleCustom, disable } = props;
   const theme = useTheme();
+  const { t } = useTranslation();
 
   return (
     <Box
@@ -82,7 +84,7 @@ const TinyEditor = (props: Props) => {
           content_style:
             "body { font-family:SVN-Sofia Pro Medium; font-size:14px }",
           inline: true,
-          placeholder: "This is place ho ho ho",
+          placeholder: t("editorHolder"),
           fix_list_elements: true,
           force_br_newlines: true,
           init_instance_callback: function () {

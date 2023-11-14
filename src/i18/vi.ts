@@ -50,4 +50,5 @@ export const vi = {
   searchPlaceholder: "Nhập tiêu đề trang nhớ",
   permissionPlaceholder: "Nhập tên người dùng",
   pagesShare: "Chia sẻ với tôi",
+  editorHolder: "Nhập nội dung",
 };
