@@ -1,6 +1,5 @@
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import {
   CircularProgress,
@@ -11,27 +10,30 @@ import {
 } from "@mui/material";
 import { Emoji, EmojiStyle } from "emoji-picker-react";
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useGlobalContext } from "~/context/GlobalContext";
+import Pagination from "~/components/Common/Pagination/Pagination";
+import type { IPagination } from "~/interface/context";
+import { itemPerPage } from "~/server/constant";
 import { api } from "~/utils/api";
 import BoxClickAble from "../../Common/BoxClickAble";
 import SidebarListAction from "./SidebarListAction";
-import Pagination from "~/components/Common/Pagination/Pagination";
-import { itemPerPage } from "~/server/constant";
 
 interface IProps {
   openList: boolean;
   setOpenList: (value: boolean) => void;
 }
 
-const UserPageList = (props: IProps) => {
+const UserPageShareList = (props: IProps) => {
   const { t } = useTranslation();
   const { openList, setOpenList } = props;
   const router = useRouter();
   const theme = useTheme();
-  const { pagination, setPagination } = useGlobalContext();
-  const { data, refetch, isLoading } = api.page.getPageByCurrUser.useQuery({
+  const [pagination, setPagination] = useState<IPagination>({
+    page: 1,
+    cursor: undefined,
+  });
+  const { data, refetch, isLoading } = api.page.findByPermissionId.useQuery({
     ...pagination,
   });
 
@@ -65,7 +67,7 @@ const UserPageList = (props: IProps) => {
         ) : (
           <ExpandMoreIcon fontSize="small" />
         )}
-        {t("pages")}
+        {t("pagesShare")}
       </BoxClickAble>
       <Collapse orientation="vertical" in={openList}>
         <Stack direction="column">
@@ -100,8 +102,6 @@ const UserPageList = (props: IProps) => {
                   onClick={() => handleChangePage(item.id)}
                 >
                   <Stack>
-                    {item.children.length ? <KeyboardArrowDownIcon /> : null}
-
                     {item.emoji ? (
                       <Emoji
                         unified={item.emoji}
@@ -132,7 +132,7 @@ const UserPageList = (props: IProps) => {
             <Pagination
               page={pagination.page}
               handleChangePage={(page) => {
-                setPagination(page, data?.nextCursor);
+                setPagination({ page, cursor: data?.nextCursor });
               }}
               totalPage={data?.total || 1}
             />
@@ -143,4 +143,4 @@ const UserPageList = (props: IProps) => {
   );
 };
 
-export default UserPageList;
+export default UserPageShareList;

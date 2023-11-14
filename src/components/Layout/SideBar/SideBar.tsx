@@ -1,4 +1,5 @@
 import AddIcon from "@mui/icons-material/Add";
+import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import {
@@ -9,6 +10,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { deleteCookie } from "cookies-next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -18,11 +20,9 @@ import BoxClickAble from "../../Common/BoxClickAble";
 import ImageLoading from "../../Common/Image/ImageLoading";
 import SearchButton from "./SearchButton";
 import SettingButton from "./SettingButton";
-import UserPageList from "./userPageList";
-import LogoutIcon from "@mui/icons-material/Logout";
-import { deleteCookie } from "cookies-next";
-import { useGlobalContext } from "~/context/GlobalContext";
-import Pagination from "~/components/Common/Pagination/Pagination";
+import SimpleBar from "simplebar-react";
+import UserPageList from "./UserPageList";
+import UserPageShareList from "./UserPageShareList";
 
 interface Props {
   openSideBar: boolean;
@@ -33,10 +33,6 @@ const SideBar = (props: Props) => {
   const { openSideBar, handleClose } = props;
   const router = useRouter();
   const { handleCreateNewPage, createPageLoading } = useCrudPage();
-  const { pagination, setPagination } = useGlobalContext();
-  const { data } = api.page.getPageByCurrUser.useQuery({
-    ...pagination,
-  });
   const { t } = useTranslation();
   const {
     data: userInfo,
@@ -46,6 +42,7 @@ const SideBar = (props: Props) => {
   } = api.user.getCurrUserDetail.useQuery();
 
   const [openList, setOpenList] = useState(false);
+  const [openListShare, setOpenListShare] = useState(false);
 
   const handleNewPageBtn = async () => {
     if (!userInfo) {
@@ -86,82 +83,89 @@ const SideBar = (props: Props) => {
         height: "100%",
       }}
     >
-      <BoxClickAble sx={{ p: 1.25, height: "auto" }} component="div">
-        <Stack direction="row" justifyContent="space-between" width="100%">
-          <Stack direction="row">
-            <ImageLoading
-              src={userInfo?.avatar || ""}
-              alt="avatar"
-              width={35}
-              height={35}
-              style={{ alignSelf: "center" }}
-              loadingCustom={isLoading}
+      <Stack flex={1}>
+        <SimpleBar>
+          <Stack height="100%">
+            <BoxClickAble sx={{ p: 1.25, height: "auto" }} component="div">
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                width="100%"
+              >
+                <Stack direction="row">
+                  <ImageLoading
+                    src={userInfo?.avatar || ""}
+                    alt="avatar"
+                    width={35}
+                    height={35}
+                    style={{ alignSelf: "center" }}
+                    loadingCustom={isLoading}
+                  />
+                  <Typography
+                    variant="body2"
+                    flexWrap="wrap"
+                    sx={{ alignSelf: "center", ml: 1 }}
+                  >
+                    {userInfo?.userName}
+                  </Typography>
+                </Stack>
+
+                <IconButton
+                  onClick={handleClose}
+                  sx={{ color: (theme) => theme.palette.text.secondary }}
+                >
+                  {openSideBar ? <MenuOpenIcon /> : <MenuIcon />}
+                </IconButton>
+              </Stack>
+            </BoxClickAble>
+
+            <Stack direction="column">
+              <SearchButton />
+              <Divider />
+
+              <SettingButton />
+              <Divider />
+
+              <BoxClickAble
+                sx={{
+                  justifyContent: "flex-start",
+                  gap: "10px",
+                  alignItems: "center",
+                }}
+                onClick={() => void handleNewPageBtn()}
+                disabled={createPageLoading}
+              >
+                {createPageLoading ? (
+                  <CircularProgress
+                    size="16px"
+                    sx={{ color: (theme) => theme.palette.text.primary }}
+                  />
+                ) : (
+                  <AddIcon fontSize="small" />
+                )}
+                <Typography variant="body2">{t("newPage")}</Typography>
+              </BoxClickAble>
+            </Stack>
+            <Divider />
+
+            <UserPageShareList
+              openList={openListShare}
+              setOpenList={setOpenListShare}
             />
-            <Typography
-              variant="body2"
-              flexWrap="wrap"
-              sx={{ alignSelf: "center", ml: 1 }}
-            >
-              {userInfo?.userName}
-            </Typography>
+            <Divider />
+
+            <UserPageList openList={openList} setOpenList={setOpenList} />
+            <Divider />
           </Stack>
-
-          <IconButton
-            onClick={handleClose}
-            sx={{ color: (theme) => theme.palette.text.secondary }}
-          >
-            {openSideBar ? <MenuOpenIcon /> : <MenuIcon />}
-          </IconButton>
-        </Stack>
-      </BoxClickAble>
-
-      <Stack direction="column">
-        <SearchButton />
-        <Divider />
-
-        <SettingButton />
-        <Divider />
-
-        <BoxClickAble
-          sx={{
-            justifyContent: "flex-start",
-            gap: "10px",
-            alignItems: "center",
-          }}
-          onClick={() => void handleNewPageBtn()}
-          disabled={createPageLoading}
-        >
-          {createPageLoading ? (
-            <CircularProgress
-              size="16px"
-              sx={{ color: (theme) => theme.palette.text.primary }}
-            />
-          ) : (
-            <AddIcon fontSize="small" />
-          )}
-          <Typography variant="body2">{t("newPage")}</Typography>
-        </BoxClickAble>
+        </SimpleBar>
       </Stack>
-      <Divider />
-
-      <UserPageList openList={openList} setOpenList={setOpenList} />
-      <Divider />
-
-      {openList && (
-        <Pagination
-          page={pagination.page}
-          handleChangePage={(page) => {
-            setPagination(page, data?.nextCursor);
-          }}
-          totalPage={data?.total || 1}
-        />
-      )}
 
       <BoxClickAble
         sx={{
           justifyContent: "flex-start",
           gap: "10px",
           alignItems: "center",
+          flex: 0,
         }}
         onClick={handleLogout}
       >

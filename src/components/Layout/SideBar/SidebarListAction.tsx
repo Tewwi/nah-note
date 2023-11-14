@@ -12,10 +12,11 @@ import { handleUnauthorize } from "~/utils/constant";
 interface IProps {
   id: string;
   handleReloadData: () => Promise<void>;
+  authorId: string;
 }
 
 const SidebarListAction = (props: IProps) => {
-  const { id, handleReloadData } = props;
+  const { id, handleReloadData, authorId } = props;
   const { t } = useTranslation();
   const router = useRouter();
   const { mutateAsync: deletePage, isLoading: deleteLoading } =
@@ -23,6 +24,7 @@ const SidebarListAction = (props: IProps) => {
       onError: (err) =>
         handleUnauthorize(getTRPCErrorFromUnknown(err).code, router),
     });
+  const { data: currUser } = api.user.getCurrUserDetail.useQuery();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [permissionDialog, setPermissionDialog] = useState(false);
@@ -51,6 +53,7 @@ const SidebarListAction = (props: IProps) => {
         onClick={(e) => {
           handleOpenPopper(e.currentTarget);
         }}
+        disabled={currUser?.id !== authorId}
       >
         <MoreHorizIcon fontSize="small" />
       </IconButton>

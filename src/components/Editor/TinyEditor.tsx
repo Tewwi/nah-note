@@ -85,7 +85,6 @@ const TinyEditor = (props: Props) => {
           placeholder: "This is place ho ho ho",
           fix_list_elements: true,
           force_br_newlines: true,
-          force_p_newlines: false,
           init_instance_callback: function () {
             const freeTiny = document.querySelector(".tox-tinymce-aux") as any;
             if (freeTiny) {

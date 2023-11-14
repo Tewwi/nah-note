@@ -51,4 +51,5 @@ export const en = {
   searchPlaceholder: "Type title of page to search",
   addSuccess: "Add Success",
   permissionPlaceholder: "Type username",
+  pagesShare: "Share with me",
 };

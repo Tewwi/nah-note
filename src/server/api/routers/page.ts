@@ -265,4 +265,42 @@ export const pageRouter = createTRPCRouter({
         });
       }
     }),
+  findByPermissionId: privateProcedure
+    .input(z.object({ cursor: z.string().nullish(), page: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const { cursor, page } = input;
+      const limit = itemPerPage * page;
+      let nextCursor: typeof cursor | undefined = undefined;
+
+      try {
+        const page = await ctx.prisma.page.findMany({
+          where: {
+            permissionId: { has: ctx.currUser.id },
+          },
+          cursor: cursor ? { id: cursor } : undefined,
+        });
+
+        if (page.length > limit) {
+          const nextItem = page.pop();
+          nextCursor = nextItem!.id;
+        }
+
+        const total = await ctx.prisma.page.count({
+          where: {
+            permissionId: { has: ctx.currUser.id },
+          },
+        });
+
+        return {
+          resp: page,
+          nextCursor,
+          total,
+        };
+      } catch (error) {
+        throw new TRPCError({
+          message: i18n.t("somethingWrong"),
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+    }),
 });

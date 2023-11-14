@@ -92,14 +92,16 @@ const SettingPermissionDialog = (props: IProps) => {
               overflowY: "auto",
             }}
           >
-            {userList?.map((user) => (
-              <PermissionUserItem
-                key={user.id}
-                handleAddUser={handleAddUser}
-                data={user as User}
-                hidden={includes(pageData?.permissionId, user.id)}
-              />
-            ))}
+            {userList
+              ?.filter((item) => item.id !== pageData?.authorId)
+              .map((user) => (
+                <PermissionUserItem
+                  key={user.id}
+                  handleAddUser={handleAddUser}
+                  data={user as User}
+                  hidden={includes(pageData?.permissionId, user.id)}
+                />
+              ))}
           </Stack>
         </Stack>
       </DialogContent>
