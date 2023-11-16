@@ -189,7 +189,14 @@ export const pageRouter = createTRPCRouter({
       try {
         const resp = await ctx.prisma.page.findMany({
           where: {
-            authorId: ctx.currUser.id,
+            OR: [
+              {
+                permissionId: { has: ctx.currUser.id },
+              },
+              {
+                authorId: ctx.currUser.id,
+              },
+            ],
             title: {
               contains: input.query,
               mode: "insensitive",

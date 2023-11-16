@@ -18,7 +18,6 @@ import { api } from "~/utils/api";
 import BoxClickAble from "../../Common/BoxClickAble";
 import SidebarListAction from "./SidebarListAction";
 import Pagination from "~/components/Common/Pagination/Pagination";
-import { itemPerPage } from "~/server/constant";
 
 interface IProps {
   openList: boolean;
@@ -128,7 +127,7 @@ const UserPageList = (props: IProps) => {
             );
           })}
 
-          {data && data?.total > itemPerPage && (
+          {data && data?.total > 1 && (
             <Pagination
               page={pagination.page}
               handleChangePage={(page) => {

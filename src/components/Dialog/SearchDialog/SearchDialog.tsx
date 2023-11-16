@@ -71,7 +71,7 @@ const SearchDialog = (props: IProps) => {
       </Stack>
       <Divider />
 
-      <SimpleBar>
+      <SimpleBar style={{ maxHeight: "250px" }}>
         <Stack>
           {data?.map((item) => {
             return (

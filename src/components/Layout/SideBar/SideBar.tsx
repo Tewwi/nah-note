@@ -83,8 +83,8 @@ const SideBar = (props: Props) => {
         height: "100%",
       }}
     >
-      <Stack flex={1}>
-        <SimpleBar>
+      <SimpleBar style={{ maxHeight: "92%" }}>
+        <Stack flex={1} sx={{ maxHeight: "100%", overflow: "auto" }}>
           <Stack height="100%">
             <BoxClickAble sx={{ p: 1.25, height: "auto" }} component="div">
               <Stack
@@ -157,8 +157,8 @@ const SideBar = (props: Props) => {
             <UserPageList openList={openList} setOpenList={setOpenList} />
             <Divider />
           </Stack>
-        </SimpleBar>
-      </Stack>
+        </Stack>
+      </SimpleBar>
 
       <BoxClickAble
         sx={{
