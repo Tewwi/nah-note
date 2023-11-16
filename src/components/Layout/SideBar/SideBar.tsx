@@ -21,7 +21,7 @@ import ImageLoading from "../../Common/Image/ImageLoading";
 import SearchButton from "./SearchButton";
 import SettingButton from "./SettingButton";
 import SimpleBar from "simplebar-react";
-import UserPageList from "./UserPageList";
+import UserPageList from "./userPageList";
 import UserPageShareList from "./UserPageShareList";
 
 interface Props {
@@ -59,7 +59,7 @@ const SideBar = (props: Props) => {
 
   useEffect(() => {
     if (isError && error.message === "jwt malformed") {
-      void router.push("/auth/login");
+      void router.push("/dashboard");
     }
   }, [error, isError, router]);
 
