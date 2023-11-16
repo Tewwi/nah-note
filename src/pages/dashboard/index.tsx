@@ -7,9 +7,11 @@ import { useRouter } from "next/router";
 import { blue } from "~/theme/colors";
 import Image from "next/image";
 import { homepageImgUrl } from "~/utils/constant";
+import { useTranslation } from "react-i18next";
 
 const DashboardPage = () => {
   const router = useRouter();
+  const { t } = useTranslation();
 
   return (
     <>
@@ -53,7 +55,7 @@ const DashboardPage = () => {
                   },
                 }}
               >
-                Start now{" "}
+                {t("startNow")}
               </Typography>
             </Button>
           </Stack>
@@ -100,7 +102,7 @@ const DashboardPage = () => {
             className={style.typing_demo}
             sx={{ m: "auto", color: "black" }}
           >
-            Start note something for yourself
+            {t("homePageText")}
           </Typography>
           <Stack margin="auto">
             <Image

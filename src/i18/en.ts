@@ -53,4 +53,6 @@ export const en = {
   permissionPlaceholder: "Type username",
   pagesShare: "Share with me",
   editorHolder: "Type some note",
+  homePageText: "Start note something for yourself",
+  startNow: "Start Now",
 };

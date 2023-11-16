@@ -51,4 +51,6 @@ export const vi = {
   permissionPlaceholder: "Nhập tên người dùng",
   pagesShare: "Chia sẻ với tôi",
   editorHolder: "Nhập nội dung",
+  homePageText: "Tạo lên một ghi chú cho riêng mình",
+  startNow: "Bắt đầu",
 };

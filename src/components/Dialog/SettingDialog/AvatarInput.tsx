@@ -42,6 +42,7 @@ const AvatarInput = (props: IProps) => {
         sx={{
           position: "absolute",
           textAlign: "center",
+          color: (theme) => theme.palette.common.white,
         }}
         open={isHover}
         onClick={(e) => {

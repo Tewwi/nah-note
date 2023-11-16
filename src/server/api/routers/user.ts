@@ -48,10 +48,18 @@ export const userRouter = createTRPCRouter({
           },
         });
 
-        await ctx.prisma.page.create({
+        const newPage = await ctx.prisma.page.create({
           data: {
             title: "Untitled",
             authorId: userCreateResp.id,
+          },
+        });
+
+        await ctx.prisma.block.create({
+          data: {
+            pageId: newPage.id,
+            content: "",
+            type: "text",
           },
         });
 
