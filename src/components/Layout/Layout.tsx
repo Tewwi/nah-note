@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { handleCheckHiddenLayout } from "~/utils/common";
 import SideBar from "./SideBar/SideBar";
+import PageInfoSection from "./SideBar/PageInfoSection";
 
 const Layout = (props: React.PropsWithChildren) => {
   const router = useRouter();
@@ -47,20 +48,29 @@ const Layout = (props: React.PropsWithChildren) => {
               backgroundColor: (theme) => theme.palette.background.paper,
             }}
           >
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              sx={{
-                mr: 2,
-                display: openSideBar ? "none" : "inline-flex",
-                color: (theme) => theme.palette.text.secondary,
-              }}
-              onClick={() => setOpenSideBar(true)}
+            <Stack
+              justifyContent={openSideBar ? "flex-end" : "space-between"}
+              width="100%"
+              direction="row"
             >
-              <MenuIcon />
-            </IconButton>
+              <IconButton
+                size="large"
+                edge="start"
+                color="inherit"
+                aria-label="menu"
+                sx={{
+                  mr: 2,
+                  display: openSideBar ? "none" : "inline-flex",
+                  color: (theme) => theme.palette.text.secondary,
+                }}
+                onClick={() => setOpenSideBar(true)}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Stack sx={{ width: "fit-content" }}>
+                <PageInfoSection />
+              </Stack>
+            </Stack>
           </Toolbar>
           {props.children}
         </div>
