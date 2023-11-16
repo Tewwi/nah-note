@@ -1,8 +1,3 @@
-
-.tox {
-  display: none !important;
-}
-
-.tox-tinymce-aux {
+.app > div[class*="tox-tinymce-aux"] {
   display: none !important;
 }

@@ -55,3 +55,6 @@ export const handleUnauthorize = (
     void router.push("/");
   }
 };
+
+export const homepageImgUrl =
+  "https://res.cloudinary.com/dqlcjscsz/image/upload/v1700119190/store/bgNahtion_kg6q6e.svg";

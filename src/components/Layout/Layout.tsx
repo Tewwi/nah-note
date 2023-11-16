@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import MenuIcon from "@mui/icons-material/Menu";
 import { AppBar, Collapse, IconButton, Stack, Toolbar } from "@mui/material";
-import { includes } from "lodash";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { handleCheckHiddenLayout } from "~/utils/common";
 import SideBar from "./SideBar/SideBar";
 
 const Layout = (props: React.PropsWithChildren) => {
@@ -16,7 +16,7 @@ const Layout = (props: React.PropsWithChildren) => {
     }
   }, []);
 
-  if (includes(router.pathname, "auth")) {
+  if (handleCheckHiddenLayout(router.pathname)) {
     return <>{props.children}</>;
   }
 
