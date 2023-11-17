@@ -33,8 +33,11 @@ const SettingPermissionDialog = (props: IProps) => {
   const { data: pageData } = api.page.getPageById.useQuery({
     id: id,
   });
-  const { data: userList, mutateAsync: searchUser } =
-    api.user.searchUserByName.useMutation();
+  const {
+    data: userList,
+    mutateAsync: searchUser,
+    reset,
+  } = api.user.searchUserByName.useMutation();
   const { mutateAsync: updatePermission } =
     api.page.setPermissionPage.useMutation({
       onError: (err) =>
@@ -42,7 +45,10 @@ const SettingPermissionDialog = (props: IProps) => {
     });
 
   const handleSearchUser = debounce(async (value: string) => {
-    await searchUser({ query: value });
+    await searchUser({
+      query: value,
+      permissionList: pageData?.permissionId || [],
+    });
   });
 
   const handleAddUser = async (userId: string) => {
@@ -64,6 +70,11 @@ const SettingPermissionDialog = (props: IProps) => {
         sx: {
           height: "320px",
           p: 1,
+        },
+      }}
+      TransitionProps={{
+        onExit: () => {
+          reset();
         },
       }}
     >

@@ -178,6 +178,7 @@ export const userRouter = createTRPCRouter({
     .input(
       z.object({
         query: z.string(),
+        permissionList: z.array(z.string()),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -187,6 +188,9 @@ export const userRouter = createTRPCRouter({
             userName: {
               contains: input.query,
               mode: "insensitive",
+            },
+            NOT: {
+              id: { in: input.permissionList },
             },
           },
           select: {

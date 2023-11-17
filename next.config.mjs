@@ -18,7 +18,18 @@ const config = {
     defaultLocale: "en",
   },
   images: {
-    domains: ["res.cloudinary.com", "images.unsplash.com", "plus.unsplash.com"],
+    domains: [
+      "res.cloudinary.com",
+      "images.unsplash.com",
+      "plus.unsplash.com",
+      "i.pinimg.com",
+    ],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
   },
   webpack: (config) => {
     config.infrastructureLogging = {

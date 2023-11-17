@@ -52,6 +52,7 @@ const Layout = (props: React.PropsWithChildren) => {
               justifyContent={openSideBar ? "flex-end" : "space-between"}
               width="100%"
               direction="row"
+              alignItems="center"
             >
               <IconButton
                 size="large"
