@@ -55,4 +55,8 @@ export const en = {
   editorHolder: "Type some note",
   homePageText: "Start note something for yourself",
   startNow: "Start Now",
+  changePassword: "Change Password",
+  changePasswordSuccess: "Change Password Success",
+  newPassword: "New Password",
+  confirmNewPass: "Confirm New Password",
 };

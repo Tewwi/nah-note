@@ -206,4 +206,37 @@ export const userRouter = createTRPCRouter({
         });
       }
     }),
+  changePassword: privateProcedure
+    .input(
+      z.object({
+        oldPassword: z.string(),
+        newPassword: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const checkPassword = await bcrypt.compare(
+        input.oldPassword,
+        ctx.currUser.password
+      );
+
+      if (!checkPassword) {
+        throw new TRPCError({
+          message: i18n.t("confirmPasswordError"),
+          code: "UNAUTHORIZED",
+        });
+      }
+
+      const salt = await bcrypt.genSalt();
+      const newPassword = await bcrypt.hash(input.newPassword, salt);
+      await handleTryCatchApiAction(async () => {
+        await ctx.prisma.user.update({
+          where: {
+            id: ctx.currUser.id,
+          },
+          data: {
+            password: newPassword,
+          },
+        });
+      });
+    }),
 });

@@ -3,6 +3,7 @@ import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AccountTab from "./AccountTab";
 import SettingTab from "./SettingTab";
+import ChangePasswordTab from "./ChangePasswordTab";
 
 interface IProps {
   open: boolean;
@@ -25,6 +26,10 @@ const SettingDialog = (props: IProps) => {
         value: 1,
         label: t("mySetting"),
       },
+      {
+        value: 2,
+        label: t("changePassword"),
+      },
     ];
   }, [t]);
 
@@ -39,6 +44,11 @@ const SettingDialog = (props: IProps) => {
       onClose={onClose}
       PaperProps={{
         sx: { minHeight: "320px" },
+      }}
+      TransitionProps={{
+        onExited: () => {
+          setTab(0);
+        },
       }}
     >
       <Stack direction={isMobile ? "column" : "row"}>
@@ -61,6 +71,8 @@ const SettingDialog = (props: IProps) => {
         {tab === 0 && <AccountTab />}
 
         {tab === 1 && <SettingTab />}
+
+        {tab === 2 && <ChangePasswordTab onClose={onClose} />}
       </Stack>
     </Dialog>
   );

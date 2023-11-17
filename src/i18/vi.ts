@@ -53,4 +53,8 @@ export const vi = {
   editorHolder: "Nhập nội dung",
   homePageText: "Tạo lên một ghi chú cho riêng mình",
   startNow: "Bắt đầu",
+  changePassword: "Đổi mật khẩu",
+  changePasswordSuccess: "Đổi mật khẩu thành công",
+  newPassword: "Mật khẩu mới",
+  confirmNewPass: "Nhập lại mật khẩu",
 };
