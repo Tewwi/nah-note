@@ -57,4 +57,7 @@ export const vi = {
   changePasswordSuccess: "Đổi mật khẩu thành công",
   newPassword: "Mật khẩu mới",
   confirmNewPass: "Nhập lại mật khẩu",
+  comment: "Bình luận",
+  commentOf: "Bình luận của",
+  commentHolder: "Nhập bình luận của bạn",
 };

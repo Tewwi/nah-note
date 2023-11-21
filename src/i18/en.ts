@@ -59,4 +59,7 @@ export const en = {
   changePasswordSuccess: "Change Password Success",
   newPassword: "New Password",
   confirmNewPass: "Confirm New Password",
+  comment: "Comment",
+  commentOf: "Comment of",
+  commentHolder: "Enter your comment",
 };

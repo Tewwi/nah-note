@@ -12,27 +12,29 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  email    String @unique
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  email    String    @unique
   userName String
   password String
-  avatar   String @default("https://res.cloudinary.com/dqlcjscsz/image/upload/v1690958315/blog/default-avatar_v6uu8y.jpg")
+  avatar   String    @default("https://res.cloudinary.com/dqlcjscsz/image/upload/v1690958315/blog/default-avatar_v6uu8y.jpg")
   Page     Page[]
+  comment  Comment[]
 }
 
 model Page {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
   blocks          Block[]
-  title           String?  @default("Untitled")
-  author          User     @relation(fields: [authorId], references: [id])
-  authorId        String   @db.ObjectId
-  permissionId    String[] @db.ObjectId
-  parent          Page?    @relation("ParentChild", fields: [parentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  parentId        String?  @db.ObjectId
-  children        Page[]   @relation("ParentChild")
+  title           String?   @default("Untitled")
+  author          User      @relation(fields: [authorId], references: [id])
+  authorId        String    @db.ObjectId
+  permissionId    String[]  @db.ObjectId
+  parent          Page?     @relation("ParentChild", fields: [parentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  parentId        String?   @db.ObjectId
+  children        Page[]    @relation("ParentChild")
   emoji           String?
   backgroundCover String?
-  createDate      DateTime @default(now())
+  createDate      DateTime  @default(now())
+  comment         Comment[]
 }
 
 model Block {
@@ -44,4 +46,13 @@ model Block {
   todo_checked Boolean @default(false)
   height       String? @default("200")
   width        String? @default("300")
+}
+
+model Comment {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  content  String
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String @db.ObjectId
+  page     Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  pageId   String @db.ObjectId
 }

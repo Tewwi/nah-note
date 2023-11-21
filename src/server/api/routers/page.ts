@@ -114,6 +114,11 @@ export const pageRouter = createTRPCRouter({
             children: true,
             author: true,
             blocks: true,
+            comment: {
+              include: {
+                author: true,
+              },
+            },
           },
         });
         handleCheckPermission(ctx.currUser.id, resp as Page);

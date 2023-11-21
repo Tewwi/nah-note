@@ -21,7 +21,7 @@ const ImageBlockItem = (props: IProps) => {
     );
   }
 
-  return <ImageResizeAble blockData={blockData} />;
+  return <ImageResizeAble disable={disable} blockData={blockData} />;
 };
 
 export default ImageBlockItem;

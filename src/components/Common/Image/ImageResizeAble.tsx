@@ -7,6 +7,7 @@ import { api } from "~/utils/api";
 
 interface IProps {
   blockData: Block;
+  disable: boolean;
 }
 
 const ImageResizeAble = (props: IProps) => {
@@ -26,6 +27,7 @@ const ImageResizeAble = (props: IProps) => {
         border: `solid 1px ${theme.palette.background.paper}`,
         backgroundColor: "transparent",
       }}
+      enable={props.disable ? false : undefined}
       size={{ width, height }}
       onResizeStop={(e, direction, ref) => {
         const newHeight = ref.offsetHeight.toString();
