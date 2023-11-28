@@ -12,7 +12,7 @@ import PageHeader from "~/components/PageComponent/PageHeader";
 import PageLoading from "~/components/PageComponent/PageLoading";
 import type { IPageForm } from "~/interface/IPage";
 import { api } from "~/utils/api";
-import { handleUnauthorize } from "~/utils/constant";
+import { Role, handleUnauthorize } from "~/utils/constant";
 
 const PageDetail = () => {
   const router = useRouter();
@@ -40,6 +40,10 @@ const PageDetail = () => {
   const currData = watch();
 
   const isAuthor = useMemo(() => {
+    if (currUserInfo?.role === Role.ADMIN.value) {
+      return true;
+    }
+
     return currUserInfo?.id === data?.authorId;
   }, [currUserInfo?.id, data?.authorId]);
 

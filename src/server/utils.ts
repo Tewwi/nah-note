@@ -7,9 +7,10 @@ import { appRouter } from "~/server/api/root";
 import { prisma } from "./db";
 import { TRPCError } from "@trpc/server";
 import type { NextApiResponse } from "next";
-import type { Page } from "@prisma/client";
+import type { Page, User } from "@prisma/client";
 import { includes } from "lodash";
 import i18n from "~/i18/config";
+import { Role } from "~/utils/constant";
 
 export const signCloud = (folderName?: string) => {
   // TODO: CHECK TO MAKE SURE AUTHENTICATED
@@ -56,9 +57,13 @@ export const handleTryCatchApiAction = async (
   }
 };
 
-export const handleCheckPermission = (userId: string, page: Page) => {
+export const handleCheckPermission = (userInfo: User, page: Page) => {
+  if (userInfo.role === Role.ADMIN.value) {
+    return true;
+  }
+
   const isHavePermission =
-    page.authorId === userId || includes(page.permissionId, userId);
+    page.authorId === userInfo.id || includes(page.permissionId, userInfo.id);
 
   if (!isHavePermission) {
     throw new TRPCError({

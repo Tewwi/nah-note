@@ -62,4 +62,6 @@ export const en = {
   comment: "Comment",
   commentOf: "Comment of",
   commentHolder: "Enter your comment",
+  userListing: "User Listing",
+  pageListing: "Page Listing",
 };

@@ -58,3 +58,14 @@ export const handleUnauthorize = (
 
 export const homepageImgUrl =
   "https://res.cloudinary.com/dqlcjscsz/image/upload/v1700119190/store/bgNahtion_kg6q6e.svg";
+
+export const Role = {
+  ADMIN: {
+    value: 0,
+    name: "Admin",
+  },
+  USER: {
+    value: 1,
+    name: "User",
+  },
+};

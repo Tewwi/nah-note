@@ -17,7 +17,7 @@ export const commentRouter = createTRPCRouter({
           id: input.pageId,
         },
       });
-      handleCheckPermission(ctx.currUser.id, page as Page);
+      handleCheckPermission(ctx.currUser, page as Page);
 
       await handleTryCatchApiAction(async () => {
         await ctx.prisma.comment.create({
@@ -37,7 +37,7 @@ export const commentRouter = createTRPCRouter({
           id: input.pageId,
         },
       });
-      handleCheckPermission(ctx.currUser.id, page as Page);
+      handleCheckPermission(ctx.currUser, page as Page);
 
       await handleTryCatchApiAction(async () => {
         await ctx.prisma.comment.delete({

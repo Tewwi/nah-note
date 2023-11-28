@@ -60,4 +60,6 @@ export const vi = {
   comment: "Bình luận",
   commentOf: "Bình luận của",
   commentHolder: "Nhập bình luận của bạn",
+  userListing: "Danh sách người dùng",
+  pageListing: "Danh sách trang nhớ",
 };

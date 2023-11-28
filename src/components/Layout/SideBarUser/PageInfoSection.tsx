@@ -34,7 +34,7 @@ const PageInfoSection = () => {
     await refetch();
   };
 
-  if (!data) {
+  if (!id || !data) {
     return <></>;
   }
 

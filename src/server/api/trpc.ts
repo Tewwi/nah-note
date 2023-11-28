@@ -11,6 +11,7 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { prisma } from "~/server/db";
+import { Role } from "~/utils/constant";
 import { verifyUser } from "~/utils/jwtHelper";
 
 /**
@@ -128,4 +129,32 @@ const enforceUserIsAuth = t.middleware(async ({ ctx, next }) => {
   });
 });
 
+const enforceUserIsAdmin = t.middleware(async ({ ctx, next }) => {
+  const { token } = ctx;
+
+  const { id } = <{ id: string }>verifyUser(token || "");
+  if (!token) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "UNAUTHORIZED" });
+  }
+
+  const currUser = await prisma.user
+    .findUnique({
+      where: { id: id },
+    })
+    .catch(() => {
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "UNAUTHORIZED" });
+    });
+
+  if (!currUser || currUser.role !== Role.ADMIN.value) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "UNAUTHORIZED" });
+  }
+
+  return next({
+    ctx: {
+      currUser: currUser,
+    },
+  });
+});
+
 export const privateProcedure = t.procedure.use(enforceUserIsAuth);
+export const privateAdminProcedure = t.procedure.use(enforceUserIsAdmin);

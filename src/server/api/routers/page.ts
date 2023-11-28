@@ -1,6 +1,10 @@
 import { TRPCError, getTRPCErrorFromUnknown } from "@trpc/server";
 import { z } from "zod";
-import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  privateAdminProcedure,
+  privateProcedure,
+} from "~/server/api/trpc";
 import { itemPerPage } from "~/server/constant";
 import i18n from "i18next";
 import { handleCheckPermission } from "~/server/utils";
@@ -121,7 +125,7 @@ export const pageRouter = createTRPCRouter({
             },
           },
         });
-        handleCheckPermission(ctx.currUser.id, resp as Page);
+        handleCheckPermission(ctx.currUser, resp as Page);
 
         return resp;
       } catch (error) {
@@ -136,7 +140,7 @@ export const pageRouter = createTRPCRouter({
     .input(schemaPage)
     .mutation(async ({ ctx, input }) => {
       const { id, ...restData } = input;
-      handleCheckPermission(ctx.currUser.id, input as Page);
+      handleCheckPermission(ctx.currUser, input as Page);
 
       try {
         const resp = await ctx.prisma.page.update({
@@ -165,7 +169,7 @@ export const pageRouter = createTRPCRouter({
             id: input.id,
           },
         });
-        handleCheckPermission(ctx.currUser.id, pageInfo as Page);
+        handleCheckPermission(ctx.currUser, pageInfo as Page);
 
         const resp = await ctx.prisma.page.delete({
           where: {
@@ -229,7 +233,7 @@ export const pageRouter = createTRPCRouter({
           },
         });
 
-        handleCheckPermission(ctx.currUser.id, page as Page);
+        handleCheckPermission(ctx.currUser, page as Page);
         const permissionArray = page?.permissionId
           ? [...page.permissionId, userIds]
           : [userIds];
@@ -259,7 +263,7 @@ export const pageRouter = createTRPCRouter({
           },
         });
 
-        handleCheckPermission(ctx.currUser.id, res as Page);
+        handleCheckPermission(ctx.currUser, res as Page);
         return await ctx.prisma.user.findMany({
           where: {
             id: { in: res?.permissionId },
@@ -307,6 +311,42 @@ export const pageRouter = createTRPCRouter({
           resp: page,
           nextCursor,
           total,
+        };
+      } catch (error) {
+        throw new TRPCError({
+          message: i18n.t("somethingWrong"),
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+    }),
+  getAllPages: privateAdminProcedure
+    .input(
+      z.object({
+        page: z.number(),
+        cursor: z.string().nullish(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { page, cursor } = input;
+      const limit = itemPerPage * page;
+      let nextCursor: typeof cursor | undefined = undefined;
+
+      try {
+        const resp = await ctx.prisma.page.findMany({
+          take: limit + 1,
+          cursor: cursor ? { id: cursor } : undefined,
+        });
+
+        const total = await ctx.prisma.page.count();
+        if (resp.length > limit) {
+          const nextItem = resp.pop();
+          nextCursor = nextItem!.id;
+        }
+
+        return {
+          data: resp,
+          nextCursor,
+          total: Math.ceil(total / itemPerPage),
         };
       } catch (error) {
         throw new TRPCError({

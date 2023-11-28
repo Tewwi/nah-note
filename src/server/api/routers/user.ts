@@ -5,9 +5,11 @@ import i18n from "i18next";
 import { z } from "zod";
 import {
   createTRPCRouter,
+  privateAdminProcedure,
   privateProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { itemPerPage } from "~/server/constant";
 import { handleTryCatchApiAction, signCloud } from "~/server/utils";
 import { defaultAvatar } from "~/utils/constant";
 import { createToken } from "~/utils/jwtHelper";
@@ -238,5 +240,41 @@ export const userRouter = createTRPCRouter({
           },
         });
       });
+    }),
+  getAllUser: privateAdminProcedure
+    .input(
+      z.object({
+        page: z.number(),
+        cursor: z.string().nullish(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { page, cursor } = input;
+      const limit = itemPerPage * page;
+      let nextCursor: typeof cursor | undefined = undefined;
+
+      try {
+        const resp = await ctx.prisma.user.findMany({
+          take: limit + 1,
+          cursor: cursor ? { id: cursor } : undefined,
+        });
+
+        const total = await ctx.prisma.user.count();
+        if (resp.length > limit) {
+          const nextItem = resp.pop();
+          nextCursor = nextItem!.id;
+        }
+
+        return {
+          data: resp,
+          nextCursor,
+          total: Math.ceil(total / itemPerPage),
+        };
+      } catch (error) {
+        throw new TRPCError({
+          message: i18n.t("somethingWrong"),
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
     }),
 });

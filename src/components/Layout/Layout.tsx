@@ -4,12 +4,16 @@ import { AppBar, Collapse, IconButton, Stack, Toolbar } from "@mui/material";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { handleCheckHiddenLayout } from "~/utils/common";
-import SideBar from "./SideBar/SideBar";
-import PageInfoSection from "./SideBar/PageInfoSection";
+import SideBarUser from "./SideBarUser/SideBarUser";
+import PageInfoSection from "./SideBarUser/PageInfoSection";
+import { api } from "~/utils/api";
+import { Role } from "~/utils/constant";
+import SideBarAdmin from "./SideBarAdmin/SideBarAdmin";
 
 const Layout = (props: React.PropsWithChildren) => {
   const router = useRouter();
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
+  const { data: userInfo } = api.user.getCurrUserDetail.useQuery();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -33,10 +37,17 @@ const Layout = (props: React.PropsWithChildren) => {
           in={openSideBar}
           sx={{ height: "100vh" }}
         >
-          <SideBar
-            openSideBar={openSideBar}
-            handleClose={() => setOpenSideBar(false)}
-          />
+          {userInfo?.role === Role.USER.value ? (
+            <SideBarUser
+              openSideBar={openSideBar}
+              handleClose={() => setOpenSideBar(false)}
+            />
+          ) : (
+            <SideBarAdmin
+              openSideBar={openSideBar}
+              handleClose={() => setOpenSideBar(false)}
+            />
+          )}
         </Collapse>
 
         <div style={{ flex: 1 }}>

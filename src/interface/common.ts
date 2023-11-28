@@ -27,3 +27,5 @@ export interface ISettingSelectItem {
   label: string;
   value: string;
 }
+
+export type OrderType = "asc" | "desc";

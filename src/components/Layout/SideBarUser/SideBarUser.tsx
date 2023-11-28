@@ -29,7 +29,7 @@ interface Props {
   handleClose: () => void;
 }
 
-const SideBar = (props: Props) => {
+const SideBarUser = (props: Props) => {
   const { openSideBar, handleClose } = props;
   const router = useRouter();
   const { handleCreateNewPage, createPageLoading } = useCrudPage();
@@ -181,4 +181,4 @@ const SideBar = (props: Props) => {
   );
 };
 
-export default SideBar;
+export default SideBarUser;
