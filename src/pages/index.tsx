@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import PageLoading from "~/components/PageComponent/PageLoading";
 import { api } from "~/utils/api";
+import { Role } from "~/utils/constant";
 
 // export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 //   const token = getCookie("token", { req, res });
@@ -26,13 +27,18 @@ import { api } from "~/utils/api";
 
 export default function Home() {
   const { data: userPages } = api.page.getPageByCurrUser.useQuery({ page: 1 });
+  const { data: userInfo } = api.user.getCurrUserDetail.useQuery();
   const router = useRouter();
 
   useEffect(() => {
     if (userPages?.resp) {
-      void router.replace(`page/${userPages?.resp[0]?.id}`);
+      if (userInfo?.role === Role.USER.value) {
+        void router.replace(`page/${userPages?.resp[0]?.id}`);
+      } else {
+        void router.replace(`admin/user_listing`);
+      }
     }
-  }, [router, userPages?.resp]);
+  }, [router, userInfo?.role, userPages?.resp]);
 
   return <PageLoading />;
 }

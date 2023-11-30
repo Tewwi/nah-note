@@ -1,19 +1,17 @@
+import ContactPageIcon from "@mui/icons-material/ContactPage";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import { Divider, Drawer, IconButton, Stack, Typography } from "@mui/material";
 import { deleteCookie } from "cookies-next";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import SimpleBar from "simplebar-react";
 import { api } from "~/utils/api";
 import BoxClickAble from "../../Common/BoxClickAble";
 import ImageLoading from "../../Common/Image/ImageLoading";
 import SettingButton from "../SideBarUser/SettingButton";
-import ContactPageIcon from "@mui/icons-material/ContactPage";
-import { Role } from "~/utils/constant";
-import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 
 interface Props {
   openSideBar: boolean;
@@ -24,27 +22,12 @@ const SideBarAdmin = (props: Props) => {
   const { openSideBar, handleClose } = props;
   const router = useRouter();
   const { t } = useTranslation();
-  const {
-    data: userInfo,
-    isLoading,
-    isError,
-    error,
-  } = api.user.getCurrUserDetail.useQuery();
+  const { data: userInfo, isLoading } = api.user.getCurrUserDetail.useQuery();
 
   const handleLogout = () => {
     deleteCookie("token");
-    router.reload();
+    void router.push("/dashboard");
   };
-
-  useEffect(() => {
-    if (userInfo?.role !== Role.ADMIN.value) {
-      void router.push("/");
-    }
-
-    if (isError && error.message === "jwt malformed") {
-      void router.push("/dashboard");
-    }
-  }, [error, isError, router, userInfo?.role]);
 
   return (
     <Drawer

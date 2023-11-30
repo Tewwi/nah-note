@@ -4,11 +4,10 @@ import { AppBar, Collapse, IconButton, Stack, Toolbar } from "@mui/material";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { handleCheckHiddenLayout } from "~/utils/common";
-import SideBarUser from "./SideBarUser/SideBarUser";
+import SideBarByRole from "./SideBarByRole";
 import PageInfoSection from "./SideBarUser/PageInfoSection";
 import { api } from "~/utils/api";
 import { Role } from "~/utils/constant";
-import SideBarAdmin from "./SideBarAdmin/SideBarAdmin";
 
 const Layout = (props: React.PropsWithChildren) => {
   const router = useRouter();
@@ -37,17 +36,10 @@ const Layout = (props: React.PropsWithChildren) => {
           in={openSideBar}
           sx={{ height: "100vh" }}
         >
-          {userInfo?.role === Role.USER.value ? (
-            <SideBarUser
-              openSideBar={openSideBar}
-              handleClose={() => setOpenSideBar(false)}
-            />
-          ) : (
-            <SideBarAdmin
-              openSideBar={openSideBar}
-              handleClose={() => setOpenSideBar(false)}
-            />
-          )}
+          <SideBarByRole
+            openSideBar={openSideBar}
+            handleClose={() => setOpenSideBar(false)}
+          />
         </Collapse>
 
         <div style={{ flex: 1 }}>
@@ -80,7 +72,7 @@ const Layout = (props: React.PropsWithChildren) => {
                 <MenuIcon />
               </IconButton>
               <Stack sx={{ width: "fit-content" }}>
-                <PageInfoSection />
+                {userInfo?.role === Role.USER.value && <PageInfoSection />}
               </Stack>
             </Stack>
           </Toolbar>

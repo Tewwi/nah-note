@@ -24,12 +24,6 @@ const config = {
       "plus.unsplash.com",
       "i.pinimg.com",
     ],
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**",
-      },
-    ],
   },
   webpack: (config) => {
     config.infrastructureLogging = {

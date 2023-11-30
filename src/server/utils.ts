@@ -57,7 +57,7 @@ export const handleTryCatchApiAction = async (
   }
 };
 
-export const handleCheckPermission = (userInfo: User, page: Page) => {
+export const handleCheckPagePermission = (userInfo: User, page: Page) => {
   if (userInfo.role === Role.ADMIN.value) {
     return true;
   }
@@ -71,4 +71,15 @@ export const handleCheckPermission = (userInfo: User, page: Page) => {
       code: "UNAUTHORIZED",
     });
   }
+};
+
+export const handleCheckUserPermission = (
+  currUser: User,
+  targetUser: string
+) => {
+  if (currUser.role === Role.ADMIN.value) {
+    return true;
+  }
+
+  return currUser.id === targetUser;
 };

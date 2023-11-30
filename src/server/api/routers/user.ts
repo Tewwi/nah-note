@@ -10,8 +10,12 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 import { itemPerPage } from "~/server/constant";
-import { handleTryCatchApiAction, signCloud } from "~/server/utils";
-import { defaultAvatar } from "~/utils/constant";
+import {
+  handleCheckUserPermission,
+  handleTryCatchApiAction,
+  signCloud,
+} from "~/server/utils";
+import { Role, defaultAvatar } from "~/utils/constant";
 import { createToken } from "~/utils/jwtHelper";
 
 export const userRouter = createTRPCRouter({
@@ -159,6 +163,14 @@ export const userRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { id, ...info } = input;
+
+      if (!handleCheckUserPermission(ctx.currUser, id)) {
+        throw new TRPCError({
+          message: i18n.t("unauthorized"),
+          code: "UNAUTHORIZED",
+        });
+      }
+
       try {
         await ctx.prisma.user.update({
           where: {
@@ -246,17 +258,47 @@ export const userRouter = createTRPCRouter({
       z.object({
         page: z.number(),
         cursor: z.string().nullish(),
+        orderBy: z.string().optional().default("create_at"),
+        orderType: z.string().optional().default("asc"),
+        query: z.string().optional().default(""),
       })
     )
     .query(async ({ ctx, input }) => {
-      const { page, cursor } = input;
+      const { page, cursor, orderBy, orderType, query } = input;
       const limit = itemPerPage * page;
       let nextCursor: typeof cursor | undefined = undefined;
 
+      if (ctx.currUser.role !== Role.ADMIN.value) {
+        throw new TRPCError({
+          message: i18n.t("unauthorized"),
+          code: "UNAUTHORIZED",
+        });
+      }
+
       try {
         const resp = await ctx.prisma.user.findMany({
+          where: {
+            role: Role.USER.value,
+            OR: [
+              {
+                userName: {
+                  contains: query,
+                  mode: "insensitive",
+                },
+              },
+              {
+                email: {
+                  contains: query,
+                  mode: "insensitive",
+                },
+              },
+            ],
+          },
           take: limit + 1,
           cursor: cursor ? { id: cursor } : undefined,
+          orderBy: {
+            [orderBy]: orderType,
+          },
         });
 
         const total = await ctx.prisma.user.count();
@@ -276,5 +318,39 @@ export const userRouter = createTRPCRouter({
           code: "INTERNAL_SERVER_ERROR",
         });
       }
+    }),
+  changePasswordAdmin: privateAdminProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        password: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      await handleTryCatchApiAction(async () => {
+        const salt = await bcrypt.genSalt();
+        const newPassword = await bcrypt.hash(input.password, salt);
+        await handleTryCatchApiAction(async () => {
+          await ctx.prisma.user.update({
+            where: {
+              id: input.id,
+            },
+            data: {
+              password: newPassword,
+            },
+          });
+        });
+      });
+    }),
+  getUserDetailById: privateAdminProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const userData = await ctx.prisma.user.findUnique({
+        where: {
+          id: input,
+        },
+      });
+
+      return userData;
     }),
 });

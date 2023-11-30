@@ -29,3 +29,15 @@ export interface ISettingSelectItem {
 }
 
 export type OrderType = "asc" | "desc";
+
+export interface ISort {
+  orderType: OrderType;
+  orderBy: string;
+}
+
+export interface IColumn {
+  id: string;
+  label: string;
+  sort: boolean;
+  width?: string;
+}

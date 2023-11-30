@@ -7,7 +7,7 @@ import {
 } from "~/server/api/trpc";
 import { itemPerPage } from "~/server/constant";
 import i18n from "i18next";
-import { handleCheckPermission } from "~/server/utils";
+import { handleCheckPagePermission } from "~/server/utils";
 import type { Page } from "@prisma/client";
 
 const schemaPage = z.object({
@@ -125,7 +125,7 @@ export const pageRouter = createTRPCRouter({
             },
           },
         });
-        handleCheckPermission(ctx.currUser, resp as Page);
+        handleCheckPagePermission(ctx.currUser, resp as Page);
 
         return resp;
       } catch (error) {
@@ -140,7 +140,7 @@ export const pageRouter = createTRPCRouter({
     .input(schemaPage)
     .mutation(async ({ ctx, input }) => {
       const { id, ...restData } = input;
-      handleCheckPermission(ctx.currUser, input as Page);
+      handleCheckPagePermission(ctx.currUser, input as Page);
 
       try {
         const resp = await ctx.prisma.page.update({
@@ -169,7 +169,7 @@ export const pageRouter = createTRPCRouter({
             id: input.id,
           },
         });
-        handleCheckPermission(ctx.currUser, pageInfo as Page);
+        handleCheckPagePermission(ctx.currUser, pageInfo as Page);
 
         const resp = await ctx.prisma.page.delete({
           where: {
@@ -233,7 +233,7 @@ export const pageRouter = createTRPCRouter({
           },
         });
 
-        handleCheckPermission(ctx.currUser, page as Page);
+        handleCheckPagePermission(ctx.currUser, page as Page);
         const permissionArray = page?.permissionId
           ? [...page.permissionId, userIds]
           : [userIds];
@@ -263,7 +263,7 @@ export const pageRouter = createTRPCRouter({
           },
         });
 
-        handleCheckPermission(ctx.currUser, res as Page);
+        handleCheckPagePermission(ctx.currUser, res as Page);
         return await ctx.prisma.user.findMany({
           where: {
             id: { in: res?.permissionId },
@@ -324,10 +324,12 @@ export const pageRouter = createTRPCRouter({
       z.object({
         page: z.number(),
         cursor: z.string().nullish(),
+        sortBy: z.string().optional().default("createDate"),
+        orderType: z.string().optional().default("asc"),
       })
     )
     .query(async ({ ctx, input }) => {
-      const { page, cursor } = input;
+      const { page, cursor, sortBy, orderType } = input;
       const limit = itemPerPage * page;
       let nextCursor: typeof cursor | undefined = undefined;
 
@@ -335,6 +337,9 @@ export const pageRouter = createTRPCRouter({
         const resp = await ctx.prisma.page.findMany({
           take: limit + 1,
           cursor: cursor ? { id: cursor } : undefined,
+          orderBy: {
+            [sortBy]: orderType,
+          },
         });
 
         const total = await ctx.prisma.page.count();

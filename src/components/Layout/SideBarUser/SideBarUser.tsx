@@ -12,17 +12,17 @@ import {
 } from "@mui/material";
 import { deleteCookie } from "cookies-next";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import SimpleBar from "simplebar-react";
 import useCrudPage from "~/hook/useCrudPage";
 import { api } from "~/utils/api";
 import BoxClickAble from "../../Common/BoxClickAble";
 import ImageLoading from "../../Common/Image/ImageLoading";
 import SearchButton from "./SearchButton";
 import SettingButton from "./SettingButton";
-import SimpleBar from "simplebar-react";
-import UserPageList from "./userPageList";
 import UserPageShareList from "./UserPageShareList";
+import UserPageList from "./userPageList";
 
 interface Props {
   openSideBar: boolean;
@@ -34,12 +34,7 @@ const SideBarUser = (props: Props) => {
   const router = useRouter();
   const { handleCreateNewPage, createPageLoading } = useCrudPage();
   const { t } = useTranslation();
-  const {
-    data: userInfo,
-    isLoading,
-    isError,
-    error,
-  } = api.user.getCurrUserDetail.useQuery();
+  const { data: userInfo, isLoading } = api.user.getCurrUserDetail.useQuery();
 
   const [openList, setOpenList] = useState(false);
   const [openListShare, setOpenListShare] = useState(false);
@@ -56,12 +51,6 @@ const SideBarUser = (props: Props) => {
     deleteCookie("token");
     router.reload();
   };
-
-  useEffect(() => {
-    if (isError && error.message === "jwt malformed") {
-      void router.push("/dashboard");
-    }
-  }, [error, isError, router]);
 
   return (
     <Drawer

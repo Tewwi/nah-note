@@ -69,3 +69,6 @@ export const Role = {
     name: "User",
   },
 };
+
+export const notFoundImg =
+  "https://res.cloudinary.com/dqlcjscsz/image/upload/v1701315931/IconNoData_jntics.svg";

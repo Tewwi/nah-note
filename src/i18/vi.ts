@@ -62,4 +62,7 @@ export const vi = {
   commentHolder: "Nhập bình luận của bạn",
   userListing: "Danh sách người dùng",
   pageListing: "Danh sách trang nhớ",
+  searchUser: "Nhập tên hoặc email người dùng",
+  noData: "Không tìm thấy dữ liệu",
+  noDataDecs: "Vui lòng kiểm tra lại từ khoá tìm kiếm",
 };

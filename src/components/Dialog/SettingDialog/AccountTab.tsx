@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import LoadingButton from "~/components/Common/Button/LoadingButton";
 import FormControlInput from "~/components/FormComponents/InputFormControl";
+import type { IUserInfo } from "~/interface/IUser";
 import { api } from "~/utils/api";
 import AvatarInput from "./AvatarInput";
 
@@ -10,11 +11,6 @@ const inputBreakPoint = {
   label: { xs: 12, sm: 12, md: 5, lg: 3, xl: 2 },
   field: { xs: 12, sm: 12, md: 7, lg: 9, xl: 10 },
 };
-
-interface IUserInfo {
-  email: string;
-  userName: string;
-}
 
 const AccountTab = () => {
   const { t } = useTranslation();

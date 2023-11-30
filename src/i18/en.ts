@@ -64,4 +64,11 @@ export const en = {
   commentHolder: "Enter your comment",
   userListing: "User Listing",
   pageListing: "Page Listing",
+  searchUser: "Enter user name or email",
+  noData: "Not found data",
+  noDataDecs: " Please check for any missing or incorrect parameters",
+  edit: "Edit",
+  delete: "Delete",
+  editUser: "Edit User",
+  addUser: "Add User",
 };
