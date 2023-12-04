@@ -100,7 +100,7 @@ const DashboardPage = () => {
           <Typography
             variant="h5"
             className={style.typing_demo}
-            sx={{ m: "auto", color: "black" }}
+            sx={{ m: "auto", color: "black", width: "unset" }}
           >
             {t("homePageText")}
           </Typography>

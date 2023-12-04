@@ -51,7 +51,7 @@ export const vi = {
   permissionPlaceholder: "Nhập tên người dùng",
   pagesShare: "Chia sẻ với tôi",
   editorHolder: "Nhập nội dung",
-  homePageText: "Tạo lên một ghi chú cho riêng mình",
+  homePageText: " Tạo nên ghi chú cho riêng mình",
   startNow: "Bắt đầu",
   changePassword: "Đổi mật khẩu",
   changePasswordSuccess: "Đổi mật khẩu thành công",
@@ -79,4 +79,5 @@ export const vi = {
   title: "Tiêu đề",
   author: "Tác giả",
   searchPage: "Nhập tiêu đề của trang nhớ",
+  success: "Thành công",
 };

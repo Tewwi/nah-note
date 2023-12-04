@@ -98,8 +98,8 @@ const PageHeader = (props: IProps) => {
         <BoxClickAble
           sx={{ opacity: "0.7", display: emoji ? "none" : "flex" }}
           startIcon={<OutletRoundedIcon />}
-          onClick={(e) => handleOpenEmojiPopper(e.currentTarget)}
           disabled={disabled}
+          onClick={(e) => handleOpenEmojiPopper(e.currentTarget)}
         >
           Add icon
         </BoxClickAble>
@@ -120,6 +120,10 @@ const PageHeader = (props: IProps) => {
         >
           <EmojiPicker
             onEmojiClick={(e) => {
+              if (disabled) {
+                return;
+              }
+
               void handleChooseEmoji(e);
             }}
             autoFocusSearch={false}

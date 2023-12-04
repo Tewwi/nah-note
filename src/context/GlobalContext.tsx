@@ -17,7 +17,7 @@ export const AppProvider = (props: React.PropsWithChildren) => {
   const { i18n } = useTranslation();
 
   const [themeMode, setThemeMode] = useState("light");
-  const [language, setLanguage] = useState("en");
+  const [language, setLanguage] = useState("vi");
   const [pagination, setPagination] = useState<IPagination>({
     page: 1,
     cursor: undefined,
@@ -38,8 +38,8 @@ export const AppProvider = (props: React.PropsWithChildren) => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       setThemeMode(localStorage.getItem("themeMode") || "light");
-      setLanguage(localStorage.getItem("lng") || "en");
-      void i18n.changeLanguage(localStorage.getItem("lng") || "en");
+      setLanguage(localStorage.getItem("lng") || "vi");
+      void i18n.changeLanguage(localStorage.getItem("lng") || "vi");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

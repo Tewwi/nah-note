@@ -13,10 +13,11 @@ interface Props {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     callback?: () => any
   ) => Promise<void>;
+  disable: boolean;
 }
 
 const CoverImage = (props: Props) => {
-  const { url, handleChangeValue } = props;
+  const { url, handleChangeValue, disable } = props;
   const { t } = useTranslation();
   const [isHover, setIsHover] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -70,6 +71,7 @@ const CoverImage = (props: Props) => {
           },
         }}
         onClick={(e) => setAnchorElCoverImg(e.currentTarget)}
+        disabled={disable}
       >
         <Typography variant="caption">{t("editCoverButton")}</Typography>
       </Button>

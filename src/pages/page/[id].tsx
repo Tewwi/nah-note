@@ -99,6 +99,7 @@ const PageDetail = () => {
         <CoverImage
           handleChangeValue={handleChangeValue}
           url={currData.backgroundCover}
+          disable={!isAuthor}
         />
 
         <Container maxWidth="md" sx={{ pl: "60px" }}>

@@ -81,4 +81,5 @@ export const en = {
   title: "Title",
   author: "Author",
   searchPage: "Enter title of page",
+  success: "Success",
 };
