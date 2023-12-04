@@ -276,32 +276,37 @@ export const userRouter = createTRPCRouter({
       }
 
       try {
-        const resp = await ctx.prisma.user.findMany({
-          where: {
-            role: Role.USER.value,
-            OR: [
-              {
-                userName: {
-                  contains: query,
-                  mode: "insensitive",
+        const [total, resp] = await ctx.prisma.$transaction([
+          ctx.prisma.user.count(),
+          ctx.prisma.user.findMany({
+            where: {
+              role: Role.USER.value,
+              OR: [
+                {
+                  userName: {
+                    contains: query,
+                    mode: "insensitive",
+                  },
                 },
-              },
-              {
-                email: {
-                  contains: query,
-                  mode: "insensitive",
+                {
+                  email: {
+                    contains: query,
+                    mode: "insensitive",
+                  },
                 },
-              },
-            ],
-          },
-          take: limit + 1,
-          cursor: cursor ? { id: cursor } : undefined,
-          orderBy: {
-            [orderBy]: orderType,
-          },
-        });
+              ],
+            },
+            take: limit + 1,
+            cursor: cursor ? { id: cursor } : undefined,
+            orderBy: {
+              [orderBy]: orderType,
+            },
+            include: {
+              Page: true,
+            },
+          }),
+        ]);
 
-        const total = await ctx.prisma.user.count();
         if (resp.length > limit) {
           const nextItem = resp.pop();
           nextCursor = nextItem!.id;
@@ -352,5 +357,16 @@ export const userRouter = createTRPCRouter({
       });
 
       return userData;
+    }),
+  deleteUser: privateAdminProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      await handleTryCatchApiAction(async () => {
+        await ctx.prisma.user.delete({
+          where: {
+            id: input,
+          },
+        });
+      });
     }),
 });

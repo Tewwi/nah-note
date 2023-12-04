@@ -9,9 +9,9 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import ConfirmDeleteDialog from "~/components/Dialog/ConfirmDialog/ConfirmDeleteDialog";
-import CreateOrUpdateDialog from "~/components/Dialog/UserListingDialog/CreateOrUpdateDialog";
+import CreatePageDialog from "~/components/Dialog/CreatePageDialog/CreatePageDialog";
 import ListingHeader from "~/components/ListingScreen/ListingHeader";
-import UserTable from "~/components/Table/UserTable";
+import PageTable from "~/components/Table/PageTable";
 import type { ISort } from "~/interface/common";
 import { generateSSGHelper } from "~/server/utils";
 import { api } from "~/utils/api";
@@ -37,18 +37,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   };
 };
 
-const UserListing = () => {
+const PageListing = () => {
   const { t } = useTranslation();
   const router = useRouter();
   const { page, orderBy, orderType, query } = router.query;
   const [cursor, setCursor] = useState<string | null | undefined>();
-  const {
-    mutateAsync: getUserDetail,
-    data: userDetail,
-    reset: resetDataUser,
-  } = api.user.getUserDetailById.useMutation();
-  const { mutateAsync: deleteUser } = api.user.deleteUser.useMutation();
-  const { data, refetch, isLoading } = api.user.getAllUser.useQuery({
+  const { mutateAsync: deleteUser } = api.page.deletePageById.useMutation();
+  const { data, refetch, isLoading } = api.page.getAllPages.useQuery({
     page: Number(page) || 1,
     cursor: cursor,
     orderBy: orderBy?.toString(),
@@ -56,7 +51,6 @@ const UserListing = () => {
     query: query?.toString() || "",
   });
 
-  const [editId, setEditId] = useState<string>();
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [deleteId, setDeleteId] = useState<string>();
 
@@ -81,31 +75,14 @@ const UserListing = () => {
     await refetch();
   }, 200);
 
-  const handleClose = () => {
-    setOpenDialog(false);
-    setEditId(undefined);
-  };
-
-  const handleOpenEdit = async (id: string) => {
-    try {
-      await getUserDetail(id);
-      setEditId(id);
-      setOpenDialog(true);
-    } catch (error) {
-      toast.error(getTRPCErrorFromUnknown(error).message);
-    }
-  };
-
   const handleOpenAdd = () => {
-    setEditId(undefined);
-    resetDataUser();
     setOpenDialog(true);
   };
 
   const handleDeleteUser = async () => {
     if (deleteId) {
       try {
-        await deleteUser(deleteId);
+        await deleteUser({ id: deleteId });
         void refetch();
         setDeleteId(undefined);
         toast.success(t("success"));
@@ -122,51 +99,45 @@ const UserListing = () => {
   return (
     <>
       <Head>
-        <title>Nah | User Listing</title>
+        <title>Nah | Page Listing</title>
       </Head>
       <Container maxWidth="md">
         <Typography variant="h3" my={2}>
-          {t("userListing")}
+          {t("pageListing")}
         </Typography>
         <Stack gap={1}>
           <ListingHeader
             handleSearch={onChangeQuery}
-            placeHolder={t("searchUser")}
+            placeHolder={t("searchPage")}
             onClickBtn={() => {
               handleOpenAdd();
             }}
             defaultValue={query?.toString() || ""}
             btnText={t("add")}
           />
-          <UserTable
+          <PageTable
             data={data?.data}
             totalPage={data?.total || 1}
             onOrderChange={handleSort}
             onPageChange={handleChangePage}
             isLoading={isLoading && !data}
-            handleOpenEdit={(id: string) => {
-              void handleOpenEdit(id);
-            }}
             handleOpenDelete={handleOpenDeleteDialog}
           />
         </Stack>
 
-        <CreateOrUpdateDialog
+        <CreatePageDialog
           open={openDialog}
-          id={editId}
-          onClose={handleClose}
-          type={editId ? "edit" : "add"}
-          data={userDetail || undefined}
-          refetchData={() => {
-            void refetch();
+          onClose={() => setOpenDialog(false)}
+          refetchData={async () => {
+            await refetch();
           }}
         />
 
         <ConfirmDeleteDialog
           open={Boolean(deleteId)}
           onClose={() => setDeleteId(undefined)}
-          title={t("deleteUser")}
-          decs={t("deleteUserDecs")}
+          title={t("deletePage")}
+          decs={t("deletePageDecs")}
           handleSubmit={handleDeleteUser}
         />
       </Container>
@@ -174,4 +145,4 @@ const UserListing = () => {
   );
 };
 
-export default UserListing;
+export default PageListing;

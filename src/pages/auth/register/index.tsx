@@ -160,7 +160,7 @@ const RegisterPage = () => {
                 type="password"
                 rules={{
                   required: t("requiredError"),
-                  min: { value: 6, message: t("passwordError") },
+                  minLength: { value: 6, message: t("passwordError") },
                 }}
               />
             </Box>

@@ -27,7 +27,7 @@ model Page {
   id              String    @id @default(auto()) @map("_id") @db.ObjectId
   blocks          Block[]
   title           String?   @default("Untitled")
-  author          User      @relation(fields: [authorId], references: [id])
+  author          User      @relation(fields: [authorId], references: [id], onUpdate: NoAction, onDelete: Cascade)
   authorId        String    @db.ObjectId
   permissionId    String[]  @db.ObjectId
   parent          Page?     @relation("ParentChild", fields: [parentId], references: [id], onUpdate: NoAction, onDelete: NoAction)

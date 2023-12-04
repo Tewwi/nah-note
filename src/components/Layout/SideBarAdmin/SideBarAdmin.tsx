@@ -29,6 +29,10 @@ const SideBarAdmin = (props: Props) => {
     void router.push("/dashboard");
   };
 
+  const handleChangePage = (route: string) => {
+    void router.push(`/admin/${route}`);
+  };
+
   return (
     <Drawer
       variant="persistent"
@@ -95,6 +99,7 @@ const SideBarAdmin = (props: Props) => {
                   gap: "10px",
                   alignItems: "center",
                 }}
+                onClick={() => handleChangePage("user_listing")}
               >
                 <ContactPageIcon fontSize="small" />
                 <Typography variant="body2">{t("userListing")}</Typography>
@@ -106,6 +111,7 @@ const SideBarAdmin = (props: Props) => {
                   gap: "10px",
                   alignItems: "center",
                 }}
+                onClick={() => handleChangePage("pages_listing")}
               >
                 <LibraryBooksIcon fontSize="small" />
                 <Typography variant="body2">{t("pageListing")}</Typography>

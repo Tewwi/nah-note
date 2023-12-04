@@ -65,4 +65,18 @@ export const vi = {
   searchUser: "Nhập tên hoặc email người dùng",
   noData: "Không tìm thấy dữ liệu",
   noDataDecs: "Vui lòng kiểm tra lại từ khoá tìm kiếm",
+  edit: "Sửa",
+  delete: "Xoá",
+  editUser: "Sửa thông tin người dùng",
+  addUser: "Thêm",
+  deleteUser: "Xoá người dùng",
+  deleteUserDecs: "Bạn chắc chắn muốn xoá người dùng này ?",
+  cancel: "Thoát",
+  deletePageError:
+    "Tài khoản tạo trang nhớ này chỉ còn duy nhất một trang nhớ !",
+  addPage: "Thêm trang nhớ",
+  view: "Xem",
+  title: "Tiêu đề",
+  author: "Tác giả",
+  searchPage: "Nhập tiêu đề của trang nhớ",
 };

@@ -106,6 +106,8 @@ const TableManage = <T,>(props: IProps<T>) => {
           count={totalPage}
           showFirstButton
           showLastButton
+          color="primary"
+          sx={{ mb: 2 }}
         />
       )}
     </Box>

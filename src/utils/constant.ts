@@ -8,7 +8,7 @@ import type {
 } from "~/interface/common";
 
 export const defaultAvatar =
-  "https://res.cloudinary.com/dqlcjscsz/image/upload/v1690958315/blog/default-avatar_v6uu8y.jpg";
+  "https://res.cloudinary.com/dqlcjscsz/image/upload/v1701664789/avatar/default-avatar_npvwal.jpg";
 
 export const horizontalLayout: ILayoutGridBreakpoints = {
   label: { xs: 12, sm: 12, md: 5, lg: 4, xl: 4 },

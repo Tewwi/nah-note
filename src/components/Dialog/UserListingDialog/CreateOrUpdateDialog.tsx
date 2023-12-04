@@ -13,13 +13,13 @@ import FormControlInput from "~/components/FormComponents/InputFormControl";
 import { defaultUserInfo, type IUserInfo } from "~/interface/IUser";
 import { api } from "~/utils/api";
 import ChangePasswordAdmin from "./ChangePasswordAdmin";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface IProps {
   type: string;
   open: boolean;
   onClose: () => void;
-  id: string;
+  id?: string;
   data?: IUserInfo;
   refetchData: () => void;
 }
@@ -29,6 +29,9 @@ const CreateOrUpdateDialog = (props: IProps) => {
   const { t } = useTranslation();
   const { mutateAsync: updateUser, isLoading } =
     api.user.updateUser.useMutation();
+  const { mutateAsync: register, isLoading: registerLoading } =
+    api.user.register.useMutation();
+
   const [openDialog, setOpenDialog] = useState(false);
 
   const {
@@ -46,15 +49,32 @@ const CreateOrUpdateDialog = (props: IProps) => {
       return;
     }
 
-    await updateUser({
-      id: id,
-      ...values,
-    });
+    if (id) {
+      await updateUser({
+        id: id,
+        ...values,
+      });
+    } else {
+      if (values.password !== undefined) {
+        await register({
+          avatar: null,
+          email: values.email,
+          userName: values.userName,
+          password: values.password,
+        });
+      }
+    }
 
     onClose();
     refetchData();
     toast.success(t("success"));
   };
+
+  useEffect(() => {
+    if (data) {
+      reset(data);
+    }
+  }, [data, reset]);
 
   return (
     <Dialog
@@ -62,7 +82,7 @@ const CreateOrUpdateDialog = (props: IProps) => {
       onClose={onClose}
       TransitionProps={{
         onExited: () => {
-          reset();
+          reset(defaultUserInfo);
         },
       }}
     >
@@ -72,32 +92,49 @@ const CreateOrUpdateDialog = (props: IProps) => {
             {type === "edit" ? t("editUser") : t("addUser")}
           </Typography>
 
-          <Stack pt={2} gap={1} direction="column">
+          <Stack pt={2} gap={1} direction="column" minWidth="320px">
             <FormControlInput
               control={control}
               label="Email"
               name="email"
-              sx={{ height: "35px" }}
+              rules={{
+                required: t("requiredError"),
+              }}
             />
 
             <FormControlInput
               control={control}
               label={t("userName")}
               name="userName"
-              sx={{ height: "35px" }}
+              rules={{
+                required: t("requiredError"),
+              }}
             />
-          </Stack>
 
-          <Button
-            variant="text"
-            sx={{
-              maxWidth: "200px",
-              alignSelf: "flex-end",
-            }}
-            onClick={() => setOpenDialog(true)}
-          >
-            {t("changePassword")}
-          </Button>
+            {id ? (
+              <Button
+                variant="text"
+                sx={{
+                  maxWidth: "200px",
+                  alignSelf: "flex-end",
+                }}
+                onClick={() => setOpenDialog(true)}
+              >
+                {t("changePassword")}
+              </Button>
+            ) : (
+              <FormControlInput
+                control={control}
+                label={t("password")}
+                name="password"
+                type="password"
+                rules={{
+                  minLength: { value: 6, message: t("passwordError") },
+                  required: t("requiredError"),
+                }}
+              />
+            )}
+          </Stack>
 
           <LoadingButton
             variant="contained"
@@ -105,17 +142,20 @@ const CreateOrUpdateDialog = (props: IProps) => {
             onClick={() => {
               void handleSubmit(onSubmit)();
             }}
-            loading={isLoading}
+            loading={isLoading || registerLoading}
             title={t("submit")}
+            sx={{ mt: 2 }}
           />
         </Stack>
       </DialogContent>
 
-      <ChangePasswordAdmin
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-        id={id}
-      />
+      {id ? (
+        <ChangePasswordAdmin
+          open={openDialog}
+          onClose={() => setOpenDialog(false)}
+          id={id}
+        />
+      ) : null}
     </Dialog>
   );
 };

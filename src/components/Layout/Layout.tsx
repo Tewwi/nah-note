@@ -6,13 +6,11 @@ import React, { useEffect, useState } from "react";
 import { handleCheckHiddenLayout } from "~/utils/common";
 import SideBarByRole from "./SideBarByRole";
 import PageInfoSection from "./SideBarUser/PageInfoSection";
-import { api } from "~/utils/api";
-import { Role } from "~/utils/constant";
 
 const Layout = (props: React.PropsWithChildren) => {
   const router = useRouter();
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
-  const { data: userInfo } = api.user.getCurrUserDetail.useQuery();
+  const isShowAppBar = router.pathname === "/page/[id]";
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -72,7 +70,7 @@ const Layout = (props: React.PropsWithChildren) => {
                 <MenuIcon />
               </IconButton>
               <Stack sx={{ width: "fit-content" }}>
-                {userInfo?.role === Role.USER.value && <PageInfoSection />}
+                {isShowAppBar && <PageInfoSection />}
               </Stack>
             </Stack>
           </Toolbar>

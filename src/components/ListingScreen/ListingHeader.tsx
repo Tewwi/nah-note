@@ -1,20 +1,19 @@
-import { Button, IconButton, InputBase, Stack } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { grey } from "~/theme/colors";
+import { Button, IconButton, InputBase, Stack } from "@mui/material";
 import type { DebouncedFunc } from "lodash";
+import { grey } from "~/theme/colors";
 
 interface IProps {
   handleSearch: DebouncedFunc<(value: string) => Promise<void>>;
   placeHolder: string;
   onClickBtn: () => void;
   defaultValue: string;
+  btnText: string;
 }
 
 const ListingHeader = (props: IProps) => {
-  const { handleSearch, placeHolder, onClickBtn, defaultValue } = props;
-  const { t } = useTranslation();
+  const { handleSearch, placeHolder, onClickBtn, defaultValue, btnText } =
+    props;
 
   return (
     <Stack direction="row" justifyContent="space-between">
@@ -40,7 +39,7 @@ const ListingHeader = (props: IProps) => {
         />
       </Stack>
       <Button variant="contained" onClick={onClickBtn}>
-        {t("startNow")}
+        {btnText}
       </Button>
     </Stack>
   );

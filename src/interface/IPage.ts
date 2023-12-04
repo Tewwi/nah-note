@@ -11,3 +11,8 @@ export interface IPageForm {
   backgroundCover: string | null;
   blocks: Block[];
 }
+
+export interface IAdminCreatePage {
+  title?: string;
+  author: User | null;
+}

@@ -168,8 +168,22 @@ export const pageRouter = createTRPCRouter({
           where: {
             id: input.id,
           },
+          include: {
+            author: {
+              include: {
+                Page: true,
+              },
+            },
+          },
         });
+
         handleCheckPagePermission(ctx.currUser, pageInfo as Page);
+        if (pageInfo?.author.Page.length === 1) {
+          throw new TRPCError({
+            message: i18n.t("deletePageError"),
+            code: "BAD_REQUEST",
+          });
+        }
 
         const resp = await ctx.prisma.page.delete({
           where: {
@@ -179,10 +193,10 @@ export const pageRouter = createTRPCRouter({
 
         return resp;
       } catch (error) {
-        console.log(error);
-
         throw new TRPCError({
-          message: i18n.t("somethingWrong"),
+          message: getTRPCErrorFromUnknown(error)
+            ? getTRPCErrorFromUnknown(error).message
+            : i18n.t("somethingWrong"),
           code: "INTERNAL_SERVER_ERROR",
         });
       }
@@ -324,25 +338,38 @@ export const pageRouter = createTRPCRouter({
       z.object({
         page: z.number(),
         cursor: z.string().nullish(),
-        sortBy: z.string().optional().default("createDate"),
+        orderBy: z.string().optional().default("createDate"),
         orderType: z.string().optional().default("asc"),
+        query: z.string().optional().default(""),
       })
     )
     .query(async ({ ctx, input }) => {
-      const { page, cursor, sortBy, orderType } = input;
+      const { page, cursor, orderBy, orderType, query } = input;
       const limit = itemPerPage * page;
       let nextCursor: typeof cursor | undefined = undefined;
 
       try {
-        const resp = await ctx.prisma.page.findMany({
-          take: limit + 1,
-          cursor: cursor ? { id: cursor } : undefined,
-          orderBy: {
-            [sortBy]: orderType,
-          },
-        });
+        const [total, resp] = await ctx.prisma.$transaction([
+          ctx.prisma.page.count(),
+          ctx.prisma.page.findMany({
+            where: {
+              title: {
+                contains: query,
+                mode: "insensitive",
+              },
+            },
+            take: limit + 1,
+            cursor: cursor ? { id: cursor } : undefined,
+            orderBy: {
+              [orderBy]: orderType,
+            },
+            include: {
+              author: true,
+              comment: true,
+            },
+          }),
+        ]);
 
-        const total = await ctx.prisma.page.count();
         if (resp.length > limit) {
           const nextItem = resp.pop();
           nextCursor = nextItem!.id;

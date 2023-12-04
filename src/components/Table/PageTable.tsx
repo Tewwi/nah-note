@@ -1,44 +1,50 @@
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import EditIcon from "@mui/icons-material/Edit";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { IconButton, TableCell, TableRow, Tooltip } from "@mui/material";
+import type { Prisma } from "@prisma/client";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import type { IColumn, ISort, OrderType } from "~/interface/common";
 import { dateFormat } from "~/utils/common";
 import TableManage from "./TableManage";
-import type { UserWithPage } from "~/interface/IUser";
+
+type PageWithAuthor = Prisma.PageGetPayload<{
+  include: {
+    author: true;
+    comment: true;
+  };
+}>;
 
 interface IProps {
-  data: UserWithPage[] | undefined;
+  data: PageWithAuthor[] | undefined;
   onOrderChange: (params: ISort) => void;
   onPageChange: (page: number) => void;
   totalPage: number;
   isLoading: boolean;
-  handleOpenEdit: (id: string) => void;
   handleOpenDelete: (id: string) => void;
 }
 
 const columns: IColumn[] = [
   {
-    id: "userName",
-    label: "User Name",
+    id: "title",
+    label: "Title",
     sort: true,
   },
   {
-    id: "email",
-    label: "Email",
+    id: "author",
+    label: "Author",
     sort: false,
   },
   {
-    id: "create_at",
+    id: "createDate",
     label: "Create At",
     sort: true,
     width: "130px",
   },
   {
-    id: "total_page",
-    label: "Total Page",
+    id: "comment",
+    label: "Comment",
     sort: false,
     width: "130px",
   },
@@ -49,14 +55,13 @@ const columns: IColumn[] = [
   },
 ];
 
-const UserTable = (props: IProps) => {
+const PageTable = (props: IProps) => {
   const {
     data,
     totalPage,
     onPageChange,
     onOrderChange,
     isLoading,
-    handleOpenEdit,
     handleOpenDelete,
   } = props;
   const router = useRouter();
@@ -65,7 +70,7 @@ const UserTable = (props: IProps) => {
 
   return (
     <>
-      <TableManage<UserWithPage>
+      <TableManage<PageWithAuthor>
         page={Number(page) || 1}
         onPageChange={onPageChange}
         onOrderChange={onOrderChange}
@@ -77,20 +82,20 @@ const UserTable = (props: IProps) => {
         isLoading={isLoading}
         renderRows={(one) => (
           <TableRow hover key={one.id}>
-            <TableCell sx={{ width: "100%" }}>{one.userName}</TableCell>
-            <TableCell sx={{ pr: 4.25 }}>{one.email}</TableCell>
-            <TableCell>{dayjs(one.create_at).format(dateFormat)}</TableCell>
+            <TableCell sx={{ width: "100%" }}>{one.title}</TableCell>
+            <TableCell sx={{ pr: 4.25 }}>{one.author.userName}</TableCell>
+            <TableCell>{dayjs(one.createDate).format(dateFormat)}</TableCell>
             <TableCell align="center" sx={{ pr: "50px" }}>
-              {one.Page?.length || 1}
+              {one.comment.length}
             </TableCell>
             <TableCell align="justify" sx={{ minWidth: "200px" }}>
-              <Tooltip title={t("edit")}>
+              <Tooltip title={t("view")}>
                 <IconButton
-                  onClick={() => void handleOpenEdit(one.id)}
+                  onClick={() => void router.push(`/page/${one.id}`)}
                   color="success"
                   size="small"
                 >
-                  <EditIcon fontSize="small" />
+                  <VisibilityIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
 
@@ -111,4 +116,4 @@ const UserTable = (props: IProps) => {
   );
 };
 
-export default UserTable;
+export default PageTable;
