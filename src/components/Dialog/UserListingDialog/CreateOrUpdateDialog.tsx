@@ -30,7 +30,7 @@ const CreateOrUpdateDialog = (props: IProps) => {
   const { mutateAsync: updateUser, isLoading } =
     api.user.updateUser.useMutation();
   const { mutateAsync: register, isLoading: registerLoading } =
-    api.user.register.useMutation();
+    api.auth.register.useMutation();
 
   const [openDialog, setOpenDialog] = useState(false);
 

@@ -43,7 +43,7 @@ const RegisterPage = () => {
     },
   });
 
-  const { mutateAsync: register } = api.user.register.useMutation();
+  const { mutateAsync: register } = api.auth.register.useMutation();
   const { mutateAsync: signCloud } = api.user.signCloud.useMutation();
   const fileUpload = watch("avatar") || null;
   const [loading, setLoading] = useState(false);

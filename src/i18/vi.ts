@@ -4,7 +4,7 @@ export const vi = {
   emailError: "Hãy nhập email đúng cú pháp",
   confirmPasswordError: "Mật khẩu không khớp",
   goLoginPage: "Tới trang đăng nhập",
-  goRegisterPage: "Tới trnag đăng ký",
+  goRegisterPage: "Tới trang đăng ký",
   registerSuccess: "Đăng ký thành công",
   loginSuccess: "Đăng nhập thành công",
   registerEmailError: "Email này đã tồn tại",

@@ -25,7 +25,7 @@ interface IProps {
 const ChangePasswordTab = (props: IProps) => {
   const isMobile = useMediaQuery("(max-width:600px)");
   const { t } = useTranslation();
-  const { mutateAsync, isLoading } = api.user.changePassword.useMutation();
+  const { mutateAsync, isLoading } = api.auth.changePassword.useMutation();
   const {
     control,
     handleSubmit,

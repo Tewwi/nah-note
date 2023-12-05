@@ -33,7 +33,7 @@ const LoginPage = () => {
     mutateAsync: login,
     isLoading,
     isSuccess,
-  } = api.user.login.useMutation();
+  } = api.auth.login.useMutation();
 
   const onSubmit = async (values: ILoginParams) => {
     try {
