@@ -113,7 +113,7 @@ const PageListing = () => {
               handleOpenAdd();
             }}
             defaultValue={query?.toString() || ""}
-            btnText={t("add")}
+            btnText={t("addPage")}
           />
           <PageTable
             data={data?.data}

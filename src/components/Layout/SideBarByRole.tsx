@@ -4,6 +4,7 @@ import { Role } from "~/utils/constant";
 import SideBarAdmin from "./SideBarAdmin/SideBarAdmin";
 import SideBarUser from "./SideBarUser/SideBarUser";
 import { useRouter } from "next/router";
+import SideBarLoading from "./SideBarLoading";
 
 interface IProps {
   openSideBar: boolean;
@@ -17,6 +18,7 @@ const SideBarByRole = (props: IProps) => {
     data: userInfo,
     isError,
     error,
+    isInitialLoading,
   } = api.user.getCurrUserDetail.useQuery();
 
   useEffect(() => {
@@ -24,6 +26,10 @@ const SideBarByRole = (props: IProps) => {
       void router.push("/dashboard");
     }
   }, [error, isError, router]);
+
+  if (isInitialLoading) {
+    return <SideBarLoading openSideBar={openSideBar} />;
+  }
 
   return (
     <>

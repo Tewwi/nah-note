@@ -59,7 +59,7 @@ const CommentDialog = (props: IProps) => {
   const handleDeleteCmt = async (id: string) => {
     await deleteComment({ commentId: id, pageId: pageId });
     void reloadData();
-    toast.success(t("addSuccess"));
+    toast.success(t("success"));
   };
 
   return (

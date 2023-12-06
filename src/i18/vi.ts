@@ -68,7 +68,7 @@ export const vi = {
   edit: "Sửa",
   delete: "Xoá",
   editUser: "Sửa thông tin người dùng",
-  addUser: "Thêm",
+  addUser: "Thêm Người Dùng",
   deleteUser: "Xoá người dùng",
   deleteUserDecs: "Bạn chắc chắn muốn xoá người dùng này ?",
   cancel: "Thoát",
@@ -80,4 +80,5 @@ export const vi = {
   author: "Tác giả",
   searchPage: "Nhập tiêu đề của trang nhớ",
   success: "Thành công",
+  addSuccess: "Thêm thành công",
 };

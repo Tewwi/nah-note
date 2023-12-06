@@ -17,6 +17,8 @@ import { debounce, includes } from "lodash";
 import PermissionUserItem from "./PermissionUserItem";
 import toast from "react-hot-toast";
 import type { User } from "@prisma/client";
+import SimpleBar from "simplebar-react";
+import "simplebar-react/dist/simplebar.min.css";
 
 interface IProps {
   open: boolean;
@@ -68,8 +70,9 @@ const SettingPermissionDialog = (props: IProps) => {
       onClose={onClose}
       PaperProps={{
         sx: {
-          height: "320px",
+          minHeight: "320px",
           p: 1,
+          minWidth: "400px",
         },
       }}
       TransitionProps={{
@@ -81,7 +84,7 @@ const SettingPermissionDialog = (props: IProps) => {
       <DialogTitle>{t("settingPermission")}</DialogTitle>
       <DialogContent>
         <Stack direction="column">
-          <Stack direction="row" alignItems="center">
+          <Stack direction="row" alignItems="center" mb={1}>
             <InputBase
               sx={{ ml: 1, flex: 1 }}
               placeholder={t("permissionPlaceholder")}
@@ -95,25 +98,20 @@ const SettingPermissionDialog = (props: IProps) => {
               }
             />
           </Stack>
-          <Stack
-            direction="column"
-            gap={1}
-            sx={{
-              maxHeight: "300px",
-              overflowY: "auto",
-            }}
-          >
-            {userList
-              ?.filter((item) => item.id !== pageData?.authorId)
-              .map((user) => (
-                <PermissionUserItem
-                  key={user.id}
-                  handleAddUser={handleAddUser}
-                  data={user as User}
-                  hidden={includes(pageData?.permissionId, user.id)}
-                />
-              ))}
-          </Stack>
+          <SimpleBar style={{ maxHeight: "240px" }}>
+            <Stack direction="column" gap={1.5}>
+              {userList
+                ?.filter((item) => item.id !== pageData?.authorId)
+                .map((user) => (
+                  <PermissionUserItem
+                    key={user.id}
+                    handleAddUser={handleAddUser}
+                    data={user as User}
+                    hidden={includes(pageData?.permissionId, user.id)}
+                  />
+                ))}
+            </Stack>
+          </SimpleBar>
         </Stack>
       </DialogContent>
     </Dialog>

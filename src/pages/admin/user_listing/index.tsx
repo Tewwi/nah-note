@@ -136,7 +136,7 @@ const UserListing = () => {
               handleOpenAdd();
             }}
             defaultValue={query?.toString() || ""}
-            btnText={t("add")}
+            btnText={t("addUser")}
           />
           <UserTable
             data={data?.data}
