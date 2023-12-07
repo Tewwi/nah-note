@@ -59,7 +59,7 @@ const AvatarInput = (props: IProps) => {
         onClose={handleClosePopover}
         elevation={0}
         PaperProps={{
-          sx: { boxShadow: "none", border: "none" },
+          sx: { boxShadow: "none", border: "none", minWidth: "350px" },
         }}
       >
         <SelectCoverDialog

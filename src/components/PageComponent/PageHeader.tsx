@@ -105,7 +105,7 @@ const PageHeader = (props: IProps) => {
         </BoxClickAble>
 
         <Popover
-          open={Boolean(anchorElEmoji)}
+          open={!disabled && Boolean(anchorElEmoji)}
           anchorEl={anchorElEmoji}
           onClose={() => setAnchorElEmoji(null)}
           elevation={0}
@@ -120,10 +120,6 @@ const PageHeader = (props: IProps) => {
         >
           <EmojiPicker
             onEmojiClick={(e) => {
-              if (disabled) {
-                return;
-              }
-
               void handleChooseEmoji(e);
             }}
             autoFocusSearch={false}
