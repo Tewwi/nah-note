@@ -3,11 +3,13 @@ import Image from "next/image";
 import type { IComment } from "~/interface/IComment";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useState } from "react";
+import { Role } from "~/utils/constant";
+import { grey } from "~/theme/colors";
 
 interface IProps {
   comment: IComment;
   handleDeleteCmt: (id: string) => Promise<void>;
-  checkUserCanDelete: (authorId: string) => boolean;
+  checkUserCanDelete: (authorId: string, role: number) => boolean;
 }
 
 const CommentItem = (props: IProps) => {
@@ -31,12 +33,27 @@ const CommentItem = (props: IProps) => {
         style={{ borderRadius: "20px" }}
       />
       <Stack direction="column" gap={1} flex={1}>
-        <Typography variant="body2" fontWeight="600" flexWrap="wrap">
-          {author.userName}
-        </Typography>
+        <Stack direction="row" gap={1.5}>
+          <Typography variant="body2" fontWeight="600" flexWrap="wrap">
+            {author.userName}
+          </Typography>
+          {author.role === Role.ADMIN.value && (
+            <Typography
+              variant="caption"
+              sx={{
+                paddingInline: 0.5,
+                backgroundColor: grey[400],
+                borderRadius: "10px",
+                color: (theme) => theme.palette.common.black,
+              }}
+            >
+              {Role.ADMIN.name}
+            </Typography>
+          )}
+        </Stack>
         <Typography variant="body2">{content}</Typography>
       </Stack>
-      {props.checkUserCanDelete(author.id) && (
+      {props.checkUserCanDelete(author.id, author.role) && (
         <IconButton
           sx={{ p: "10px" }}
           aria-label="menu"

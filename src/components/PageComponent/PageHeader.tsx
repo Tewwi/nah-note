@@ -105,7 +105,7 @@ const PageHeader = (props: IProps) => {
         </BoxClickAble>
 
         <Popover
-          open={!disabled && Boolean(anchorElEmoji)}
+          open={Boolean(anchorElEmoji) && !disabled}
           anchorEl={anchorElEmoji}
           onClose={() => setAnchorElEmoji(null)}
           elevation={0}

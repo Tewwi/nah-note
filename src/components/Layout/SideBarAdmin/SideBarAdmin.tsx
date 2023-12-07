@@ -26,7 +26,8 @@ const SideBarAdmin = (props: Props) => {
 
   const handleLogout = () => {
     deleteCookie("token");
-    void router.push("/dashboard");
+    localStorage.clear();
+    void router.push("/");
   };
 
   const handleChangePage = (route: string) => {

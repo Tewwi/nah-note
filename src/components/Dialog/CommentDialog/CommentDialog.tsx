@@ -24,7 +24,7 @@ interface IProps {
   pageId: string;
   reloadData: () => Promise<void>;
   pageName: string;
-  checkUserCanDelete: (authorId: string) => boolean;
+  checkUserCanDelete: (authorId: string, role: number) => boolean;
 }
 
 const CommentDialog = (props: IProps) => {

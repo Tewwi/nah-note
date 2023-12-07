@@ -33,9 +33,9 @@ export default function Home() {
   useEffect(() => {
     if (userPages?.resp) {
       if (userInfo?.role === Role.USER.value) {
-        void router.replace(`page/${userPages?.resp[0]?.id}`);
+        void router.push(`page/${userPages?.resp[0]?.id}`);
       } else {
-        void router.replace(`admin/user_listing`);
+        void router.push(`admin/user_listing`);
       }
     }
   }, [router, userInfo?.role, userPages?.resp]);

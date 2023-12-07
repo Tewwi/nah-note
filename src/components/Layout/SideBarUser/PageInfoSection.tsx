@@ -3,7 +3,7 @@ import { getTRPCErrorFromUnknown } from "@trpc/server";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { api } from "~/utils/api";
-import { handleUnauthorize } from "~/utils/constant";
+import { Role, handleUnauthorize } from "~/utils/constant";
 import Image from "next/image";
 import CommentIcon from "@mui/icons-material/Comment";
 import { useTranslation } from "react-i18next";
@@ -26,8 +26,20 @@ const PageInfoSection = () => {
 
   const [open, setOpen] = useState(false);
 
-  const checkUserCanDelete = (commentAuthorId: string) => {
-    return userInfo?.id === data?.authorId || userInfo?.id === commentAuthorId;
+  const checkUserCanDelete = (commentAuthorId: string, authorRole: number) => {
+    if (userInfo?.id === commentAuthorId) {
+      return true;
+    }
+
+    if (authorRole === Role.ADMIN.value) {
+      return false;
+    }
+
+    if (userInfo?.role === Role.ADMIN.value) {
+      return true;
+    }
+
+    return userInfo?.id === data?.authorId;
   };
 
   const refetchData = async () => {
