@@ -8,10 +8,12 @@ import { blue } from "~/theme/colors";
 import Image from "next/image";
 import { homepageImgUrl } from "~/utils/constant";
 import { useTranslation } from "react-i18next";
+import { useGlobalContext } from "~/context/GlobalContext";
 
 const DashboardPage = () => {
   const router = useRouter();
   const { t } = useTranslation();
+  const { language } = useGlobalContext();
 
   return (
     <>
@@ -100,7 +102,11 @@ const DashboardPage = () => {
           <Typography
             variant="h5"
             className={style.typing_demo}
-            sx={{ m: "auto", color: "black", width: "unset" }}
+            sx={{
+              m: "auto",
+              color: "black",
+              width: language === "vi" ? "460px" : "480px",
+            }}
           >
             {t("homePageText")}
           </Typography>
