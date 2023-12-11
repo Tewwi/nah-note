@@ -11,6 +11,7 @@ import type { Page, User } from "@prisma/client";
 import { includes } from "lodash";
 import i18n from "~/i18/config";
 import { Role } from "~/utils/constant";
+import type { IChartUserData } from "~/interface/IUser";
 
 export const signCloud = (folderName?: string) => {
   // TODO: CHECK TO MAKE SURE AUTHENTICATED
@@ -82,4 +83,22 @@ export const handleCheckUserPermission = (
   }
 
   return currUser.id === targetUser;
+};
+
+export const handleGetMonthInYear = (arr: IChartUserData[]) => {
+  const currMonth = arr.map((item) => item.month);
+  const result = Array(12)
+    .fill(null)
+    .map((_item, index) => {
+      if (includes(currMonth, index + 1)) {
+        return arr.find((item) => item.month === index + 1);
+      }
+
+      return {
+        month: index + 1,
+        count: 0,
+      };
+    }) as IChartUserData[];
+
+  return result;
 };

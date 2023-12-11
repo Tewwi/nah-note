@@ -1,8 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import bcrypt from "bcrypt";
 import i18n from "i18next";
 import { z } from "zod";
+import type { IChartUserData } from "~/interface/IUser";
 import {
   createTRPCRouter,
   privateAdminProcedure,
@@ -12,6 +16,7 @@ import {
 import { itemPerPage } from "~/server/constant";
 import {
   handleCheckUserPermission,
+  handleGetMonthInYear,
   handleTryCatchApiAction,
   signCloud,
 } from "~/server/utils";
@@ -369,4 +374,90 @@ export const userRouter = createTRPCRouter({
         });
       });
     }),
+  getChartData: privateAdminProcedure
+    .input(z.number())
+    .query(async ({ ctx, input }) => {
+      try {
+        const queryResult = await ctx.prisma.user.aggregateRaw({
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $gte: [
+                        "$create_at",
+                        {
+                          $dateFromString: {
+                            dateString: new Date(
+                              `${input}-01-01T00:00:00.000Z`
+                            ).toISOString(),
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      $lte: [
+                        "$create_at",
+                        {
+                          $dateFromString: {
+                            dateString: new Date(
+                              `${input + 1}-01-01T00:00:00.000Z`
+                            ).toISOString(),
+                          },
+                        },
+                      ],
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              $group: {
+                _id: {
+                  month: { $month: "$create_at" },
+                },
+                count: { $sum: 1 },
+              },
+            },
+          ],
+        });
+        const arrayValues = Object.values(queryResult).map((item: any) => {
+          return { month: item._id.month, count: item.count };
+        }) as IChartUserData[];
+
+        return handleGetMonthInYear(arrayValues);
+      } catch (error) {
+        throw new TRPCError({
+          message: i18n.t("somethingWrong"),
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+    }),
+  getAllYearData: privateAdminProcedure.query(async ({ ctx }) => {
+    try {
+      const queryResult = await ctx.prisma.user.aggregateRaw({
+        pipeline: [
+          {
+            $group: {
+              _id: {
+                year: { $year: "$create_at" },
+              },
+            },
+          },
+        ],
+      });
+
+      const arrayValues = Object.values(queryResult).map((item: any) => {
+        return item._id.year as string;
+      });
+
+      return arrayValues;
+    } catch (error) {
+      throw new TRPCError({
+        message: i18n.t("somethingWrong"),
+        code: "INTERNAL_SERVER_ERROR",
+      });
+    }
+  }),
 });

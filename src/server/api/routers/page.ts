@@ -1,14 +1,15 @@
+import type { Page } from "@prisma/client";
 import { TRPCError, getTRPCErrorFromUnknown } from "@trpc/server";
+import i18n from "i18next";
 import { z } from "zod";
+import type { IChartUserData } from "~/interface/IUser";
 import {
   createTRPCRouter,
   privateAdminProcedure,
   privateProcedure,
 } from "~/server/api/trpc";
 import { itemPerPage } from "~/server/constant";
-import i18n from "i18next";
 import { handleCheckPagePermission } from "~/server/utils";
-import type { Page } from "@prisma/client";
 
 const schemaPage = z.object({
   title: z.string().nullable().optional(),
@@ -387,4 +388,32 @@ export const pageRouter = createTRPCRouter({
         });
       }
     }),
+  getChartData: privateProcedure.query(async ({ ctx }) => {
+    try {
+      const queryResult = await ctx.prisma.user.aggregateRaw({
+        pipeline: [
+          {
+            $group: {
+              _id: {
+                month: { $month: "$createDate" },
+              },
+              count: { $sum: 1 },
+            },
+          },
+        ],
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const arrayValues = Object.values(queryResult).map((item: any) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+        return { month: item._id.month, count: item.count };
+      }) as IChartUserData[];
+
+      return arrayValues;
+    } catch (error) {
+      throw new TRPCError({
+        message: i18n.t("somethingWrong"),
+        code: "INTERNAL_SERVER_ERROR",
+      });
+    }
+  }),
 });

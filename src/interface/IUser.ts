@@ -16,3 +16,8 @@ export type UserWithPage = Prisma.UserGetPayload<{
     Page: true;
   };
 }>;
+
+export interface IChartUserData {
+  month: number;
+  count: number;
+}

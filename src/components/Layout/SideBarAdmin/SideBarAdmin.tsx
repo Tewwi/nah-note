@@ -1,8 +1,8 @@
 import ContactPageIcon from "@mui/icons-material/ContactPage";
-import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
+import ShowChartIcon from "@mui/icons-material/ShowChart";
 import { Divider, Drawer, IconButton, Stack, Typography } from "@mui/material";
 import { deleteCookie } from "cookies-next";
 import { useRouter } from "next/router";
@@ -112,10 +112,10 @@ const SideBarAdmin = (props: Props) => {
                   gap: "10px",
                   alignItems: "center",
                 }}
-                onClick={() => handleChangePage("pages_listing")}
+                onClick={() => handleChangePage("user_chart")}
               >
-                <LibraryBooksIcon fontSize="small" />
-                <Typography variant="body2">{t("pageListing")}</Typography>
+                <ShowChartIcon fontSize="small" />
+                <Typography variant="body2">{t("chartUser")}</Typography>
               </BoxClickAble>
             </Stack>
             <Divider />
