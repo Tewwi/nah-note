@@ -10,14 +10,14 @@ import {
   Typography,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import dayjs from "dayjs";
+import moment from "moment";
 import { api } from "~/utils/api";
 import { Line } from "react-chartjs-2";
 import { options } from "~/components/Chart/option";
 
 const UserChart = () => {
   const { t } = useTranslation();
-  const [selectYear, setSelectYear] = useState(dayjs().year());
+  const [selectYear, setSelectYear] = useState(moment().year());
   const { data: chartData, isLoading } =
     api.user.getChartData.useQuery(selectYear);
   const { data: years } = api.user.getAllYearData.useQuery();

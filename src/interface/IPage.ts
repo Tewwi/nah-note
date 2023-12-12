@@ -16,3 +16,8 @@ export interface IAdminCreatePage {
   title?: string;
   author: User | null;
 }
+
+export interface IChartPageData {
+  date: string;
+  count: number;
+}

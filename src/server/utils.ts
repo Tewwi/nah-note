@@ -5,7 +5,7 @@ import superjson from "superjson";
 import { env } from "~/env.mjs";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "./db";
-import { TRPCError } from "@trpc/server";
+import { TRPCError, getTRPCErrorFromUnknown } from "@trpc/server";
 import type { NextApiResponse } from "next";
 import type { Page, User } from "@prisma/client";
 import { includes } from "lodash";
@@ -51,8 +51,9 @@ export const handleTryCatchApiAction = async (
   try {
     await callback();
   } catch (error) {
+    const err = getTRPCErrorFromUnknown(error);
     throw new TRPCError({
-      message: message,
+      message: err.message || message,
       code: "INTERNAL_SERVER_ERROR",
     });
   }
@@ -69,6 +70,15 @@ export const handleCheckPagePermission = (userInfo: User, page: Page) => {
   if (!isHavePermission) {
     throw new TRPCError({
       message: i18n.t("UNAUTHORIZED"),
+      code: "UNAUTHORIZED",
+    });
+  }
+};
+
+export const handleCheckUserBlock = (userInfo: User) => {
+  if (userInfo.isBlock) {
+    throw new TRPCError({
+      message: i18n.t("blockErrorMessage"),
       code: "UNAUTHORIZED",
     });
   }

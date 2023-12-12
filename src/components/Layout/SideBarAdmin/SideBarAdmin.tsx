@@ -117,6 +117,18 @@ const SideBarAdmin = (props: Props) => {
                 <ShowChartIcon fontSize="small" />
                 <Typography variant="body2">{t("chartUser")}</Typography>
               </BoxClickAble>
+
+              <BoxClickAble
+                sx={{
+                  justifyContent: "flex-start",
+                  gap: "10px",
+                  alignItems: "center",
+                }}
+                onClick={() => handleChangePage("page_chart")}
+              >
+                <ShowChartIcon fontSize="small" />
+                <Typography variant="body2">{t("chartPage")}</Typography>
+              </BoxClickAble>
             </Stack>
             <Divider />
           </Stack>

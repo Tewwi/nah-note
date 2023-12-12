@@ -1,13 +1,15 @@
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import EditIcon from "@mui/icons-material/Edit";
 import { IconButton, TableCell, TableRow, Tooltip } from "@mui/material";
-import dayjs from "dayjs";
+import moment from "moment";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import type { IColumn, ISort, OrderType } from "~/interface/common";
 import { dateFormat } from "~/utils/common";
 import TableManage from "./TableManage";
 import type { UserWithPage } from "~/interface/IUser";
+import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
+import DoNotDisturbOffIcon from "@mui/icons-material/DoNotDisturbOff";
 
 interface IProps {
   data: UserWithPage[] | undefined;
@@ -17,6 +19,7 @@ interface IProps {
   isLoading: boolean;
   handleOpenEdit: (id: string) => void;
   handleOpenDelete: (id: string) => void;
+  handleOpenBlockUserDialog: (id: string, status: boolean) => void;
 }
 
 const columns: IColumn[] = [
@@ -58,6 +61,7 @@ const UserTable = (props: IProps) => {
     isLoading,
     handleOpenEdit,
     handleOpenDelete,
+    handleOpenBlockUserDialog,
   } = props;
   const router = useRouter();
   const { t } = useTranslation();
@@ -79,7 +83,7 @@ const UserTable = (props: IProps) => {
           <TableRow hover key={one.id}>
             <TableCell sx={{ width: "100%" }}>{one.userName}</TableCell>
             <TableCell sx={{ pr: 4.25 }}>{one.email}</TableCell>
-            <TableCell>{dayjs(one.create_at).format(dateFormat)}</TableCell>
+            <TableCell>{moment(one.create_at).format(dateFormat)}</TableCell>
             <TableCell align="center" sx={{ pr: "50px" }}>
               {one.Page?.length || 1}
             </TableCell>
@@ -101,6 +105,22 @@ const UserTable = (props: IProps) => {
                   onClick={() => handleOpenDelete(one.id)}
                 >
                   <DeleteForeverIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title={one.isBlock ? t("unblockUser") : t("blockUser")}>
+                <IconButton
+                  color="error"
+                  size="small"
+                  onClick={() =>
+                    handleOpenBlockUserDialog(one.id, !one.isBlock)
+                  }
+                >
+                  {one.isBlock ? (
+                    <DoNotDisturbOffIcon fontSize="small" />
+                  ) : (
+                    <DoNotDisturbOnIcon fontSize="small" />
+                  )}
                 </IconButton>
               </Tooltip>
             </TableCell>

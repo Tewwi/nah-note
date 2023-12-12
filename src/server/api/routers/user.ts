@@ -460,4 +460,23 @@ export const userRouter = createTRPCRouter({
       });
     }
   }),
+  toggleBlockUser: privateAdminProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        status: z.boolean(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      await handleTryCatchApiAction(async () => {
+        await ctx.prisma.user.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            isBlock: input.status,
+          },
+        });
+      });
+    }),
 });

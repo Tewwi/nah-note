@@ -41,13 +41,24 @@ const UserListing = () => {
   const { t } = useTranslation();
   const router = useRouter();
   const { page, orderBy, orderType, query } = router.query;
+
   const [cursor, setCursor] = useState<string | null | undefined>();
+  const [editId, setEditId] = useState<string>();
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [deleteId, setDeleteId] = useState<string>();
+  const [blockUserInfo, setBlockUserInfo] = useState<{
+    id: string | undefined;
+    status: boolean;
+  }>({ status: false, id: undefined });
+
   const {
     mutateAsync: getUserDetail,
     data: userDetail,
     reset: resetDataUser,
   } = api.user.getUserDetailById.useMutation();
   const { mutateAsync: deleteUser } = api.user.deleteUser.useMutation();
+  const { mutateAsync: toggleBlockUser } =
+    api.user.toggleBlockUser.useMutation();
   const { data, refetch, isLoading } = api.user.getAllUser.useQuery({
     page: Number(page) || 1,
     cursor: cursor,
@@ -55,10 +66,6 @@ const UserListing = () => {
     orderType: orderType?.toString(),
     query: query?.toString() || "",
   });
-
-  const [editId, setEditId] = useState<string>();
-  const [openDialog, setOpenDialog] = useState<boolean>(false);
-  const [deleteId, setDeleteId] = useState<string>();
 
   const handleChangePage = (page: number) => {
     router.query.page = page.toString();
@@ -100,6 +107,26 @@ const UserListing = () => {
     setEditId(undefined);
     resetDataUser();
     setOpenDialog(true);
+  };
+
+  const handleToggleBlock = async () => {
+    if (blockUserInfo.id) {
+      try {
+        await toggleBlockUser({
+          ...blockUserInfo,
+          id: blockUserInfo.id,
+        });
+        void refetch();
+        setBlockUserInfo({ ...blockUserInfo, id: undefined });
+        toast.success(t("success"));
+      } catch (error) {
+        toast.error(getTRPCErrorFromUnknown(error).message);
+      }
+    }
+  };
+
+  const handleOpenBlockUserDialog = (id: string, status: boolean) => {
+    setBlockUserInfo({ id: id, status: status });
   };
 
   const handleDeleteUser = async () => {
@@ -148,6 +175,7 @@ const UserListing = () => {
               void handleOpenEdit(id);
             }}
             handleOpenDelete={handleOpenDeleteDialog}
+            handleOpenBlockUserDialog={handleOpenBlockUserDialog}
           />
         </Stack>
 
@@ -168,6 +196,16 @@ const UserListing = () => {
           title={t("deleteUser")}
           decs={t("deleteUserDecs")}
           handleSubmit={handleDeleteUser}
+        />
+
+        <ConfirmDeleteDialog
+          open={Boolean(blockUserInfo.id)}
+          onClose={() => setBlockUserInfo({ ...blockUserInfo, id: undefined })}
+          title={blockUserInfo.status ? t("blockUser") : t("unblockUser")}
+          decs={
+            blockUserInfo.status ? t("blockUserDesc") : t("unblockUserDesc")
+          }
+          handleSubmit={handleToggleBlock}
         />
       </Container>
     </>

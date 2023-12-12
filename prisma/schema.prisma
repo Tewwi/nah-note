@@ -21,6 +21,8 @@ model User {
   comment   Comment[]
   role      Int       @default(1)
   create_at DateTime  @default(now())
+  isBlock   Boolean   @default(false)
+  isPremium Boolean   @default(false)
 }
 
 model Page {

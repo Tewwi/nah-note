@@ -16,6 +16,7 @@ import CommentItem from "./CommentItem";
 import SendIcon from "@mui/icons-material/Send";
 import { api } from "~/utils/api";
 import toast from "react-hot-toast";
+import { getTRPCErrorFromUnknown } from "@trpc/server";
 
 interface IProps {
   open: boolean;
@@ -46,13 +47,17 @@ const CommentDialog = (props: IProps) => {
 
   const handleSubmitComment = async () => {
     if (commentContent) {
-      await mutateAsync({
-        content: commentContent,
-        pageId: pageId,
-      });
-      setCommentContent("");
-      toast.success(t("addSuccess"));
-      void reloadData();
+      try {
+        await mutateAsync({
+          content: commentContent,
+          pageId: pageId,
+        });
+        setCommentContent("");
+        toast.success(t("addSuccess"));
+        void reloadData();
+      } catch (error) {
+        toast.error(getTRPCErrorFromUnknown(error).message);
+      }
     }
   };
 

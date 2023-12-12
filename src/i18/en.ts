@@ -97,4 +97,13 @@ export const en = {
   chartUser: "User statistics",
   chartUserTitle: "Chart user in ",
   chartUserEle: "New User",
+  chartPage: "Page statistics",
+  chartPageTitle: "Chart page in ",
+  chartPageEle: "New Page",
+  blockErrorMessage:
+    "Accounts that have been blocked cannot perform this action",
+  blockUser: "Block User",
+  unblockUser: "Unblock User",
+  blockUserDesc: "Are you sure you want to block this user ?",
+  unblockUserDesc: "Are you sure you want to unblock this user ?",
 };

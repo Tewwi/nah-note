@@ -41,7 +41,7 @@ const ConfirmDeleteDialog = (props: Props) => {
 
         <Stack width="100%" direction="row" gap={1}>
           <LoadingButton
-            title={t("delete")}
+            title={t("ok")}
             loading={loading}
             variant="contained"
             color="error"

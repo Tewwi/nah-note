@@ -7,3 +7,5 @@ export const handleCheckHiddenLayout = (routerName: string) => {
 };
 
 export const dateFormat = "DD-MM-YYYY";
+export const datePickerFormat = "yyyy/MM/dd";
+export const dateDisplayFormat = "DD/MM/YYYY";

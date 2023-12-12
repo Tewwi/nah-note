@@ -96,4 +96,12 @@ export const vi = {
   chartUser: "Thống kê người dùng",
   chartUserTitle: "Biểu đồ thống kế người dùng trong năm",
   chartUserEle: "Lượng người dùng mới",
+  chartPage: "Thống kê trang nhớ",
+  chartPageTitle: "Biểu đồ trang nhớ trong",
+  chartPageEle: "Số lượng trang nhớ được tạo",
+  blockErrorMessage: "Tài khoản bị chặn không thể thực hiện hành động này",
+  blockUser: "Chặn",
+  unblockUser: "Bỏ chặn",
+  blockUserDesc: "Bạn chắc chắn muốn chặn người dùng này ?",
+  unblockUserDesc: "Bạn chắc chắn muốn bỏ chặn người dùng này ?",
 };

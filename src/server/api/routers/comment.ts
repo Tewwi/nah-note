@@ -2,6 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "../trpc";
 import {
   handleCheckPagePermission,
+  handleCheckUserBlock,
   handleTryCatchApiAction,
 } from "~/server/utils";
 import type { Page } from "@prisma/client";
@@ -21,6 +22,7 @@ export const commentRouter = createTRPCRouter({
         },
       });
       handleCheckPagePermission(ctx.currUser, page as Page);
+      handleCheckUserBlock(ctx.currUser);
 
       await handleTryCatchApiAction(async () => {
         await ctx.prisma.comment.create({
@@ -41,6 +43,7 @@ export const commentRouter = createTRPCRouter({
         },
       });
       handleCheckPagePermission(ctx.currUser, page as Page);
+      handleCheckUserBlock(ctx.currUser);
 
       await handleTryCatchApiAction(async () => {
         await ctx.prisma.comment.delete({

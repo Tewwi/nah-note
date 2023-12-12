@@ -1,15 +1,21 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { Page } from "@prisma/client";
 import { TRPCError, getTRPCErrorFromUnknown } from "@trpc/server";
 import i18n from "i18next";
 import { z } from "zod";
-import type { IChartUserData } from "~/interface/IUser";
+import type { IChartPageData } from "~/interface/IPage";
 import {
   createTRPCRouter,
   privateAdminProcedure,
   privateProcedure,
 } from "~/server/api/trpc";
 import { itemPerPage } from "~/server/constant";
-import { handleCheckPagePermission } from "~/server/utils";
+import {
+  handleCheckPagePermission,
+  handleCheckUserBlock,
+} from "~/server/utils";
 
 const schemaPage = z.object({
   title: z.string().nullable().optional(),
@@ -155,9 +161,10 @@ export const pageRouter = createTRPCRouter({
 
         return resp;
       } catch (error) {
+        const err = getTRPCErrorFromUnknown(error);
         throw new TRPCError({
-          message: i18n.t("somethingWrong"),
-          code: "INTERNAL_SERVER_ERROR",
+          message: err.message,
+          code: err.code,
         });
       }
     }),
@@ -194,11 +201,10 @@ export const pageRouter = createTRPCRouter({
 
         return resp;
       } catch (error) {
+        const err = getTRPCErrorFromUnknown(error);
         throw new TRPCError({
-          message: getTRPCErrorFromUnknown(error)
-            ? getTRPCErrorFromUnknown(error).message
-            : i18n.t("somethingWrong"),
-          code: "INTERNAL_SERVER_ERROR",
+          message: err.message,
+          code: err.code,
         });
       }
     }),
@@ -248,7 +254,18 @@ export const pageRouter = createTRPCRouter({
           },
         });
 
+        const targetUser = await ctx.prisma.user.findUnique({
+          where: {
+            id: userIds,
+          },
+        });
+
         handleCheckPagePermission(ctx.currUser, page as Page);
+        handleCheckUserBlock(ctx.currUser);
+        if (targetUser) {
+          handleCheckUserBlock(targetUser);
+        }
+
         const permissionArray = page?.permissionId
           ? [...page.permissionId, userIds]
           : [userIds];
@@ -262,9 +279,10 @@ export const pageRouter = createTRPCRouter({
           },
         });
       } catch (error) {
+        const err = getTRPCErrorFromUnknown(error);
         throw new TRPCError({
-          message: i18n.t("somethingWrong"),
-          code: "INTERNAL_SERVER_ERROR",
+          message: err.message,
+          code: err.code,
         });
       }
     }),
@@ -290,9 +308,10 @@ export const pageRouter = createTRPCRouter({
           },
         });
       } catch (error) {
+        const err = getTRPCErrorFromUnknown(error);
         throw new TRPCError({
-          message: i18n.t("somethingWrong"),
-          code: "INTERNAL_SERVER_ERROR",
+          message: err.message,
+          code: err.code,
         });
       }
     }),
@@ -388,32 +407,70 @@ export const pageRouter = createTRPCRouter({
         });
       }
     }),
-  getChartData: privateProcedure.query(async ({ ctx }) => {
-    try {
-      const queryResult = await ctx.prisma.user.aggregateRaw({
-        pipeline: [
-          {
-            $group: {
-              _id: {
-                month: { $month: "$createDate" },
+  getChartData: privateProcedure
+    .input(
+      z.object({
+        start: z.date(),
+        end: z.date(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        const queryResult = await ctx.prisma.page.aggregateRaw({
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $gte: [
+                        "$createDate",
+                        {
+                          $dateFromString: {
+                            dateString: input.start.toISOString(),
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      $lte: [
+                        "$createDate",
+                        {
+                          $dateFromString: {
+                            dateString: input.end.toISOString(),
+                          },
+                        },
+                      ],
+                    },
+                  ],
+                },
               },
-              count: { $sum: 1 },
             },
-          },
-        ],
-      });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const arrayValues = Object.values(queryResult).map((item: any) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        return { month: item._id.month, count: item.count };
-      }) as IChartUserData[];
+            {
+              $group: {
+                _id: {
+                  $dateToString: { format: "%Y-%m-%d", date: "$createDate" },
+                },
+                count: { $sum: 1 },
+              },
+            },
+          ],
+        });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const arrayValues = Object.values(queryResult).map((item: any) => {
+          return { date: item._id, count: item.count };
+        }) as IChartPageData[];
 
-      return arrayValues;
-    } catch (error) {
-      throw new TRPCError({
-        message: i18n.t("somethingWrong"),
-        code: "INTERNAL_SERVER_ERROR",
-      });
-    }
-  }),
+        return arrayValues.sort((a, b) => {
+          const tempA = a.date.split("/").reverse().join("");
+          const tempB = b.date.split("/").reverse().join("");
+          return tempA > tempB ? 1 : tempA < tempB ? -1 : 0;
+        });
+      } catch (error) {
+        throw new TRPCError({
+          message: i18n.t("somethingWrong"),
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+    }),
 });
