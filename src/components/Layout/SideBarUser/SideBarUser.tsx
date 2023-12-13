@@ -105,7 +105,7 @@ const SideBarUser = (props: Props) => {
                           backgroundColor: grey[400],
                           borderRadius: "10px",
                           color: (theme) => theme.palette.common.black,
-                          alignSelf: "center",
+                          alignSelf: "baseline",
                           ml: 1,
                           mb: 0.5,
                         }}
