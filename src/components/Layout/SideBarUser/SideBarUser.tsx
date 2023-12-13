@@ -55,6 +55,7 @@ const SideBarUser = (props: Props) => {
   const handleLogout = () => {
     deleteCookie("token");
     void utils.user.getCurrUserDetail.reset();
+    void utils.page.getPageByCurrUser.reset();
     void router.replace("/");
   };
 
