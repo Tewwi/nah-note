@@ -33,6 +33,7 @@
     "moment": "^2.29.4",
     "next": "^13.4.2",
     "next-auth": "^4.23.2",
+    "raw-body": "^2.5.2",
     "re-resizable": "^6.9.11",
     "react": "18.2.0",
     "react-chartjs-2": "^5.2.0",
@@ -42,6 +43,7 @@
     "react-hot-toast": "^2.4.1",
     "react-i18next": "^13.2.2",
     "simplebar-react": "^3.2.4",
+    "stripe": "^14.8.0",
     "superjson": "1.12.2",
     "zod": "^3.21.4"
   },

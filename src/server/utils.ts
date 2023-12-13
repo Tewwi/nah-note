@@ -112,3 +112,20 @@ export const handleGetMonthInYear = (arr: IChartUserData[]) => {
 
   return result;
 };
+
+export const handleCheckPremiumPermission = (
+  user: User,
+  condition: boolean
+) => {
+  if (user.isPremium || user.role === Role.ADMIN.value) {
+    return;
+  }
+
+  if (!condition) {
+    // console.log("aaa", user.isPremium, condition);
+    throw new TRPCError({
+      message: i18n.t("nonPremiumError"),
+      code: "UNAUTHORIZED",
+    });
+  }
+};

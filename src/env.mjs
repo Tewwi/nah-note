@@ -12,6 +12,8 @@ export const env = createEnv({
     SECRET_KEY_CLOUDINARY: z.string(),
     API_KEY_CLOUDINARY: z.string(),
     NODE_ENV: z.enum(["development", "test", "production"]),
+    STRIPE_SECRET_KEY: z.string(),
+    WEBHOOK_SECRET: z.string(),
   },
 
   /**
@@ -23,6 +25,7 @@ export const env = createEnv({
     NEXT_PUBLIC_CLOUDINARY_API: z.string().min(1),
     NEXT_PUBLIC_CLOUDINARY_API_KEY: z.string().min(1),
     NEXT_PUBLIC_TINY_API_KEY: z.string().min(1),
+    NEXT_PUBLIC_CLOUDINARY_API_PAYMENT_URL: z.string(),
   },
 
   /**
@@ -30,14 +33,20 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
+    //server
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     SECRET_KEY: process.env.SECRET_KEY,
     SECRET_KEY_CLOUDINARY: process.env.SECRET_KEY_CLOUDINARY,
     API_KEY_CLOUDINARY: process.env.API_KEY_CLOUDINARY,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+    WEBHOOK_SECRET: process.env.WEBHOOK_SECRET,
+    //client
     NEXT_PUBLIC_CLOUDINARY_API: process.env.NEXT_PUBLIC_CLOUDINARY_API,
     NEXT_PUBLIC_CLOUDINARY_API_KEY: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
     NEXT_PUBLIC_TINY_API_KEY: process.env.NEXT_PUBLIC_TINY_API_KEY,
+    NEXT_PUBLIC_CLOUDINARY_API_PAYMENT_URL:
+      process.env.NEXT_PUBLIC_CLOUDINARY_API_PAYMENT_URL,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

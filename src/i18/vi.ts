@@ -104,4 +104,13 @@ export const vi = {
   unblockUser: "Bỏ chặn",
   blockUserDesc: "Bạn chắc chắn muốn chặn người dùng này ?",
   unblockUserDesc: "Bạn chắc chắn muốn bỏ chặn người dùng này ?",
+  nonPremiumError:
+    "Hãy nâng cấp tài khoản của bạn để thực hiện hành động này !",
+  premiumTitle: "Nâng cấp tài khoản của bạn",
+  premiumBenefitDesc: "Tài khoản sau khi được nâng cấp sẽ có thể",
+  premiumBenefit_1: "Không giới hạn trang nhớ",
+  premiumBenefit_2: "Không giới hạn số khối trong trang nhớ",
+  premiumBenefit_3: "Không giới hạn số người chia sẻ trong 1 trang nhớ",
+  premiumBtn: "Nâng cấp ngay",
+  premiumText: "Nâng cấp",
 };

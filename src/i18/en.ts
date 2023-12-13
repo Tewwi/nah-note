@@ -106,4 +106,12 @@ export const en = {
   unblockUser: "Unblock User",
   blockUserDesc: "Are you sure you want to block this user ?",
   unblockUserDesc: "Are you sure you want to unblock this user ?",
+  nonPremiumError: "Please upgrade your account to process this action",
+  premiumTitle: "Upgrade your account",
+  premiumBenefitDesc: "Premium account can have :",
+  premiumBenefit_1: "Unlimited page",
+  premiumBenefit_2: "Unlimited block in page",
+  premiumBenefit_3: "Unlimited user share for page",
+  premiumBtn: "Upgrade now",
+  premiumText: "Premium",
 };

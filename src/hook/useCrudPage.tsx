@@ -1,3 +1,4 @@
+import { getTRPCErrorFromUnknown } from "@trpc/server";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { api } from "~/utils/api";
@@ -10,11 +11,8 @@ interface ICreateNewPage {
 
 const useCrudPage = () => {
   const router = useRouter();
-  const {
-    mutateAsync: createNewPageApi,
-    error,
-    isLoading: createPageLoading,
-  } = api.page.createNewPage.useMutation();
+  const { mutateAsync: createNewPageApi, isLoading: createPageLoading } =
+    api.page.createNewPage.useMutation();
   const { refetch: reloadPagesData } = api.page.getPageByCurrUser.useQuery(
     { page: 1 },
     { getNextPageParam: (lastPage) => lastPage.nextCursor }
@@ -23,11 +21,10 @@ const useCrudPage = () => {
   const handleCreateNewPage = async (params: ICreateNewPage) => {
     try {
       const resp = await createNewPageApi(params);
-      await reloadPagesData()
+      await reloadPagesData();
       void router.push(`/page/${resp.id}`);
     } catch (e) {
-      console.log(e);
-      toast.error(error?.message || "");
+      toast.error(getTRPCErrorFromUnknown(e).message);
     }
   };
 

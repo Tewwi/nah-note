@@ -11,9 +11,14 @@ import {
   privateAdminProcedure,
   privateProcedure,
 } from "~/server/api/trpc";
-import { itemPerPage } from "~/server/constant";
+import {
+  itemPerPage,
+  maxPageForNonPremium,
+  maxPermissionShareForNonPremium,
+} from "~/server/constant";
 import {
   handleCheckPagePermission,
+  handleCheckPremiumPermission,
   handleCheckUserBlock,
 } from "~/server/utils";
 
@@ -32,6 +37,11 @@ export const pageRouter = createTRPCRouter({
     .input(schemaPage)
     .mutation(async ({ ctx, input }) => {
       try {
+        handleCheckPremiumPermission(
+          ctx.currUser,
+          ctx.currUser.Page.length + 1 <= maxPageForNonPremium
+        );
+
         const resp = await ctx.prisma.page.create({
           data: {
             title: input.title,
@@ -50,9 +60,10 @@ export const pageRouter = createTRPCRouter({
 
         return resp;
       } catch (error) {
+        const err = getTRPCErrorFromUnknown(error);
         throw new TRPCError({
-          message: i18n.t("somethingWrong"),
-          code: "INTERNAL_SERVER_ERROR",
+          message: err.message,
+          code: err.code,
         });
       }
     }),
@@ -252,6 +263,9 @@ export const pageRouter = createTRPCRouter({
           where: {
             id: pageId,
           },
+          include: {
+            author: true,
+          },
         });
 
         const targetUser = await ctx.prisma.user.findUnique({
@@ -260,6 +274,12 @@ export const pageRouter = createTRPCRouter({
           },
         });
 
+        if (page) {
+          handleCheckPremiumPermission(
+            page.author,
+            page.permissionId.length + 1 <= maxPermissionShareForNonPremium
+          );
+        }
         handleCheckPagePermission(ctx.currUser, page as Page);
         handleCheckUserBlock(ctx.currUser);
         if (targetUser) {

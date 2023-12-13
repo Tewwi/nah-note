@@ -113,6 +113,9 @@ const enforceUserIsAuth = t.middleware(async ({ ctx, next }) => {
   const currUser = await prisma.user
     .findUnique({
       where: { id: id },
+      include: {
+        Page: true,
+      },
     })
     .catch(() => {
       throw new TRPCError({ code: "UNAUTHORIZED", message: "UNAUTHORIZED" });

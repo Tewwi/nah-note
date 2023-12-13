@@ -1,8 +1,12 @@
-import { TRPCError } from "@trpc/server";
+import { TRPCError, getTRPCErrorFromUnknown } from "@trpc/server";
 import i18n from "i18next";
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
-import { handleTryCatchApiAction } from "~/server/utils";
+import { maxBlockForNonPremium } from "~/server/constant";
+import {
+  handleCheckPremiumPermission,
+  handleTryCatchApiAction,
+} from "~/server/utils";
 
 export const schemaBlock = z.object({
   type: z.string(),
@@ -19,6 +23,27 @@ export const blockRouter = createTRPCRouter({
     .input(schemaBlock)
     .mutation(async ({ ctx, input }) => {
       try {
+        const page = await ctx.prisma.page.findUnique({
+          where: {
+            id: input.pageId,
+          },
+          include: {
+            blocks: true,
+          },
+        });
+
+        if (!page) {
+          throw new TRPCError({
+            message: i18n.t("Not Found"),
+            code: "NOT_FOUND",
+          });
+        }
+
+        handleCheckPremiumPermission(
+          ctx.currUser,
+          page.blocks.length + 1 <= maxBlockForNonPremium
+        );
+
         return await ctx.prisma.block.create({
           data: {
             type: input.type,
@@ -27,9 +52,10 @@ export const blockRouter = createTRPCRouter({
           },
         });
       } catch (error) {
+        const err = getTRPCErrorFromUnknown(error);
         throw new TRPCError({
-          message: i18n.t("somethingWrong"),
-          code: "INTERNAL_SERVER_ERROR",
+          message: err.message,
+          code: err.code,
         });
       }
     }),

@@ -1,14 +1,13 @@
-import { Box, Button, Stack, Typography } from "@mui/material";
-import React from "react";
-import style from "./index.module.css";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import Head from "next/head";
-import { useRouter } from "next/router";
-import { blue } from "~/theme/colors";
 import Image from "next/image";
-import { homepageImgUrl } from "~/utils/constant";
+import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import { useGlobalContext } from "~/context/GlobalContext";
+import { blue } from "~/theme/colors";
+import { homepageImgUrl } from "~/utils/constant";
+import style from "./index.module.css";
 
 const DashboardPage = () => {
   const router = useRouter();

@@ -16,13 +16,17 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import SimpleBar from "simplebar-react";
 import useCrudPage from "~/hook/useCrudPage";
+import { grey } from "~/theme/colors";
 import { api } from "~/utils/api";
+import { Role } from "~/utils/constant";
 import BoxClickAble from "../../Common/BoxClickAble";
 import ImageLoading from "../../Common/Image/ImageLoading";
+import AdminSection from "./AdminSection";
 import SearchButton from "./SearchButton";
 import SettingButton from "./SettingButton";
 import UserPageShareList from "./UserPageShareList";
 import UserPageList from "./userPageList";
+import PremiumButton from "./PremiumButtom";
 
 interface Props {
   openSideBar: boolean;
@@ -35,9 +39,11 @@ const SideBarUser = (props: Props) => {
   const { handleCreateNewPage, createPageLoading } = useCrudPage();
   const { t } = useTranslation();
   const { data: userInfo, isLoading } = api.user.getCurrUserDetail.useQuery();
+  const utils = api.useContext();
 
   const [openList, setOpenList] = useState(false);
   const [openListShare, setOpenListShare] = useState(false);
+  const [openAdminSection, setOpenAdminSection] = useState(false);
 
   const handleNewPageBtn = async () => {
     if (!userInfo) {
@@ -46,10 +52,10 @@ const SideBarUser = (props: Props) => {
 
     await handleCreateNewPage({ authorId: userInfo.id });
   };
-
   const handleLogout = () => {
     deleteCookie("token");
-    router.reload();
+    void utils.user.getCurrUserDetail.reset();
+    void router.replace("/");
   };
 
   return (
@@ -90,13 +96,32 @@ const SideBarUser = (props: Props) => {
                     style={{ alignSelf: "center" }}
                     loadingCustom={isLoading}
                   />
-                  <Typography
-                    variant="body2"
-                    flexWrap="wrap"
-                    sx={{ alignSelf: "center", ml: 1 }}
-                  >
-                    {userInfo?.userName}
-                  </Typography>
+                  <Stack justifyContent="center">
+                    {userInfo?.isPremium ? (
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          paddingInline: 0.5,
+                          backgroundColor: grey[400],
+                          borderRadius: "10px",
+                          color: (theme) => theme.palette.common.black,
+                          alignSelf: "center",
+                          ml: 1,
+                          mb: 0.5,
+                        }}
+                      >
+                        Premium
+                      </Typography>
+                    ) : null}
+
+                    <Typography
+                      variant="body2"
+                      flexWrap="wrap"
+                      sx={{ alignSelf: "center", ml: 1 }}
+                    >
+                      {userInfo?.userName}
+                    </Typography>
+                  </Stack>
                 </Stack>
 
                 <IconButton
@@ -109,6 +134,13 @@ const SideBarUser = (props: Props) => {
             </BoxClickAble>
 
             <Stack direction="column">
+              {!userInfo?.isPremium ? (
+                <>
+                  <PremiumButton />
+                  <Divider />
+                </>
+              ) : null}
+
               <SearchButton />
               <Divider />
 
@@ -136,6 +168,16 @@ const SideBarUser = (props: Props) => {
               </BoxClickAble>
             </Stack>
             <Divider />
+
+            {userInfo?.role === Role.ADMIN.value ? (
+              <>
+                <AdminSection
+                  openList={openAdminSection}
+                  setOpenList={setOpenAdminSection}
+                />
+                <Divider />
+              </>
+            ) : null}
 
             <UserPageShareList
               openList={openListShare}
