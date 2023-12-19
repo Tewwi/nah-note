@@ -1,11 +1,12 @@
 // import { getCookie } from "cookies-next";
+import { getCookie } from "cookies-next";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get("token");
-
+  const token = getCookie("token");
+  console.log("middleware", token);
   if (!token) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
