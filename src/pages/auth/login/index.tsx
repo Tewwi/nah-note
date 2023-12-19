@@ -49,7 +49,7 @@ const LoginPage = () => {
     }
 
     toast.success(t("loginSuccess"));
-    void router.push("/", undefined, { shallow: true });
+    void router.push("/");
   };
 
   return (
