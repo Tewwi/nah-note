@@ -113,4 +113,6 @@ export const vi = {
   premiumBenefit_3: "Không giới hạn số người chia sẻ trong 1 trang nhớ",
   premiumBtn: "Nâng cấp ngay",
   premiumText: "Nâng cấp",
+  add: "Thêm",
+  removeSuccess: "Xoá thành công",
 };

@@ -114,4 +114,6 @@ export const en = {
   premiumBenefit_3: "Unlimited user share for page",
   premiumBtn: "Upgrade now",
   premiumText: "Premium",
+  add: "Add",
+  removeSuccess: "Remove Successful",
 };

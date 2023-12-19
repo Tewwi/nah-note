@@ -1,24 +1,10 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  InputBase,
-  Stack,
-} from "@mui/material";
-import { getTRPCErrorFromUnknown } from "@trpc/server";
-import { useRouter } from "next/router";
-import React from "react";
+import { Dialog, DialogContent, DialogTitle, Tab, Tabs } from "@mui/material";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { api } from "~/utils/api";
-import { handleUnauthorize } from "~/utils/constant";
-import SearchIcon from "@mui/icons-material/Search";
-import { debounce, includes } from "lodash";
-import PermissionUserItem from "./PermissionUserItem";
-import toast from "react-hot-toast";
-import type { User } from "@prisma/client";
-import SimpleBar from "simplebar-react";
 import "simplebar-react/dist/simplebar.min.css";
+import { api } from "~/utils/api";
+import AddPermissionTab from "./AddPermissionTab";
+import EditPermissionTab from "./EditPermissionTab";
 
 interface IProps {
   open: boolean;
@@ -28,39 +14,29 @@ interface IProps {
 
 const SettingPermissionDialog = (props: IProps) => {
   const { open, onClose, id } = props;
-
-  const router = useRouter();
   const { t } = useTranslation();
 
-  const { data: pageData } = api.page.getPageById.useQuery({
+  const [tab, setTab] = useState(0);
+
+  const { data: pageData, refetch } = api.page.getPageById.useQuery({
     id: id,
   });
-  const {
-    data: userList,
-    mutateAsync: searchUser,
-    reset,
-  } = api.user.searchUserByName.useMutation();
-  const { mutateAsync: updatePermission } =
-    api.page.setPermissionPage.useMutation({
-      onError: (err) =>
-        handleUnauthorize(getTRPCErrorFromUnknown(err).code, router),
-    });
 
-  const handleSearchUser = debounce(async (value: string) => {
-    await searchUser({
-      query: value,
-      permissionList: pageData?.permissionId || [],
-    });
-  });
+  const settingOption = useMemo(() => {
+    return [
+      {
+        value: 0,
+        label: t("add"),
+      },
+      {
+        value: 1,
+        label: t("edit"),
+      },
+    ];
+  }, [t]);
 
-  const handleAddUser = async (userId: string) => {
-    try {
-      await updatePermission({ pageId: id, userIds: userId });
-      onClose();
-      toast.success(t("addSuccess"));
-    } catch (error) {
-      toast.error(getTRPCErrorFromUnknown(error).message);
-    }
+  const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
+    setTab(newValue);
   };
 
   return (
@@ -76,43 +52,36 @@ const SettingPermissionDialog = (props: IProps) => {
         },
       }}
       TransitionProps={{
-        onExit: () => {
-          reset();
+        onExited: () => {
+          setTab(0);
+          void refetch();
         },
       }}
     >
       <DialogTitle>{t("settingPermission")}</DialogTitle>
       <DialogContent>
-        <Stack direction="column">
-          <Stack direction="row" alignItems="center" mb={1}>
-            <InputBase
-              sx={{ ml: 1, flex: 1 }}
-              placeholder={t("permissionPlaceholder")}
-              onChange={(e) => {
-                void handleSearchUser(e.target.value);
-              }}
-              endAdornment={
-                <IconButton sx={{ p: "10px" }} aria-label="menu">
-                  <SearchIcon />
-                </IconButton>
-              }
-            />
-          </Stack>
-          <SimpleBar style={{ maxHeight: "240px" }}>
-            <Stack direction="column" gap={1.5}>
-              {userList
-                ?.filter((item) => item.id !== pageData?.authorId)
-                .map((user) => (
-                  <PermissionUserItem
-                    key={user.id}
-                    handleAddUser={handleAddUser}
-                    data={user as User}
-                    hidden={includes(pageData?.permissionId, user.id)}
-                  />
-                ))}
-            </Stack>
-          </SimpleBar>
-        </Stack>
+        <Tabs
+          orientation={"horizontal"}
+          value={tab}
+          onChange={handleChangeTab}
+          sx={{
+            borderRight: 1,
+            borderColor: "divider",
+            mb: 1,
+          }}
+        >
+          {settingOption.map((item) => (
+            <Tab key={item.value} label={item.label} />
+          ))}
+        </Tabs>
+
+        {tab === 0 ? (
+          <AddPermissionTab pageData={pageData} onClose={onClose} />
+        ) : null}
+
+        {tab === 1 ? (
+          <EditPermissionTab pageData={pageData} onClose={onClose} />
+        ) : null}
       </DialogContent>
     </Dialog>
   );

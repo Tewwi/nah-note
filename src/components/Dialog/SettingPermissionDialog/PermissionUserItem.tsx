@@ -1,17 +1,19 @@
 import { CircularProgress, IconButton, Stack, Typography } from "@mui/material";
 import type { User } from "@prisma/client";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import Image from "next/image";
+import RemoveIcon from "@mui/icons-material/Remove";
 
 interface IProps {
   data: User;
   handleAddUser: (id: string) => Promise<void>;
   hidden: boolean;
+  isEdit?: boolean;
 }
 
 const PermissionUserItem = (props: IProps) => {
-  const { data, handleAddUser, hidden } = props;
+  const { data, handleAddUser, hidden, isEdit = false } = props;
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClickAdd = async () => {
@@ -20,6 +22,23 @@ const PermissionUserItem = (props: IProps) => {
     await handleAddUser(data.id);
     setIsLoading(false);
   };
+
+  const renderIcons = useMemo(() => {
+    if (isLoading) {
+      return (
+        <CircularProgress
+          size="16px"
+          sx={{ color: (theme) => theme.palette.text.primary }}
+        />
+      );
+    }
+
+    if (isEdit) {
+      return <RemoveIcon fontSize="small" color="error" />;
+    }
+
+    return <AddIcon fontSize="small" />;
+  }, [isEdit, isLoading]);
 
   if (hidden) {
     return <></>;
@@ -41,14 +60,7 @@ const PermissionUserItem = (props: IProps) => {
         disabled={isLoading}
         size="small"
       >
-        {isLoading ? (
-          <CircularProgress
-            size="16px"
-            sx={{ color: (theme) => theme.palette.text.primary }}
-          />
-        ) : (
-          <AddIcon fontSize="small" />
-        )}
+        {renderIcons}
       </IconButton>
     </Stack>
   );

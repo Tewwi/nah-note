@@ -306,6 +306,48 @@ export const pageRouter = createTRPCRouter({
         });
       }
     }),
+  removePermissionUser: privateProcedure
+    .input(z.object({ userId: z.string(), pageId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { pageId, userId } = input;
+
+      try {
+        const page = await ctx.prisma.page.findUnique({
+          where: {
+            id: pageId,
+          },
+          include: {
+            author: true,
+          },
+        });
+
+        if (ctx.currUser.id !== page?.author.id) {
+          throw new TRPCError({
+            message: i18n.t("UNAUTHORIZED"),
+            code: "UNAUTHORIZED",
+          });
+        }
+
+        const permissionArray = page?.permissionId
+          ? page.permissionId.filter((item) => item !== userId)
+          : [];
+
+        return await ctx.prisma.page.update({
+          where: {
+            id: page?.id,
+          },
+          data: {
+            permissionId: permissionArray,
+          },
+        });
+      } catch (error) {
+        const err = getTRPCErrorFromUnknown(error);
+        throw new TRPCError({
+          message: err.message,
+          code: err.code,
+        });
+      }
+    }),
   getListPermissionUserById: privateProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {

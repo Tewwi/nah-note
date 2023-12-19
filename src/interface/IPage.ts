@@ -1,4 +1,4 @@
-import type { Block, User } from "@prisma/client";
+import type { Block, Prisma, User } from "@prisma/client";
 
 export interface IPageForm {
   id: string;
@@ -21,3 +21,11 @@ export interface IChartPageData {
   date: string;
   count: number;
 }
+
+export type PageFullPackage = Prisma.PageGetPayload<{
+  include: {
+    author: true;
+    comment: true;
+    blocks: true;
+  };
+}>;
