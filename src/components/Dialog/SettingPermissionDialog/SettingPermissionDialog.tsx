@@ -65,8 +65,6 @@ const SettingPermissionDialog = (props: IProps) => {
           value={tab}
           onChange={handleChangeTab}
           sx={{
-            borderRight: 1,
-            borderColor: "divider",
             mb: 1,
           }}
         >
