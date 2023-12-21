@@ -2,13 +2,13 @@ import { CircularProgress, Container, Stack, Typography } from "@mui/material";
 import moment from "moment";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Line } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 import { options } from "~/components/Chart/option";
 import CustomReactDateRangePicker from "~/components/FormComponents/DatetimePicker/CustomReactDateRangePicker";
 import { api } from "~/utils/api";
-import { dateDisplayFormat, dateFormat } from "~/utils/common";
+import { dateFormat } from "~/utils/common";
 
 const PageChart = () => {
   const { t } = useTranslation();
@@ -55,6 +55,15 @@ const PageChart = () => {
     void router.replace(router);
   };
 
+  useEffect(() => {
+    if (!router.query.start_date && !router.query.end_date) {
+      router.query.start_date = moment(startDate).format(dateFormat);
+      router.query.end_date = moment(endDate).format(dateFormat);
+
+      void router.replace(router);
+    }
+  }, [endDate, router, startDate]);
+
   return (
     <>
       <Head>
@@ -66,9 +75,7 @@ const PageChart = () => {
         </Typography>
 
         <Typography variant="body1" my={2}>
-          {`${t("chartPageTitle")} ${moment(startDate).format(
-            dateDisplayFormat
-          )} - ${moment(endDate).format(dateDisplayFormat)}`}
+          {`${t("chartPageTitle")}`}
         </Typography>
         <Stack direction="row" gap={1} mb={2}>
           <CustomReactDateRangePicker

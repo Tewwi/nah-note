@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 
   return {
     redirect: {
-      destination: "dashboard",
+      destination: "/dashboard",
       permanent: false,
     },
   };

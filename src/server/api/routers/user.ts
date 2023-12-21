@@ -448,9 +448,11 @@ export const userRouter = createTRPCRouter({
         ],
       });
 
-      const arrayValues = Object.values(queryResult).map((item: any) => {
-        return item._id.year as string;
-      });
+      const arrayValues = Object.values(queryResult)
+        .map((item: any) => {
+          return item._id.year as string;
+        })
+        .sort((a, b) => Number(a) - Number(b));
 
       return arrayValues;
     } catch (error) {

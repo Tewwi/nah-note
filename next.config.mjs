@@ -23,6 +23,7 @@ const config = {
       "images.unsplash.com",
       "plus.unsplash.com",
       "i.pinimg.com",
+      "robohash.org",
     ],
   },
   webpack: (config) => {

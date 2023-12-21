@@ -20,7 +20,7 @@ model User {
   Page           Page[]
   comment        Comment[]
   role           Int       @default(1)
-  create_at      DateTime  @default(now())
+  create_at      DateTime? @default(now())
   isBlock        Boolean   @default(false)
   isPremium      Boolean   @default(false)
   getPremiumDate DateTime?
@@ -38,7 +38,7 @@ model Page {
   children        Page[]    @relation("ParentChild")
   emoji           String?
   backgroundCover String?
-  createDate      DateTime  @default(now())
+  createDate      DateTime? @default(now())
   comment         Comment[]
 }
 

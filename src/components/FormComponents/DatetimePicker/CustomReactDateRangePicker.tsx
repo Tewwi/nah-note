@@ -3,7 +3,7 @@ import CustomReactDatePicker from "./CustomReactDatePicker";
 import { useRouter } from "next/router";
 import moment from "moment";
 import { isArray } from "lodash";
-import { dateFormat } from "~/utils/common";
+import { dateFormat, datePickerFormat } from "~/utils/common";
 
 interface Props {
   clearSearchParamsOutside?: boolean;
@@ -48,7 +48,7 @@ const CustomReactDateRangePicker = (props: Props) => {
           },
         },
       }}
-      dateFormat={"yyyy/MM/dd"}
+      dateFormat={datePickerFormat}
       startDate={convertDate("start_date")}
       endDate={convertDate("end_date")}
       onChange={(dates) => {
