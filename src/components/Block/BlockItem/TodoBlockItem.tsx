@@ -1,16 +1,25 @@
-import { Checkbox, Stack } from "@mui/material";
+import { Checkbox, Stack, Typography } from "@mui/material";
 import type { Block } from "@prisma/client";
 import { debounce } from "lodash";
+import moment from "moment";
 import { type ChangeEvent, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import TinyEditor from "~/components/Editor/TinyEditor";
+import { dateDisplayFormat } from "~/utils/common";
 
 interface IProps {
-  handleChangeValue: (value: string, checkBoxValue?: boolean) => Promise<void>;
+  handleChangeValue: (
+    value: string,
+    checkBoxValue?: boolean,
+    updateDate?: Date
+  ) => Promise<void>;
   blockData: Block;
   disable: boolean;
 }
 
 const TodoBlockItem = (props: IProps) => {
+  const { t } = useTranslation();
+
   const { blockData, handleChangeValue, disable } = props;
   const [checkboxValue, setCheckboxValue] = useState(
     Boolean(blockData.todo_checked)
@@ -20,7 +29,8 @@ const TodoBlockItem = (props: IProps) => {
   const handleToggleCheckbox = useCallback(
     debounce(
       async (_event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
-        await handleChangeValue(blockData.content, checked);
+        const date = moment().toDate();
+        await handleChangeValue(blockData.content, checked, date);
       },
       1000
     ),
@@ -28,30 +38,47 @@ const TodoBlockItem = (props: IProps) => {
   );
 
   return (
-    <Stack direction="row" flex={1}>
-      <Checkbox
-        value={checkboxValue}
-        defaultChecked={checkboxValue}
-        onChange={(e, checked) => {
-          setCheckboxValue(checked);
-          void handleToggleCheckbox(e, checked);
-        }}
-        size="small"
-        sx={{
-          ":hover": {
-            backgroundColor: "transparent",
-          },
-        }}
-      />
-      <TinyEditor
-        value={blockData.content}
-        handleChangeValue={handleChangeValue}
-        styleCustom={{
-          textDecoration: checkboxValue ? "line-through" : "unset",
-          opacity: checkboxValue ? 0.7 : 1,
-        }}
-        disable={disable}
-      />
+    <Stack>
+      <Stack direction="row" flex={1}>
+        <Checkbox
+          value={checkboxValue}
+          defaultChecked={checkboxValue}
+          onChange={(e, checked) => {
+            setCheckboxValue(checked);
+            void handleToggleCheckbox(e, checked);
+          }}
+          size="small"
+          sx={{
+            ":hover": {
+              backgroundColor: "transparent",
+            },
+          }}
+        />
+        <TinyEditor
+          value={blockData.content}
+          handleChangeValue={handleChangeValue}
+          styleCustom={{
+            textDecoration: checkboxValue ? "line-through" : "unset",
+            opacity: checkboxValue ? 0.7 : 1,
+          }}
+          disable={disable}
+        />
+        {blockData.updateDate ? (
+          <Typography
+            variant="caption"
+            sx={{
+              fontStyle: "italic",
+              alignSelf: "center",
+              ml: 2,
+              opacity: 0.4,
+            }}
+          >
+            {` - ${t("lastUpdate")} ${moment(blockData.updateDate).format(
+              dateDisplayFormat
+            )}`}
+          </Typography>
+        ) : null}
+      </Stack>
     </Stack>
   );
 };

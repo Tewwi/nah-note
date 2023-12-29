@@ -11,10 +11,14 @@ import { useTranslation } from "react-i18next";
 import ConfirmDeleteDialog from "~/components/Dialog/ConfirmDialog/ConfirmDeleteDialog";
 import CreateOrUpdateDialog from "~/components/Dialog/UserListingDialog/CreateOrUpdateDialog";
 import ListingHeader from "~/components/ListingScreen/ListingHeader";
-import UserTable from "~/components/Table/UserTable";
 import type { ISort } from "~/interface/common";
 import { generateSSGHelper } from "~/server/utils";
 import { api } from "~/utils/api";
+import dynamic from "next/dynamic";
+
+const UserTable = dynamic(() =>
+  import("~/components/Table/UserTable").then((module) => module.default)
+);
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const token = getCookie("token", { req, res });

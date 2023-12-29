@@ -5,7 +5,11 @@ import TodoBlockItem from "./BlockItem/TodoBlockItem";
 import ImageBlockItem from "./BlockItem/ImageBlockItem";
 
 interface IProps {
-  handleChangeValue: (value: string, checkBoxValue?: boolean) => Promise<void>;
+  handleChangeValue: (
+    value: string,
+    checkBoxValue?: boolean,
+    updateDate?: Date
+  ) => Promise<void>;
   blockData: Block;
   disable: boolean;
 }

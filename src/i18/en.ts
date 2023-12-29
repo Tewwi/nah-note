@@ -116,4 +116,5 @@ export const en = {
   premiumText: "Premium",
   add: "Add",
   removeSuccess: "Remove Successful",
+  lastUpdate: "Last update",
 };

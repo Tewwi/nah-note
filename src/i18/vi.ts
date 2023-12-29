@@ -115,4 +115,5 @@ export const vi = {
   premiumText: "Nâng cấp",
   add: "Thêm",
   removeSuccess: "Xoá thành công",
+  lastUpdate: "Sửa lúc",
 };

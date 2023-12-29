@@ -16,6 +16,7 @@ export const schemaBlock = z.object({
   todo_checked: z.boolean().optional(),
   height: z.string().nullable().optional(),
   width: z.string().nullable().optional(),
+  updateDate: z.date().nullable().optional(),
 });
 
 export const blockRouter = createTRPCRouter({

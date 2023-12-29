@@ -44,11 +44,12 @@ const Block = (props: Props) => {
   );
 
   const handleChangeValue = useCallback(
-    async (value: string, checkBoxValue?: boolean) => {
+    async (value: string, checkBoxValue?: boolean, updateDate?: Date) => {
       const newValue = {
         ...blockData,
         content: value,
         todo_checked: checkBoxValue ? checkBoxValue : blockData.todo_checked,
+        updateDate: updateDate ? updateDate : blockData.updateDate,
       };
 
       handleChangeValueFieldArr(index, newValue);
