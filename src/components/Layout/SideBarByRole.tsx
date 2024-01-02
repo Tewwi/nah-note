@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { api } from "~/utils/api";
+import useCurrUser from "~/hook/useCurrUser";
 import SideBarLoading from "./SideBarLoading";
 import SideBarUser from "./SideBarUser/SideBarUser";
 
@@ -12,8 +12,7 @@ interface IProps {
 const SideBarByRole = (props: IProps) => {
   const { openSideBar, handleClose } = props;
   const router = useRouter();
-  const { isError, error, isInitialLoading } =
-    api.user.getCurrUserDetail.useQuery();
+  const { isError, error, isInitialLoading } = useCurrUser();
 
   useEffect(() => {
     if (isError && error.message === "jwt malformed") {

@@ -40,6 +40,7 @@ model Page {
   backgroundCover String?
   createDate      DateTime? @default(now())
   comment         Comment[]
+  isPublic        Boolean   @default(false)
 }
 
 model Block {

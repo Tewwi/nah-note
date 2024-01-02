@@ -10,6 +10,7 @@ import {
   createTRPCRouter,
   privateAdminProcedure,
   privateProcedure,
+  publicProcedure,
 } from "~/server/api/trpc";
 import {
   itemPerPage,
@@ -116,7 +117,7 @@ export const pageRouter = createTRPCRouter({
         });
       }
     }),
-  getPageById: privateProcedure
+  getPageById: publicProcedure
     .input(
       z.object({
         id: z.string(),
@@ -143,8 +144,19 @@ export const pageRouter = createTRPCRouter({
             },
           },
         });
-        handleCheckPagePermission(ctx.currUser, resp as Page);
 
+        if (resp?.isPublic) {
+          return resp;
+        }
+
+        if (!ctx.currUser) {
+          throw new TRPCError({
+            message: i18n.t("UNAUTHORIZED"),
+            code: "UNAUTHORIZED",
+          });
+        }
+
+        handleCheckPagePermission(ctx.currUser, resp as Page);
         return resp;
       } catch (error) {
         const err = getTRPCErrorFromUnknown(error);
@@ -219,7 +231,6 @@ export const pageRouter = createTRPCRouter({
         });
       }
     }),
-
   searchPageByQuery: privateProcedure
     .input(z.object({ query: z.string() }))
     .mutation(async ({ ctx, input }) => {

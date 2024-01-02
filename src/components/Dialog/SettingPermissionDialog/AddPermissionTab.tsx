@@ -27,7 +27,10 @@ const AddPermissionTab = (props: IProps) => {
   const { mutateAsync: updatePermission } =
     api.page.setPermissionPage.useMutation({
       onError: (err) =>
-        handleUnauthorize(getTRPCErrorFromUnknown(err).code, router),
+        handleUnauthorize(
+          getTRPCErrorFromUnknown(err).code,
+          () => void router.push("/")
+        ),
     });
 
   const handleSearchUser = debounce(async (value: string) => {

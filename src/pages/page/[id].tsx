@@ -10,6 +10,8 @@ import BlockList from "~/components/PageComponent/BlockList";
 import CoverImage from "~/components/PageComponent/CoverImage";
 import PageHeader from "~/components/PageComponent/PageHeader";
 import PageLoading from "~/components/PageComponent/PageLoading";
+import useCurrUser from "~/hook/useCurrUser";
+import useGetPageDetail from "~/hook/useGetPageDetail";
 import type { IPageForm } from "~/interface/IPage";
 import { api } from "~/utils/api";
 import { Role, handleUnauthorize } from "~/utils/constant";
@@ -18,20 +20,14 @@ const PageDetail = () => {
   const router = useRouter();
   const { id } = router.query;
   const { mutateAsync } = api.page.updatePageById.useMutation({
-    onError: (err) =>
-      handleUnauthorize(getTRPCErrorFromUnknown(err).code, router),
-  });
-  const { data: currUserInfo } = api.user.getCurrUserDetail.useQuery();
-
-  const { data, isLoading, refetch } = api.page.getPageById.useQuery(
-    {
-      id: id?.toString() || "",
+    onSettled(data, error) {
+      if (!data && getTRPCErrorFromUnknown(error)) {
+        handleUnauthorize("UNAUTHORIZED", () => void router.push("/"));
+      }
     },
-    {
-      onError: (err) =>
-        handleUnauthorize(getTRPCErrorFromUnknown(err).code, router),
-    }
-  );
+  });
+  const { data: currUserInfo } = useCurrUser();
+  const { data, isLoading, refetch } = useGetPageDetail(id?.toString() || "");
 
   const { control, setValue, watch, handleSubmit, reset } = useForm<IPageForm>({
     mode: "onBlur",
@@ -40,11 +36,15 @@ const PageDetail = () => {
   const currData = watch();
 
   const isAuthor = useMemo(() => {
-    if (currUserInfo?.role === Role.ADMIN.value) {
+    if (!currUserInfo) {
+      return false;
+    }
+
+    if (currUserInfo.role === Role.ADMIN.value) {
       return true;
     }
 
-    return currUserInfo?.id === data?.authorId;
+    return currUserInfo.id === data?.authorId;
   }, [currUserInfo?.id, data?.authorId]);
 
   const onSubmit = useCallback(

@@ -53,6 +53,7 @@ const TodoBlockItem = (props: IProps) => {
               backgroundColor: "transparent",
             },
           }}
+          disabled={disable}
         />
         <TinyEditor
           value={blockData.content}

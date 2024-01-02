@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import BoxClickAble from "~/components/Common/BoxClickAble";
 import SettingPermissionDialog from "~/components/Dialog/SettingPermissionDialog/SettingPermissionDialog";
+import useCurrUser from "~/hook/useCurrUser";
 import { api } from "~/utils/api";
 import { handleUnauthorize } from "~/utils/constant";
 
@@ -22,9 +23,12 @@ const SidebarListAction = (props: IProps) => {
   const { mutateAsync: deletePage, isLoading: deleteLoading } =
     api.page.deletePageById.useMutation({
       onError: (err) =>
-        handleUnauthorize(getTRPCErrorFromUnknown(err).code, router),
+        handleUnauthorize(
+          getTRPCErrorFromUnknown(err).code,
+          () => void router.push("/")
+        ),
     });
-  const { data: currUser } = api.user.getCurrUserDetail.useQuery();
+  const { data: currUser } = useCurrUser();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [permissionDialog, setPermissionDialog] = useState(false);

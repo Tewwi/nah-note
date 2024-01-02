@@ -6,17 +6,19 @@ import React, { useEffect, useState } from "react";
 import { handleCheckHiddenLayout } from "~/utils/common";
 import SideBarByRole from "./SideBarByRole";
 import PageInfoSection from "./SideBarUser/PageInfoSection";
+import { getCookie } from "cookies-next";
 
 const Layout = (props: React.PropsWithChildren) => {
   const router = useRouter();
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const isShowAppBar = router.pathname === "/page/[id]";
+  const token = getCookie("token");
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && token) {
       setOpenSideBar(true);
     }
-  }, []);
+  }, [token]);
 
   if (handleCheckHiddenLayout(router.pathname)) {
     return <>{props.children}</>;
@@ -34,10 +36,12 @@ const Layout = (props: React.PropsWithChildren) => {
           in={openSideBar}
           sx={{ height: "100vh" }}
         >
-          <SideBarByRole
-            openSideBar={openSideBar}
-            handleClose={() => setOpenSideBar(false)}
-          />
+          {token ? (
+            <SideBarByRole
+              openSideBar={openSideBar}
+              handleClose={() => setOpenSideBar(false)}
+            />
+          ) : null}
         </Collapse>
 
         <div style={{ flex: 1 }}>
@@ -65,6 +69,7 @@ const Layout = (props: React.PropsWithChildren) => {
                   display: openSideBar ? "none" : "inline-flex",
                   color: (theme) => theme.palette.text.secondary,
                 }}
+                hidden={!token}
                 onClick={() => setOpenSideBar(true)}
               >
                 <MenuIcon />

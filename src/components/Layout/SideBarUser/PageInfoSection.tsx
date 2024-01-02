@@ -1,28 +1,20 @@
-import { Badge, Stack, Typography } from "@mui/material";
-import { getTRPCErrorFromUnknown } from "@trpc/server";
-import { useRouter } from "next/router";
-import React, { useState } from "react";
-import { api } from "~/utils/api";
-import { Role, handleUnauthorize } from "~/utils/constant";
-import Image from "next/image";
 import CommentIcon from "@mui/icons-material/Comment";
+import { Badge, Stack, Typography } from "@mui/material";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import CommentDialog from "~/components/Dialog/CommentDialog/CommentDialog";
+import useCurrUser from "~/hook/useCurrUser";
+import useGetPageDetail from "~/hook/useGetPageDetail";
+import { Role } from "~/utils/constant";
 
 const PageInfoSection = () => {
   const router = useRouter();
   const { t } = useTranslation();
   const { id } = router.query;
-  const { data, refetch } = api.page.getPageById.useQuery(
-    {
-      id: id?.toString() || "",
-    },
-    {
-      onError: (err) =>
-        handleUnauthorize(getTRPCErrorFromUnknown(err).code, router),
-    }
-  );
-  const { data: userInfo } = api.user.getCurrUserDetail.useQuery();
+  const { data, refetch } = useGetPageDetail(id?.toString() || "");
+  const { data: userInfo } = useCurrUser();
 
   const [open, setOpen] = useState(false);
 

@@ -24,7 +24,10 @@ const EditPermissionTab = (props: IProps) => {
   const { mutateAsync: removePermission } =
     api.page.removePermissionUser.useMutation({
       onError: (err) =>
-        handleUnauthorize(getTRPCErrorFromUnknown(err).code, router),
+        handleUnauthorize(
+          getTRPCErrorFromUnknown(err).code,
+          () => void router.push("/")
+        ),
     });
 
   const {
@@ -35,7 +38,10 @@ const EditPermissionTab = (props: IProps) => {
     { id: pageData?.id || "0" },
     {
       onError: (err) =>
-        handleUnauthorize(getTRPCErrorFromUnknown(err).code, router),
+        handleUnauthorize(
+          getTRPCErrorFromUnknown(err).code,
+          () => void router.push("/")
+        ),
     }
   );
 

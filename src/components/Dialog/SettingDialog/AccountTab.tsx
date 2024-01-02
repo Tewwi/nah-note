@@ -6,6 +6,7 @@ import FormControlInput from "~/components/FormComponents/InputFormControl";
 import type { IUserInfo } from "~/interface/IUser";
 import { api } from "~/utils/api";
 import AvatarInput from "./AvatarInput";
+import useCurrUser from "~/hook/useCurrUser";
 
 const inputBreakPoint = {
   label: { xs: 12, sm: 12, md: 5, lg: 3, xl: 2 },
@@ -15,7 +16,7 @@ const inputBreakPoint = {
 const AccountTab = () => {
   const { t } = useTranslation();
   const isMobile = useMediaQuery("(max-width:600px)");
-  const { data: userInfo, refetch } = api.user.getCurrUserDetail.useQuery();
+  const { data: userInfo, refetch } = useCurrUser();
   const { mutateAsync: updateUser, isLoading } =
     api.user.updateUser.useMutation();
   const {

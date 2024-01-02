@@ -4,6 +4,7 @@ import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import PageLoading from "~/components/PageComponent/PageLoading";
+import useCurrUser from "~/hook/useCurrUser";
 import { generateSSGHelper } from "~/server/utils";
 import { api } from "~/utils/api";
 import { Role } from "~/utils/constant";
@@ -31,7 +32,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 
 export default function Home() {
   const { data: userPages } = api.page.getPageByCurrUser.useQuery({ page: 1 });
-  const { data: userInfo } = api.user.getCurrUserDetail.useQuery();
+  const { data: userInfo } = useCurrUser();
   const router = useRouter();
 
   useEffect(() => {

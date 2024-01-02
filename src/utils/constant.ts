@@ -1,5 +1,4 @@
 import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/rpc";
-import type { NextRouter } from "next/router";
 import toast from "react-hot-toast";
 import i18n from "~/i18/config";
 import type {
@@ -48,11 +47,11 @@ export const languageOptions: ISettingSelectItem[] = [
 
 export const handleUnauthorize = (
   errKey: TRPC_ERROR_CODE_KEY,
-  router: NextRouter
+  handleRouter: () => void
 ) => {
   if (errKey === "UNAUTHORIZED") {
     toast.error(i18n.t("unauthorized"));
-    void router.push("/");
+    handleRouter();
   }
 };
 

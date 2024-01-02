@@ -116,4 +116,5 @@ export const vi = {
   add: "Thêm",
   removeSuccess: "Xoá thành công",
   lastUpdate: "Sửa lúc",
+  unauthorized: "Bạn không có quyền để làm hành động này",
 };

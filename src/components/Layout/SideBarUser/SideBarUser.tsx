@@ -27,6 +27,7 @@ import SettingButton from "./SettingButton";
 import UserPageShareList from "./UserPageShareList";
 import UserPageList from "./userPageList";
 import PremiumButton from "./PremiumButtom";
+import useCurrUser from "~/hook/useCurrUser";
 
 interface Props {
   openSideBar: boolean;
@@ -38,7 +39,7 @@ const SideBarUser = (props: Props) => {
   const router = useRouter();
   const { handleCreateNewPage, createPageLoading } = useCrudPage();
   const { t } = useTranslation();
-  const { data: userInfo, isLoading } = api.user.getCurrUserDetail.useQuery();
+  const { data: userInfo, isLoading } = useCurrUser();
   const utils = api.useContext();
 
   const [openList, setOpenList] = useState(false);

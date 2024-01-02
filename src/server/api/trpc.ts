@@ -100,16 +100,15 @@ export const createTRPCRouter = t.router;
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
-export const publicProcedure = t.procedure;
 
 const enforceUserIsAuth = t.middleware(async ({ ctx, next }) => {
   const { token } = ctx;
 
-  const { id } = <{ id: string }>verifyUser(token || "");
   if (!token) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "UNAUTHORIZED" });
   }
 
+  const { id } = <{ id: string }>verifyUser(token || "");
   const currUser = await prisma.user
     .findUnique({
       where: { id: id },
@@ -159,5 +158,40 @@ const enforceUserIsAdmin = t.middleware(async ({ ctx, next }) => {
   });
 });
 
+const enforcePublicAuth = t.middleware(async ({ ctx, next }) => {
+  const { token } = ctx;
+
+  if (!token || token === "undefined") {
+    return next({
+      ctx: {
+        currUser: undefined,
+      },
+    });
+  } else {
+    const { id } = <{ id: string }>verifyUser(token || "");
+    const currUser = await prisma.user
+      .findUnique({
+        where: { id: id },
+        include: {
+          Page: true,
+        },
+      })
+      .catch(() => {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "UNAUTHORIZED" });
+      });
+
+    if (!currUser) {
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "UNAUTHORIZED" });
+    }
+
+    return next({
+      ctx: {
+        currUser: currUser,
+      },
+    });
+  }
+});
+
 export const privateProcedure = t.procedure.use(enforceUserIsAuth);
 export const privateAdminProcedure = t.procedure.use(enforceUserIsAdmin);
+export const publicProcedure = t.procedure.use(enforcePublicAuth);

@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogTitle, Tab, Tabs } from "@mui/material";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import "simplebar-react/dist/simplebar.min.css";
-import { api } from "~/utils/api";
+import useGetPageDetail from "~/hook/useGetPageDetail";
 import AddPermissionTab from "./AddPermissionTab";
 import EditPermissionTab from "./EditPermissionTab";
 
@@ -18,9 +18,7 @@ const SettingPermissionDialog = (props: IProps) => {
 
   const [tab, setTab] = useState(0);
 
-  const { data: pageData, refetch } = api.page.getPageById.useQuery({
-    id: id,
-  });
+  const { data: pageData, refetch } = useGetPageDetail(id?.toString() || "");
 
   const settingOption = useMemo(() => {
     return [
