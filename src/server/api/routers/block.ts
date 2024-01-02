@@ -67,13 +67,12 @@ export const blockRouter = createTRPCRouter({
       const { id, ...rest } = input;
 
       try {
-        const resp = await ctx.prisma.block.update({
+        await ctx.prisma.block.update({
           where: { id: id },
           data: {
             ...rest,
           },
         });
-        console.log(resp);
       } catch (error) {
         throw new TRPCError({
           message: i18n.t("somethingWrong"),

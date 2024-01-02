@@ -49,7 +49,6 @@ const PageDetail = () => {
 
   const onSubmit = useCallback(
     async (submitData: IPageForm) => {
-      console.log("submit", submitData);
       await mutateAsync({
         ...submitData,
         id: id?.toString(),

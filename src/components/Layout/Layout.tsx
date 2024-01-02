@@ -4,9 +4,13 @@ import { AppBar, Collapse, IconButton, Stack, Toolbar } from "@mui/material";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { handleCheckHiddenLayout } from "~/utils/common";
-import SideBarByRole from "./SideBarByRole";
 import PageInfoSection from "./SideBarUser/PageInfoSection";
 import { getCookie } from "cookies-next";
+import dynamic from "next/dynamic";
+
+const SideBarByRole = dynamic(() =>
+  import("./SideBarByRole").then((module) => module.default)
+);
 
 const Layout = (props: React.PropsWithChildren) => {
   const router = useRouter();

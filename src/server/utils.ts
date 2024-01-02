@@ -122,7 +122,6 @@ export const handleCheckPremiumPermission = (
   }
 
   if (!condition) {
-    // console.log("aaa", user.isPremium, condition);
     throw new TRPCError({
       message: i18n.t("nonPremiumError"),
       code: "UNAUTHORIZED",
