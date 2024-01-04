@@ -8,7 +8,7 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import SimpleBar from "simplebar-react";
 import type { IComment } from "~/interface/IComment";
@@ -17,6 +17,7 @@ import SendIcon from "@mui/icons-material/Send";
 import { api } from "~/utils/api";
 import toast from "react-hot-toast";
 import { getTRPCErrorFromUnknown } from "@trpc/server";
+import { getCookie } from "cookies-next";
 
 interface IProps {
   open: boolean;
@@ -40,10 +41,18 @@ const CommentDialog = (props: IProps) => {
   } = props;
   const { t } = useTranslation();
   const isMobile = useMediaQuery("(max-width:600px)");
+
   const { mutateAsync, isLoading } = api.comment.createComment.useMutation();
   const { mutateAsync: deleteComment } =
     api.comment.deleteComment.useMutation();
+
   const [commentContent, setCommentContent] = useState("");
+
+  const disableComment = useMemo(() => {
+    const token = getCookie("token");
+
+    return !token || token === "undefined";
+  }, []);
 
   const handleSubmitComment = async () => {
     if (commentContent) {
@@ -103,7 +112,13 @@ const CommentDialog = (props: IProps) => {
           </Stack>
         </SimpleBar>
 
-        <Stack direction="row" alignItems="center">
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{
+            display: disableComment ? "none" : "flex,",
+          }}
+        >
           <InputBase
             sx={{ ml: 1, flex: 1 }}
             placeholder={t("commentHolder")}

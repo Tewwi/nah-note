@@ -1,4 +1,5 @@
 import { getTRPCErrorFromUnknown } from "@trpc/server";
+import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/rpc";
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
 import { handleUnauthorize } from "~/utils/constant";
@@ -12,7 +13,10 @@ const useGetPageDetail = (id: string) => {
     {
       onSettled(data, error) {
         if (!data && getTRPCErrorFromUnknown(error)) {
-          handleUnauthorize("UNAUTHORIZED", () => void router.push("/"));
+          handleUnauthorize(
+            error?.message as TRPC_ERROR_CODE_KEY,
+            () => void router.push("/")
+          );
         }
       },
       enabled: false,

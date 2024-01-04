@@ -1,15 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import MenuIcon from "@mui/icons-material/Menu";
-import { AppBar, Collapse, IconButton, Stack, Toolbar } from "@mui/material";
+import { AppBar, Collapse, Stack, Toolbar } from "@mui/material";
+import { getCookie } from "cookies-next";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { handleCheckHiddenLayout } from "~/utils/common";
 import PageInfoSection from "./SideBarUser/PageInfoSection";
-import { getCookie } from "cookies-next";
-import dynamic from "next/dynamic";
 
 const SideBarByRole = dynamic(() =>
   import("./SideBarByRole").then((module) => module.default)
+);
+
+const OpenSideBarButton = dynamic(
+  () => import("./SideBarUser/OpenSideBarBtn").then((module) => module.default),
+  { ssr: false }
 );
 
 const Layout = (props: React.PropsWithChildren) => {
@@ -63,21 +67,10 @@ const Layout = (props: React.PropsWithChildren) => {
               direction="row"
               alignItems="center"
             >
-              <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-                sx={{
-                  mr: 2,
-                  display: openSideBar ? "none" : "inline-flex",
-                  color: (theme) => theme.palette.text.secondary,
-                }}
-                hidden={!token}
-                onClick={() => setOpenSideBar(true)}
-              >
-                <MenuIcon />
-              </IconButton>
+              <OpenSideBarButton
+                open={openSideBar}
+                handleOpen={() => setOpenSideBar(true)}
+              />
               <Stack sx={{ width: "fit-content" }}>
                 {isShowAppBar && <PageInfoSection />}
               </Stack>

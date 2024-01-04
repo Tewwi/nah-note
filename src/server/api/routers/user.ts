@@ -144,7 +144,7 @@ export const userRouter = createTRPCRouter({
       return signCloud(input.folderName);
     }),
 
-  getCurrUserDetail: privateProcedure.query(({ ctx }) => {
+  getCurrUserDetail: privateProcedure.input(z.object({})).query(({ ctx }) => {
     if (ctx.currUser) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...userInfo } = ctx.currUser;
@@ -204,10 +204,20 @@ export const userRouter = createTRPCRouter({
       try {
         return ctx.prisma.user.findMany({
           where: {
-            userName: {
-              contains: input.query,
-              mode: "insensitive",
-            },
+            OR: [
+              {
+                userName: {
+                  contains: input.query,
+                  mode: "insensitive",
+                },
+              },
+              {
+                email: {
+                  contains: input.query,
+                  mode: "insensitive",
+                },
+              },
+            ],
             NOT: {
               id: { in: input.permissionList },
             },
@@ -216,6 +226,7 @@ export const userRouter = createTRPCRouter({
             userName: true,
             id: true,
             avatar: true,
+            email: true,
           },
         });
       } catch (error) {

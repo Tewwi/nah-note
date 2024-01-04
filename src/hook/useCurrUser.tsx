@@ -1,9 +1,15 @@
+import { getCookie } from "cookies-next";
 import { api } from "~/utils/api";
 
 const useCurrUser = () => {
-  const apiCurrUser = api.user.getCurrUserDetail.useQuery(undefined, {
-    enabled: false,
-  });
+  const token = getCookie("token");
+
+  const apiCurrUser = api.user.getCurrUserDetail.useQuery(
+    {},
+    {
+      enabled: Boolean(token || token === "undefined"),
+    }
+  );
 
   return apiCurrUser;
 };

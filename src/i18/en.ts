@@ -117,4 +117,11 @@ export const en = {
   add: "Add",
   removeSuccess: "Remove Successful",
   lastUpdate: "Last update",
+  general: "General",
+  permissionGeneral: "General Permission",
+  any: "Everyone",
+  limit: "Restrict",
+  permissionAnyDesc: "Anyone with the link can access this note",
+  permissionLimitDesc: "Only authorized people can access this note",
+  copyLink: "Copy Link",
 };

@@ -1,4 +1,10 @@
-import { CircularProgress, IconButton, Stack, Typography } from "@mui/material";
+import {
+  CircularProgress,
+  Divider,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
 import type { User } from "@prisma/client";
 import React, { useMemo, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
@@ -45,24 +51,32 @@ const PermissionUserItem = (props: IProps) => {
   }
 
   return (
-    <Stack
-      direction="row"
-      width="100%"
-      justifyContent="space-between"
-      alignItems="center"
-    >
-      <Stack direction="row" gap={1} alignItems="center">
-        <Image src={data.avatar} width={35} height={35} alt="" />
-        <Typography variant="body2">{data.userName}</Typography>
-      </Stack>
-      <IconButton
-        onClick={() => void handleClickAdd()}
-        disabled={isLoading}
-        size="small"
+    <>
+      <Stack
+        direction="row"
+        width="100%"
+        justifyContent="space-between"
+        alignItems="center"
       >
-        {renderIcons}
-      </IconButton>
-    </Stack>
+        <Stack direction="row" gap={1} alignItems="center">
+          <Image src={data.avatar} width={35} height={35} alt="" />
+          <Stack>
+            <Typography variant="body2" fontWeight={600}>
+              {data.userName}
+            </Typography>
+            <Typography variant="body2">{data.email}</Typography>
+          </Stack>
+        </Stack>
+        <IconButton
+          onClick={() => void handleClickAdd()}
+          disabled={isLoading}
+          size="small"
+        >
+          {renderIcons}
+        </IconButton>
+      </Stack>
+      <Divider />
+    </>
   );
 };
 

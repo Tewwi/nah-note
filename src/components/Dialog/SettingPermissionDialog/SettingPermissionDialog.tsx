@@ -5,6 +5,7 @@ import "simplebar-react/dist/simplebar.min.css";
 import useGetPageDetail from "~/hook/useGetPageDetail";
 import AddPermissionTab from "./AddPermissionTab";
 import EditPermissionTab from "./EditPermissionTab";
+import PermissionTab from "./PermissionTab";
 
 interface IProps {
   open: boolean;
@@ -24,10 +25,14 @@ const SettingPermissionDialog = (props: IProps) => {
     return [
       {
         value: 0,
-        label: t("add"),
+        label: t("general"),
       },
       {
         value: 1,
+        label: t("add"),
+      },
+      {
+        value: 2,
         label: t("edit"),
       },
     ];
@@ -35,6 +40,10 @@ const SettingPermissionDialog = (props: IProps) => {
 
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
+  };
+
+  const handleRefetch = () => {
+    void refetch();
   };
 
   return (
@@ -72,10 +81,14 @@ const SettingPermissionDialog = (props: IProps) => {
         </Tabs>
 
         {tab === 0 ? (
-          <AddPermissionTab pageData={pageData} onClose={onClose} />
+          <PermissionTab pageData={pageData} handleRefetch={handleRefetch} />
         ) : null}
 
         {tab === 1 ? (
+          <AddPermissionTab pageData={pageData} onClose={onClose} />
+        ) : null}
+
+        {tab === 2 ? (
           <EditPermissionTab pageData={pageData} onClose={onClose} />
         ) : null}
       </DialogContent>

@@ -117,4 +117,12 @@ export const vi = {
   removeSuccess: "Xoá thành công",
   lastUpdate: "Sửa lúc",
   unauthorized: "Bạn không có quyền để làm hành động này",
+  general: "Chung",
+  permissionGeneral: "Quyền chung",
+  any: "Mọi người",
+  limit: "Hạn chế",
+  permissionAnyDesc: "Bất kỳ ai có đường dẫn đều có thể truy cập vào trang nhớ",
+  permissionLimitDesc:
+    "Chỉ những người được cho phép mới có thể truy cập vào trang nhớ",
+  copyLink: "Sao chép liên kết",
 };

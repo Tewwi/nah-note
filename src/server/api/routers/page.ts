@@ -317,6 +317,40 @@ export const pageRouter = createTRPCRouter({
         });
       }
     }),
+  setPublicPermission: privateProcedure
+    .input(z.object({ pageId: z.string(), isPublic: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const { pageId } = input;
+
+      try {
+        const page = await ctx.prisma.page.findUnique({
+          where: {
+            id: pageId,
+          },
+          include: {
+            author: true,
+          },
+        });
+
+        handleCheckPagePermission(ctx.currUser, page as Page);
+        handleCheckUserBlock(ctx.currUser);
+
+        return await ctx.prisma.page.update({
+          where: {
+            id: page?.id,
+          },
+          data: {
+            isPublic: input.isPublic,
+          },
+        });
+      } catch (error) {
+        const err = getTRPCErrorFromUnknown(error);
+        throw new TRPCError({
+          message: err.message,
+          code: err.code,
+        });
+      }
+    }),
   removePermissionUser: privateProcedure
     .input(z.object({ userId: z.string(), pageId: z.string() }))
     .mutation(async ({ ctx, input }) => {
