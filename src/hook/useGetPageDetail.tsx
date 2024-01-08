@@ -12,7 +12,7 @@ const useGetPageDetail = (id: string) => {
     },
     {
       retry(_failureCount, error) {
-        if (getTRPCErrorFromUnknown(error)) {
+        if (getTRPCErrorFromUnknown(error).message === "UNAUTHORIZED") {
           handleUnauthorize(
             error?.message as TRPC_ERROR_CODE_KEY,
             () => void router.push("/")
