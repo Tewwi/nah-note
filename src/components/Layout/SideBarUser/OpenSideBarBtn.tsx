@@ -35,7 +35,7 @@ const OpenSideBarButton = (props: IProps) => {
         </IconButton>
       ) : (
         <Button
-          variant="outlined"
+          variant="text"
           size="small"
           onClick={() => void router.push("/auth/login")}
         >

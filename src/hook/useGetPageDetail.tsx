@@ -11,13 +11,17 @@ const useGetPageDetail = (id: string) => {
       id: id,
     },
     {
-      onSettled(data, error) {
-        if (!data && getTRPCErrorFromUnknown(error)) {
+      retry(_failureCount, error) {
+        if (getTRPCErrorFromUnknown(error)) {
           handleUnauthorize(
             error?.message as TRPC_ERROR_CODE_KEY,
             () => void router.push("/")
           );
+
+          return false;
         }
+
+        return true;
       },
       enabled: false,
     }
