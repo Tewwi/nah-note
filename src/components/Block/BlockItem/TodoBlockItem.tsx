@@ -25,7 +25,7 @@ const TodoBlockItem = (props: IProps) => {
     Boolean(blockData.todo_checked)
   );
 
-  const isShowDate = blockData.updateDate && blockData.todo_checked;
+  const isShowDate = blockData.updateDate && checkboxValue;
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleToggleCheckbox = useCallback(
