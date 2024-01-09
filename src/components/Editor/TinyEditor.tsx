@@ -79,8 +79,7 @@ const TinyEditor = (props: Props) => {
           toolbar:
             "undo redo | " +
             "bold italic forecolor | alignleft aligncenter " +
-            "alignright alignjustify | outdent indent | " +
-            "removeformat",
+            "alignright alignjustify | outdent indent | ",
           content_style:
             "body { font-family:SVN-Sofia Pro Medium; font-size:14px }",
           inline: true,
