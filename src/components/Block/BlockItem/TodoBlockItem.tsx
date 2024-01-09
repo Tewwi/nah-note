@@ -19,11 +19,13 @@ interface IProps {
 
 const TodoBlockItem = (props: IProps) => {
   const { t } = useTranslation();
-
   const { blockData, handleChangeValue, disable } = props;
+
   const [checkboxValue, setCheckboxValue] = useState(
     Boolean(blockData.todo_checked)
   );
+
+  const isShowDate = blockData.updateDate && blockData.todo_checked;
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleToggleCheckbox = useCallback(
@@ -64,7 +66,7 @@ const TodoBlockItem = (props: IProps) => {
           }}
           disable={disable}
         />
-        {blockData.updateDate ? (
+        {isShowDate ? (
           <Typography
             variant="caption"
             sx={{
