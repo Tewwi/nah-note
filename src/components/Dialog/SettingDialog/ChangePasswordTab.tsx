@@ -78,6 +78,11 @@ const ChangePasswordTab = (props: IProps) => {
           rules={{
             required: t("requiredError"),
             min: { value: 6, message: t("passwordError") },
+            validate: (val) => {
+              if (watch("oldPass") == val) {
+                return t("newPasswordError");
+              }
+            },
           }}
           type="password"
         />

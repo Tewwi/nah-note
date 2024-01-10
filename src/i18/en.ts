@@ -124,4 +124,5 @@ export const en = {
   permissionAnyDesc: "Anyone with the link can access this note",
   permissionLimitDesc: "Only authorized people can access this note",
   copyLink: "Copy Link",
+  newPasswordError: "Cant use old password",
 };
