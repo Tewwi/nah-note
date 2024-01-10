@@ -11,6 +11,7 @@ import DnDContext from "../DragnDrop/DnDContext";
 import { debounce } from "lodash";
 import { useCallback } from "react";
 import type { Block as IBlock } from "@prisma/client";
+import { getTRPCErrorFromUnknown } from "@trpc/server";
 
 interface Props {
   control: Control<IPageForm>;
@@ -35,15 +36,19 @@ const BlockList = (props: Props) => {
   });
 
   const handleAddNewBlock = useCallback(async () => {
-    const resp = await createNewBlock({
-      pageId: pageId,
-      type: "text",
-      content: "",
-    });
+    try {
+      const resp = await createNewBlock({
+        pageId: pageId,
+        type: "text",
+        content: "",
+      });
 
-    append({
-      ...resp,
-    });
+      append({
+        ...resp,
+      });
+    } catch (error) {
+      toast.error(getTRPCErrorFromUnknown(error).message);
+    }
   }, [pageId]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
