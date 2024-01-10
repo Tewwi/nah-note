@@ -2,10 +2,10 @@ import { Checkbox, Stack, Typography } from "@mui/material";
 import type { Block } from "@prisma/client";
 import { debounce } from "lodash";
 import moment from "moment";
-import { type ChangeEvent, useState, useCallback } from "react";
+import { useCallback, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import TinyEditor from "~/components/Editor/TinyEditor";
-import { dateDisplayFormat } from "~/utils/common";
+import { dateTimeFormat } from "~/utils/common";
 
 interface IProps {
   handleChangeValue: (
@@ -77,7 +77,7 @@ const TodoBlockItem = (props: IProps) => {
             }}
           >
             {` - ${t("lastUpdate")} ${moment(blockData.updateDate).format(
-              dateDisplayFormat
+              dateTimeFormat
             )}`}
           </Typography>
         ) : null}
