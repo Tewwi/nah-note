@@ -126,4 +126,5 @@ export const vi = {
     "Chỉ những người được cho phép mới có thể truy cập vào trang nhớ",
   copyLink: "Sao chép liên kết",
   newPasswordError: "Không thể sử dụng mật khẩu cũ",
+  loadMore: "Xem thêm",
 };

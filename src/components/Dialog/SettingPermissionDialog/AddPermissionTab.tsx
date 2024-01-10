@@ -1,8 +1,14 @@
 import SearchIcon from "@mui/icons-material/Search";
-import { IconButton, InputBase, Stack } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  IconButton,
+  InputBase,
+  Stack,
+} from "@mui/material";
 import type { Page, User } from "@prisma/client";
 import { getTRPCErrorFromUnknown } from "@trpc/server";
-import { debounce, includes } from "lodash";
+import { debounce, includes, uniq } from "lodash";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -11,6 +17,7 @@ import "simplebar-react/dist/simplebar.min.css";
 import { api } from "~/utils/api";
 import { handleUnauthorize } from "~/utils/constant";
 import PermissionUserItem from "./PermissionUserItem";
+import { useCallback, useMemo, useState } from "react";
 
 interface IProps {
   pageData?: Page | null;
@@ -22,8 +29,22 @@ const AddPermissionTab = (props: IProps) => {
   const router = useRouter();
   const { t } = useTranslation();
 
-  const { data: userList, mutateAsync: searchUser } =
-    api.user.searchUserByName.useMutation();
+  const [searchParam, setSearchParam] = useState("");
+
+  const {
+    data: userList,
+    fetchNextPage,
+    hasNextPage,
+    isLoading,
+  } = api.user.searchUserByName.useInfiniteQuery(
+    {
+      query: searchParam,
+      permissionList: pageData?.permissionId || [],
+    },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    }
+  );
   const { mutateAsync: updatePermission } =
     api.page.setPermissionPage.useMutation({
       onError: (err) =>
@@ -33,12 +54,20 @@ const AddPermissionTab = (props: IProps) => {
         ),
     });
 
-  const handleSearchUser = debounce(async (value: string) => {
-    await searchUser({
-      query: value,
-      permissionList: pageData?.permissionId || [],
-    });
-  });
+  const userListData = useMemo(() => {
+    const result = userList?.pages.reduce((total, item) => {
+      return total.concat(item.data as User[]);
+    }, [] as unknown as User[]);
+
+    return uniq(result);
+  }, [userList?.pages]);
+
+  const handleSearchUser = useCallback(
+    debounce((value: string) => {
+      setSearchParam(value);
+    }, 500),
+    []
+  );
 
   const handleAddUser = async (userId: string) => {
     if (pageData) {
@@ -70,16 +99,39 @@ const AddPermissionTab = (props: IProps) => {
       </Stack>
       <SimpleBar style={{ maxHeight: "240px" }}>
         <Stack direction="column" gap={1.5}>
-          {userList
+          {isLoading && (
+            <CircularProgress
+              size="24px"
+              sx={{
+                color: (theme) => theme.palette.text.primary,
+                mt: 4,
+                alignSelf: "center",
+              }}
+            />
+          )}
+
+          {userListData
             ?.filter((item) => item.id !== pageData?.authorId)
             .map((user) => (
               <PermissionUserItem
                 key={user.id}
                 handleAddUser={handleAddUser}
-                data={user as User}
+                data={user}
                 hidden={includes(pageData?.permissionId, user.id)}
               />
             ))}
+
+          {hasNextPage && (
+            <Button
+              variant="text"
+              fullWidth
+              onClick={() => {
+                void fetchNextPage();
+              }}
+            >
+              {t("loadMore")}
+            </Button>
+          )}
         </Stack>
       </SimpleBar>
     </Stack>

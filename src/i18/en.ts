@@ -125,4 +125,5 @@ export const en = {
   permissionLimitDesc: "Only authorized people can access this note",
   copyLink: "Copy Link",
   newPasswordError: "Cant use old password",
+  loadMore: "Load More",
 };

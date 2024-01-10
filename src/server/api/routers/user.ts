@@ -13,7 +13,10 @@ import {
   privateProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { itemPerPage } from "~/server/constant";
+import {
+  itemPerPage,
+  maxPermissionShareForNonPremium,
+} from "~/server/constant";
 import {
   handleCheckUserPermission,
   handleGetMonthInYear,
@@ -198,22 +201,27 @@ export const userRouter = createTRPCRouter({
       z.object({
         query: z.string(),
         permissionList: z.array(z.string()),
+        cursor: z.string().optional(),
       })
     )
-    .mutation(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }) => {
+      const { cursor, query } = input;
+      const limit = maxPermissionShareForNonPremium;
+      let nextCursor: typeof cursor | undefined = undefined;
+
       try {
-        return ctx.prisma.user.findMany({
+        const result = await ctx.prisma.user.findMany({
           where: {
             OR: [
               {
                 userName: {
-                  contains: input.query,
+                  contains: query,
                   mode: "insensitive",
                 },
               },
               {
                 email: {
-                  contains: input.query,
+                  contains: query,
                   mode: "insensitive",
                 },
               },
@@ -222,6 +230,8 @@ export const userRouter = createTRPCRouter({
               id: { in: input.permissionList },
             },
           },
+          take: limit + 1,
+          cursor: cursor ? { id: cursor } : undefined,
           select: {
             userName: true,
             id: true,
@@ -229,6 +239,16 @@ export const userRouter = createTRPCRouter({
             email: true,
           },
         });
+
+        if (result.length > limit) {
+          const nextItem = result.pop();
+          nextCursor = nextItem!.id;
+        }
+
+        return {
+          data: result,
+          nextCursor,
+        };
       } catch (error) {
         throw new TRPCError({
           message: i18n.t("somethingWrong"),
