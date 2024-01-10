@@ -44,10 +44,10 @@ const PremiumDialog = (props: IProps) => {
           </Typography>
           <Image
             src={
-              "https://res.cloudinary.com/dqlcjscsz/image/upload/v1702439462/store/crop_start_dotibn.svg"
+              "https://res.cloudinary.com/dqlcjscsz/image/upload/v1704878128/store/2al0tmt5syhDOHxOphSY5vHDUd7_dypsei.svg"
             }
             alt="premium_image"
-            height={200}
+            height={250}
             width={300}
             style={{ alignSelf: "center" }}
           />

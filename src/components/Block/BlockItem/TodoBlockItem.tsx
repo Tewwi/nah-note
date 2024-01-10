@@ -40,7 +40,7 @@ const TodoBlockItem = (props: IProps) => {
   );
 
   return (
-    <Stack>
+    <Stack sx={{ width: isShowDate ? "unset" : "100%" }}>
       <Stack direction="row" flex={1}>
         <Checkbox
           value={checkboxValue}
