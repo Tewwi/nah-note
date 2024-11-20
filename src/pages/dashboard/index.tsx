@@ -104,7 +104,7 @@ const DashboardPage = () => {
             sx={{
               m: "auto",
               color: "black",
-              width: language === "vi" ? "460px" : "480px",
+              width: language === "vi" ? "460px" : "300px",
             }}
           >
             {t("homePageText")}

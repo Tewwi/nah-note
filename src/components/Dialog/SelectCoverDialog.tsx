@@ -36,6 +36,7 @@ const SelectCoverDialog = (props: IProps) => {
       const isUrlValid = await isImgUrl(urlImg);
       if (!isUrlValid) {
         toast.error(t("imgLinkInvalid"));
+        setIsLoading(false);
         return;
       }
 
